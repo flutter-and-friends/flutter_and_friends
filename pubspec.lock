@@ -53,10 +53,10 @@ packages:
     dependency: "direct dev"
     description:
       name: bloc_lint
-      sha256: "9e0d71bb531a129b51f38aa3313ee1c2ca3881cdca27b3c087c291b64d81288f"
+      sha256: c7f0984689bccf5e8e08f1fd4054687547a558294b692c145211165eff1c19d4
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.1"
+    version: "0.3.2"
   bluez:
     dependency: transitive
     description:
@@ -1063,5 +1063,5 @@ packages:
     source: hosted
     version: "3.1.3"
 sdks:
-  dart: ">=3.9.0 <4.0.0"
-  flutter: ">=3.35.2 <4.0.0"
+  dart: ">=3.9.2 <4.0.0"
+  flutter: ">=3.35.4 <4.0.0"
