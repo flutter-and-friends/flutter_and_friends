@@ -619,12 +619,11 @@ packages:
   nfc_manager:
     dependency: "direct main"
     description:
-      path: "packages/nfc_manager"
-      ref: "8b5223edcd7d81eb75f9bc99970f8891a0251c8c"
-      resolved-ref: "8b5223edcd7d81eb75f9bc99970f8891a0251c8c"
-      url: "https://github.com/SuperMari000/flutter-nfc-manager.git"
-    source: git
-    version: "4.0.2"
+      name: nfc_manager
+      sha256: "24c78b0e5702da53e7f8794d073624c0bee7cd99924f257cbd11f5d1c5866879"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.1.1"
   package_config:
     dependency: transitive
     description:

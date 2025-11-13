@@ -20,7 +20,7 @@ dependencies:
   image_picker: ^1.2.0
   intl: ^0.20.0
   json_annotation: ^4.9.0
-  nfc_manager: ^4.0.2
+  nfc_manager: ^4.1.0
   path_provider: ^2.0.0
   pub_semver: ^2.1.4
   shorebird_code_push: ^2.0.2

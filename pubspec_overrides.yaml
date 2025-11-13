@@ -1,7 +1,0 @@
-dependency_overrides:
-# Fix for issue with nfc_manager package on iOS not working in background isolate
-  nfc_manager:
-    git:
-      url: https://github.com/SuperMari000/flutter-nfc-manager.git
-      ref: 8b5223edcd7d81eb75f9bc99970f8891a0251c8c
-      path: packages/nfc_manager
