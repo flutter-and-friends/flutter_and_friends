@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_and_friends/favorites/favorites.dart';
@@ -20,7 +22,7 @@ class FavoriteButton extends StatelessWidget {
         ),
         onPressed: () {
           context.read<FavoritesCubit>().toggleFavorite(event);
-          HapticFeedback.mediumImpact();
+          unawaited(HapticFeedback.mediumImpact());
         },
       ),
     );

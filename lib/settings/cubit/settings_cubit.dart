@@ -13,7 +13,9 @@ class SettingsCubit extends Cubit<SettingsState> {
 
   final ShorebirdUpdater _updater;
 
-  Future<void> init() async {
+  void init() => _loadCurrentPatch();
+
+  Future<void> _loadCurrentPatch() async {
     final patch = await _updater.readCurrentPatch();
     emit(state.copyWith(patchNumber: patch?.number));
   }
