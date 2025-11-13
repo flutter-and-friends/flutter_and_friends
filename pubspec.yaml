@@ -4,8 +4,8 @@ publish_to: none
 version: 1.1.13+23
 
 environment:
-  sdk: ">=3.9.2 <4.0.0"
-  flutter: ">=3.35.4 <4.0.0"
+  sdk: ">=3.10.0 <4.0.0"
+  flutter: ">=3.38.1 <4.0.0"
 
 dependencies:
   bloc: ^9.0.0
@@ -20,7 +20,7 @@ dependencies:
   image_picker: ^1.2.0
   intl: ^0.20.0
   json_annotation: ^4.9.0
-  nfc_manager: ^4.0.2
+  nfc_manager: ^4.1.0
   path_provider: ^2.0.0
   pub_semver: ^2.1.4
   shorebird_code_push: ^2.0.2
@@ -32,7 +32,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   json_serializable: ^6.8.0
-  very_good_analysis: ^9.0.0
+  very_good_analysis: ^10.0.0
 
 flutter:
   assets:

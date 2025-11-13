@@ -11,7 +11,7 @@ class UpdaterCubit extends Cubit<UpdaterState> {
 
   final ShorebirdUpdater _updater;
 
-  Future<void> init() async => checkForUpdates();
+  void init() => checkForUpdates();
 
   Future<void> checkForUpdates() async {
     emit(state.copyWith(status: UpdaterStatus.updateCheckInProgress));

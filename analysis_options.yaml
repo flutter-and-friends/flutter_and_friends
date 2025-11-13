@@ -1,6 +1,6 @@
 include:
   - package:bloc_lint/recommended.yaml
-  - package:very_good_analysis/analysis_options.9.0.0.yaml
+  - package:very_good_analysis/analysis_options.10.0.0.yaml
 
 analyzer:
   exclude: ["lib/**.g.dart"]

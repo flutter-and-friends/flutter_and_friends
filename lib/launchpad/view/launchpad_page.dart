@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_and_friends/favorites/favorites.dart';
@@ -61,7 +63,7 @@ class _BottomNavigationBar extends StatelessWidget {
       useLegacyColorScheme: false,
       onTap: (index) {
         context.read<LaunchpadCubit>().toggleTab(index);
-        HapticFeedback.mediumImpact();
+        unawaited(HapticFeedback.mediumImpact());
       },
       currentIndex: state.index,
       items: const [
