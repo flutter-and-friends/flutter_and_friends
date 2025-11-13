@@ -3,5 +3,5 @@ dependency_overrides:
   nfc_manager:
     git:
       url: https://github.com/SuperMari000/flutter-nfc-manager.git
-      ref: FixIosBackgroundIsolateError
+      ref: 8b5223edcd7d81eb75f9bc99970f8891a0251c8c
       path: packages/nfc_manager
