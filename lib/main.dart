@@ -13,9 +13,13 @@ import 'package:shorebird_code_push/shorebird_code_push.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final temporaryDirectory = await getTemporaryDirectory();
+  // path_provider has no web implementation; on web HydratedBloc uses
+  // browser storage via the `web` sentinel path instead.
+  final storageDirectory = kIsWeb
+      ? HydratedStorageDirectory.web
+      : HydratedStorageDirectory((await getTemporaryDirectory()).path);
   HydratedBloc.storage = await HydratedStorage.build(
-    storageDirectory: HydratedStorageDirectory(temporaryDirectory.path),
+    storageDirectory: storageDirectory,
   );
   if (kDebugMode) await HydratedBloc.storage.clear();
   runApp(const App());
@@ -53,6 +57,9 @@ class AppView extends StatelessWidget {
       (ThemeCubit cubit) => cubit.state.toThemeMode(),
     );
     return MaterialApp(
+      // Also becomes the browser tab title on web; Flutter overwrites the
+      // <title> from index.html with this at runtime.
+      title: 'Flutter & Friends',
       debugShowCheckedModeBanner: false,
       home: const UpdateListener(child: LaunchpadPage()),
       themeMode: themeMode,
