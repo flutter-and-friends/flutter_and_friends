@@ -1,0 +1,35 @@
+{
+    "name": "Flutter & Friends",
+    "short_name": "Flutter & Friends",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#FAF9FD",
+    "theme_color": "#005AC1",
+    "description": "The official Flutter & Friends conference app.",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "icons/Icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-maskable-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "icons/Icon-maskable-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ]
+}

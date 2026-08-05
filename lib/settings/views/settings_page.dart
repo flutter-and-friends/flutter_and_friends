@@ -75,7 +75,7 @@ class SettingsView extends StatelessWidget {
             const SizedBox(height: 16),
             Text('Socials', style: headingStyle),
             ListTile(
-              leading: const Icon(
+              leading: const FaIcon(
                 FontAwesomeIcons.linkedin,
                 color: Colors.indigo,
               ),
@@ -87,14 +87,14 @@ class SettingsView extends StatelessWidget {
               ),
             ),
             ListTile(
-              leading: const Icon(FontAwesomeIcons.xTwitter),
+              leading: const FaIcon(FontAwesomeIcons.xTwitter),
               title: const Text('X.com'),
               subtitle: const Text('@FlutterNFriends'),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => launchUrlString('https://x.com/FlutterNFriends'),
             ),
             ListTile(
-              leading: const Icon(
+              leading: const FaIcon(
                 FontAwesomeIcons.bluesky,
                 color: Colors.blueAccent,
               ),
