@@ -17,16 +17,21 @@ class OrganizerAvatar extends StatelessWidget {
         Expanded(
           flex: 2,
           child: InkWell(
-            onTap: organizer.twitter != null
+            onTap: organizer.handle != null
                 ? () => launchUrlString(
-                    'https://twitter.com/${organizer.twitter}',
+                    'https://twitter.com/${organizer.handle}',
                   )
                 : null,
             child: Hero(
               tag: organizer.name,
               child: CircleAvatar(
                 radius: 60,
-                backgroundImage: AssetImage(organizer.avatar),
+                backgroundImage: organizer.avatar != null
+                    ? AssetImage(organizer.avatar!)
+                    : null,
+                child: organizer.avatar == null
+                    ? const Icon(Icons.person, size: 48)
+                    : null,
               ),
             ),
           ),
@@ -45,9 +50,9 @@ class OrganizerAvatar extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              if (organizer.twitter != null)
+              if (organizer.handle != null)
                 Text(
-                  '@${organizer.twitter}',
+                  '@${organizer.handle}',
                   style: theme.textTheme.labelMedium?.copyWith(
                     color: theme.colorScheme.primary,
                     fontWeight: FontWeight.w700,

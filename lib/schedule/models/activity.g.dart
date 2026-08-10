@@ -9,16 +9,20 @@ part of 'activity.dart';
 // **************************************************************************
 
 Activity _$ActivityFromJson(Map<String, dynamic> json) => Activity(
+  id: json['id'] as String,
   name: json['name'] as String,
   duration: Duration(microseconds: (json['duration'] as num).toInt()),
   startTime: DateTime.parse(json['startTime'] as String),
-  location: Location.fromJson(json['location'] as Map<String, dynamic>),
+  location: json['location'] == null
+      ? null
+      : Location.fromJson(json['location'] as Map<String, dynamic>),
   image: json['image'] as String?,
   link: json['link'] as String?,
   description: json['description'] as String?,
 );
 
 Map<String, dynamic> _$ActivityToJson(Activity instance) => <String, dynamic>{
+  'id': instance.id,
   'name': instance.name,
   'duration': instance.duration.inMicroseconds,
   'startTime': instance.startTime.toIso8601String(),

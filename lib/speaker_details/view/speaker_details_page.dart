@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_and_friends/speakers/speakers.dart';
-import 'package:flutter_and_friends/twitter/twitter.dart';
 
 class SpeakerDetailsPage extends StatelessWidget {
   const SpeakerDetailsPage({required this.speaker, super.key});
@@ -64,10 +63,7 @@ class SpeakerInfo extends StatelessWidget {
                 child: CircleAvatar(
                   radius: avatarSize / 2 + 4,
                   backgroundColor: theme.colorScheme.primary.withAlpha(100),
-                  child: CircleAvatar(
-                    radius: avatarSize / 2,
-                    backgroundImage: AssetImage(speaker.avatar),
-                  ),
+                  child: SpeakerPhoto(speaker: speaker, radius: avatarSize / 2),
                 ),
               ),
             ],
@@ -86,8 +82,7 @@ class SpeakerInfo extends StatelessWidget {
             style: theme.textTheme.titleMedium,
             textAlign: TextAlign.center,
           ),
-          if (speaker.twitter != null)
-            TwitterIconButton(handle: speaker.twitter!),
+          SpeakerSocialLinks(speaker: speaker),
         ],
       ),
     );
