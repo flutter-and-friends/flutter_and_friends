@@ -14,7 +14,7 @@ class FavoriteButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocSelector<FavoritesCubit, FavoritesState, bool>(
-      selector: (state) => state.events.contains(event),
+      selector: (state) => state.events.any((e) => e.id == event.id),
       builder: (context, isFavorite) => IconButton(
         icon: Icon(
           isFavorite ? Icons.favorite : Icons.favorite_border,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_and_friends/schedule/schedule.dart';
 import 'package:flutter_and_friends/speakers/speakers.dart';
 import 'package:flutter_and_friends/theme/theme.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SpeakersPage extends StatelessWidget {
   const SpeakersPage({super.key});
@@ -14,12 +16,20 @@ class SpeakersPage extends StatelessWidget {
   }
 }
 
+/// Speakers are remote data, on the same footing as sessions (last-minute
+/// speaker changes happen) - sourced from [ScheduleDataCubit] rather than a
+/// build-time list, and fetched/cached/replaced atomically alongside the
+/// schedule (see [ScheduleDataState.speakers]).
 class SpeakersView extends StatelessWidget {
   const SpeakersView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const SpeakersGridView(speakers: speakers);
+    final speakers = context.select(
+      (ScheduleDataCubit cubit) => cubit.state.speakers,
+    );
+    final sorted = [...speakers]..sort((a, b) => a.name.compareTo(b.name));
+    return SpeakersGridView(speakers: sorted);
   }
 }
 

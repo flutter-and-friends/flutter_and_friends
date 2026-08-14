@@ -6,6 +6,11 @@ plugins {
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+    // Push (announcement) prep: DO NOT uncomment until google-services.json
+    // (downloaded from the Firebase console after registering this app's
+    // Android package name) exists in this directory — the plugin fails
+    // the build hard if the file is missing.
+    // id("com.google.gms.google-services")
 }
 
 val keystoreProperties = Properties()

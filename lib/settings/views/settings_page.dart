@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_and_friends/friends_badge/friends_badge.dart';
 import 'package:flutter_and_friends/organizers/organizers.dart';
@@ -6,7 +7,6 @@ import 'package:flutter_and_friends/theme/theme.dart';
 import 'package:flutter_and_friends/updater/updater.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:shorebird_code_push/shorebird_code_push.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -18,12 +18,11 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => SettingsCubit(
-        updater: context.read<ShorebirdUpdater>(),
-      )..init(),
-      child: const SettingsView(),
-    );
+    // SettingsCubit is provided once at the app root (see main.dart) so a
+    // debug feed host override survives navigating away from this page -
+    // this page just consumes the existing instance rather than creating
+    // its own.
+    return const SettingsView();
   }
 }
 
@@ -55,6 +54,11 @@ class SettingsView extends StatelessWidget {
             Text('Preferences', style: headingStyle),
             const ThemeToggle(),
             const SizedBox(height: 16),
+            if (kDebugMode) ...[
+              Text('Debug', style: headingStyle),
+              const _DebugFeedHostSwitcher(),
+              const SizedBox(height: 16),
+            ],
             Text('Extras', style: headingStyle),
             ListTile(
               leading: const Icon(Icons.badge_outlined),
@@ -186,5 +190,69 @@ class AppVersion extends StatelessWidget {
       return '$packageVersion ($buildNumber)$patchNumber';
     });
     return Text(version);
+  }
+}
+
+/// Debug-only control (see [kDebugMode] gating in [SettingsView]) that lets
+/// a developer point the schedule fetch at a locally-served feed without
+/// rebuilding - e.g. `http://localhost:4500/schedule.json` served from
+/// `flutter_and_friends_website`. Persisted via [SettingsCubit] so the
+/// override survives a hot restart, and always shows the URL that is
+/// actually in effect right now so an active override is never silently
+/// invisible.
+class _DebugFeedHostSwitcher extends StatefulWidget {
+  const _DebugFeedHostSwitcher();
+
+  @override
+  State<_DebugFeedHostSwitcher> createState() => _DebugFeedHostSwitcherState();
+}
+
+class _DebugFeedHostSwitcherState extends State<_DebugFeedHostSwitcher> {
+  late final _controller = TextEditingController(
+    text: context.read<SettingsCubit>().state.effectiveDebugFeedHost,
+  );
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = context.watch<SettingsCubit>().state;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: const Text('Use local schedule host'),
+          subtitle: Text('Active feed: ${state.effectiveFeedUrl}'),
+          value: state.debugUseLocalFeed,
+          onChanged: (value) =>
+              context.read<SettingsCubit>().setDebugUseLocalFeed(value: value),
+        ),
+        if (state.debugUseLocalFeed)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: TextField(
+              controller: _controller,
+              decoration: const InputDecoration(
+                labelText: 'Feed host',
+                helperText:
+                    'e.g. http://localhost:4500 - on an Android emulator '
+                    'use http://10.0.2.2:4500 instead (localhost there '
+                    'means the emulator itself, not this machine).',
+                helperMaxLines: 3,
+              ),
+              onSubmitted: (host) =>
+                  context.read<SettingsCubit>().setDebugFeedHost(host),
+              onEditingComplete: () => context
+                  .read<SettingsCubit>()
+                  .setDebugFeedHost(_controller.text),
+            ),
+          ),
+      ],
+    );
   }
 }

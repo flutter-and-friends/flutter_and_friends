@@ -6,7 +6,8 @@ part 'activity.g.dart';
 
 @JsonSerializable()
 class Activity extends Equatable implements Event {
-  const Activity({
+  Activity({
+    required this.id,
     required this.name,
     required this.duration,
     required this.startTime,
@@ -22,13 +23,15 @@ class Activity extends Equatable implements Event {
   Map<String, dynamic> toJson() => _$ActivityToJson(this);
 
   @override
+  final String id;
+  @override
   final String name;
   @override
   final Duration duration;
   @override
   final DateTime startTime;
   @override
-  final Location location;
+  final Location? location;
 
   final String? image;
   final String? link;
@@ -36,6 +39,7 @@ class Activity extends Equatable implements Event {
 
   @override
   List<Object?> get props => [
+    id,
     name,
     duration,
     startTime,

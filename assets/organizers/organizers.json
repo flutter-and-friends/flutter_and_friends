@@ -1,0 +1,26 @@
+[
+  {
+    "id": "lukas",
+    "name": "Lukas Klingsbo",
+    "avatar": "assets/organizers/lukas.jpg",
+    "handle": "spydon"
+  },
+  {
+    "id": "johannes",
+    "name": "Johannes Pietilä Löhnn",
+    "avatar": "assets/organizers/johannes.jpg",
+    "handle": "lohnn"
+  },
+  {
+    "id": "daria",
+    "name": "Daria Orlova",
+    "avatar": "assets/organizers/daria.jpg",
+    "handle": "dariadroid"
+  },
+  {
+    "id": "elias",
+    "name": "Elias Elfarri",
+    "avatar": "assets/organizers/elias.jpg",
+    "handle": "eliasElfarri"
+  }
+]

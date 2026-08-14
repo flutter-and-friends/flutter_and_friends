@@ -9,17 +9,25 @@ part of 'speaker.dart';
 // **************************************************************************
 
 Speaker _$SpeakerFromJson(Map<String, dynamic> json) => Speaker(
+  slug: json['slug'] as String,
   name: json['name'] as String,
   title: json['title'] as String,
   bio: json['bio'] as String,
-  avatar: json['avatar'] as String,
-  twitter: json['twitter'] as String?,
+  photoUrl: json['photoUrl'] as String?,
+  github: json['github'] as String?,
+  bluesky: json['bluesky'] as String?,
+  linkedin: json['linkedin'] as String?,
+  website: json['website'] as String?,
 );
 
 Map<String, dynamic> _$SpeakerToJson(Speaker instance) => <String, dynamic>{
+  'slug': instance.slug,
   'name': instance.name,
   'title': instance.title,
   'bio': instance.bio,
-  'avatar': instance.avatar,
-  'twitter': instance.twitter,
+  'photoUrl': instance.photoUrl,
+  'github': instance.github,
+  'bluesky': instance.bluesky,
+  'linkedin': instance.linkedin,
+  'website': instance.website,
 };

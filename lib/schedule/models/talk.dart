@@ -7,7 +7,8 @@ part 'talk.g.dart';
 
 @JsonSerializable()
 class Talk extends Equatable implements Event {
-  const Talk({
+  Talk({
+    required this.id,
     required this.name,
     required this.speakers,
     required this.duration,
@@ -21,6 +22,9 @@ class Talk extends Equatable implements Event {
   Map<String, dynamic> toJson() => _$TalkToJson(this);
 
   @override
+  final String id;
+
+  @override
   final String name;
 
   @override
@@ -30,14 +34,15 @@ class Talk extends Equatable implements Event {
   final DateTime startTime;
 
   @override
-  final Location location;
+  final Location? location;
 
   final List<Speaker> speakers;
 
   final String description;
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
+    id,
     name,
     speakers,
     duration,

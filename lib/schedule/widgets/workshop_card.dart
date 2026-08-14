@@ -3,6 +3,7 @@ import 'package:flutter_and_friends/extensions/extensions.dart';
 import 'package:flutter_and_friends/favorites/favorites.dart';
 import 'package:flutter_and_friends/location/location.dart';
 import 'package:flutter_and_friends/schedule/schedule.dart';
+import 'package:flutter_and_friends/speakers/speakers.dart';
 import 'package:flutter_and_friends/workshop_details/workshop_details.dart';
 
 class WorkshopCard extends StatelessWidget {
@@ -63,10 +64,7 @@ class WorkshopCard extends StatelessWidget {
                     children: [
                       Hero(
                         tag: speaker.name,
-                        child: CircleAvatar(
-                          radius: 24,
-                          backgroundImage: AssetImage(speaker.avatar),
-                        ),
+                        child: SpeakerPhoto(speaker: speaker, radius: 24),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
