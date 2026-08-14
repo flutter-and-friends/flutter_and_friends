@@ -2,6 +2,7 @@ import 'package:flutter_and_friends/schedule/schedule.dart';
 
 interface class Event {
   const Event({
+    required this.id,
     required this.name,
     required this.duration,
     required this.startTime,
@@ -35,8 +36,17 @@ interface class Event {
     throw UnsupportedError('Unsupported event type: "$event"');
   }
 
+  /// Stable, unique identifier for this event.
+  ///
+  /// This is the identity used for equality-sensitive operations such as
+  /// favouriting - it must stay the same even if every other field (title,
+  /// description, time...) is edited upstream. Authored and assigned by the
+  /// remote schedule feed (the website's authored session id) - never derived from other
+  /// fields on this side, and never regenerated. An [Event] with no real id
+  /// is a bug at the call site, not something to paper over here.
+  final String id;
   final String name;
   final Duration duration;
   final DateTime startTime;
-  final Location location;
+  final Location? location;
 }

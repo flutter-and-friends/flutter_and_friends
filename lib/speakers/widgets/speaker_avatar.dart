@@ -21,10 +21,7 @@ class SpeakerAvatar extends StatelessWidget {
             ),
             child: Hero(
               tag: speaker.name,
-              child: CircleAvatar(
-                radius: 60,
-                backgroundImage: AssetImage(speaker.avatar),
-              ),
+              child: SpeakerPhoto(speaker: speaker, radius: 60),
             ),
           ),
         ),

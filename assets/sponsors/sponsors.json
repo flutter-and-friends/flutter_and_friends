@@ -1,0 +1,83 @@
+{
+  "version": 515301040,
+  "tiers": [
+    {
+      "id": "platinum",
+      "displayName": "Platinum",
+      "sponsors": [
+        {
+          "id": "flutter",
+          "name": "Flutter",
+          "url": "https://flutter.dev",
+          "logo": "assets/sponsors/flutter.svg"
+        }
+      ]
+    },
+    {
+      "id": "gold",
+      "displayName": "Gold",
+      "sponsors": [
+        {
+          "id": "revenuecat",
+          "name": "RevenueCat",
+          "url": "https://www.revenuecat.com",
+          "logo": "assets/sponsors/revenuecat.svg"
+        },
+        {
+          "id": "serverpod",
+          "name": "Serverpod",
+          "url": "https://serverpod.dev",
+          "logo": "assets/sponsors/serverpod.svg"
+        },
+        {
+          "id": "leancode",
+          "name": "LeanCode",
+          "url": "https://leancode.co",
+          "logo": "assets/sponsors/leancode.png"
+        }
+      ]
+    },
+    {
+      "id": "silver",
+      "displayName": "Silver",
+      "sponsors": [
+        {
+          "id": "shorebird",
+          "name": "Shorebird",
+          "url": "https://shorebird.dev",
+          "logo": "assets/sponsors/shorebird.svg"
+        },
+        {
+          "id": "dcm",
+          "name": "DCM",
+          "url": "https://dcm.dev",
+          "logo": "assets/sponsors/dcm.svg"
+        }
+      ]
+    },
+    {
+      "id": "event_sponsor",
+      "displayName": "Event Sponsor",
+      "sponsors": [
+        {
+          "id": "widgetbook",
+          "name": "Widgetbook",
+          "url": "https://www.widgetbook.io",
+          "logo": "assets/sponsors/widgetbook.svg"
+        },
+        {
+          "id": "firebase",
+          "name": "Firebase",
+          "url": "https://firebase.google.com",
+          "logo": "assets/sponsors/firebase.svg"
+        },
+        {
+          "id": "skandia",
+          "name": "Skandia",
+          "url": "https://www.skandia.se",
+          "logo": "assets/sponsors/skandia.svg"
+        }
+      ]
+    }
+  ]
+}

@@ -10,7 +10,7 @@ part of 'location.dart';
 
 Location _$LocationFromJson(Map<String, dynamic> json) => Location(
   name: json['name'] as String,
-  coordinates: _$recordConvert(
+  coordinates: _$recordConvertNullable(
     json['coordinates'],
     ($jsonValue) => (
       ($jsonValue[r'$1'] as num).toDouble(),
@@ -21,11 +21,15 @@ Location _$LocationFromJson(Map<String, dynamic> json) => Location(
 
 Map<String, dynamic> _$LocationToJson(Location instance) => <String, dynamic>{
   'name': instance.name,
-  'coordinates': <String, dynamic>{
-    r'$1': instance.coordinates.$1,
-    r'$2': instance.coordinates.$2,
-  },
+  'coordinates': instance.coordinates == null
+      ? null
+      : <String, dynamic>{
+          r'$1': instance.coordinates!.$1,
+          r'$2': instance.coordinates!.$2,
+        },
 };
 
-$Rec _$recordConvert<$Rec>(Object? value, $Rec Function(Map) convert) =>
-    convert(value as Map<String, dynamic>);
+$Rec? _$recordConvertNullable<$Rec>(
+  Object? value,
+  $Rec Function(Map) convert,
+) => value == null ? null : convert(value as Map<String, dynamic>);

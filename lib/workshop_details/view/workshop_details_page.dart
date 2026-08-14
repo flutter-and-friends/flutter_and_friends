@@ -4,7 +4,6 @@ import 'package:flutter_and_friends/location/location.dart';
 import 'package:flutter_and_friends/schedule/schedule.dart';
 import 'package:flutter_and_friends/speaker_details/speaker_details.dart';
 import 'package:flutter_and_friends/speakers/speakers.dart';
-import 'package:flutter_and_friends/twitter/twitter.dart';
 import 'package:intl/intl.dart';
 
 class WorkshopDetailsPage extends StatelessWidget {
@@ -114,9 +113,9 @@ class SpeakerInfo extends StatelessWidget {
                   child: CircleAvatar(
                     radius: avatarSize / 2 + 4,
                     backgroundColor: theme.colorScheme.primary.withAlpha(100),
-                    child: CircleAvatar(
+                    child: SpeakerPhoto(
+                      speaker: speaker,
                       radius: avatarSize / 2,
-                      backgroundImage: AssetImage(speaker.avatar),
                     ),
                   ),
                 ),
@@ -137,8 +136,7 @@ class SpeakerInfo extends StatelessWidget {
             style: theme.textTheme.titleMedium,
             textAlign: TextAlign.center,
           ),
-          if (speaker.twitter != null)
-            TwitterIconButton(handle: speaker.twitter!),
+          SpeakerSocialLinks(speaker: speaker),
         ],
       ),
     );

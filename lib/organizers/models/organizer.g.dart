@@ -9,13 +9,15 @@ part of 'organizer.dart';
 // **************************************************************************
 
 Organizer _$OrganizerFromJson(Map<String, dynamic> json) => Organizer(
+  id: json['id'] as String,
   name: json['name'] as String,
-  avatar: json['avatar'] as String,
-  twitter: json['twitter'] as String?,
+  avatar: json['avatar'] as String?,
+  handle: json['handle'] as String?,
 );
 
 Map<String, dynamic> _$OrganizerToJson(Organizer instance) => <String, dynamic>{
+  'id': instance.id,
   'name': instance.name,
   'avatar': instance.avatar,
-  'twitter': instance.twitter,
+  'handle': instance.handle,
 };

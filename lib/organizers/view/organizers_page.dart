@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_and_friends/organizers/organizers.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class OrganizersPage extends StatelessWidget {
   const OrganizersPage({super.key});
@@ -22,7 +23,21 @@ class OrganizersView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const OrganizersGridView(organizers: organizers);
+    return BlocBuilder<OrganizersCubit, OrganizersState>(
+      builder: (context, state) {
+        if (state.status == OrganizersStatus.loading ||
+            state.status == OrganizersStatus.initial) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (state.status == OrganizersStatus.error &&
+            state.organizers.isEmpty) {
+          return Center(
+            child: Text(state.errorMessage ?? 'Could not load organizers'),
+          );
+        }
+        return OrganizersGridView(organizers: state.organizers);
+      },
+    );
   }
 }
 
