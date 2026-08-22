@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_and_friends/favorites/favorites.dart';
 import 'package:flutter_and_friends/location/location.dart';
+import 'package:flutter_and_friends/qa/qa.dart';
 import 'package:flutter_and_friends/schedule/schedule.dart';
 import 'package:flutter_and_friends/speaker_details/speaker_details.dart';
 import 'package:flutter_and_friends/speakers/speakers.dart';
@@ -81,6 +82,10 @@ class TalkDetailsView extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           Text(talk.description),
+          if (talk.id == flutterCoreTeamQaSession.id) ...[
+            const SizedBox(height: 24),
+            const QaSessionButton(),
+          ],
         ],
       ),
     );

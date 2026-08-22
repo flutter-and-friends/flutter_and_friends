@@ -4,7 +4,9 @@ This privacy policy applies to the Flutter & Friends app (hereby referred to as 
 
 ## Information Collection and Use
 
-The application does not collect or store personal data.
+The application does not collect or store personal data, with one exception: the audience Q&A feature.
+
+When you open the Q&A feature, the Application creates an anonymous account for your device so that your questions and upvotes can be told apart from other attendees'. This account is not linked to your name, email address, or any other identity. Questions you submit, the optional name you choose to attach to them, and your upvotes are stored in Google Firebase and are visible to all other users of the Application as well as to the conference organizers, who use them to run the session. You can delete your own questions from within the Application at any time.
 
 If you installed the application from Google Play, then Google Play does collect some personal data. Please see the privacy policy for Google Play Services here: https://policies.google.com/privacy
 

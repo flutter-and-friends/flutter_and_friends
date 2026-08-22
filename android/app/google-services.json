@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "148076616084",
+    "project_id": "flutter-and-friends-ad8fe",
+    "storage_bucket": "flutter-and-friends-ad8fe.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:148076616084:android:f3c8cfe6bccb9cfa38d781",
+        "android_client_info": {
+          "package_name": "com.felangel.flutter_and_friends"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAoMfWLMcSzqnPH9SZcjfxmEcqAYQdj28I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
