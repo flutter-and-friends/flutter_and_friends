@@ -20,3 +20,35 @@
   <a href="https://play.google.com/store/apps/details?id=com.felangel.flutter_and_friends"><img alt="Get it on Google Play" src="art/google_play_badge.png" height="80px"/></a>
   <a href="https://apps.apple.com/us/app/flutter-friends/id6462616068"><img alt="Get it on AppStore" src="art/appstore_badge.png" height="80px"/></a>
 </p>
+
+## Audience Q&A
+
+The Q&A tab lets attendees ask the panel questions and upvote each other's questions. Questions and votes are shared between all attendees, so they live in Firestore in the same Firebase project as the [website](https://github.com/flutter-and-friends/flutter_friends_web). The app signs every device in with anonymous Firebase Auth, and the security rules in [`firebase/firestore.rules`](firebase/firestore.rules) tie each question and vote to that identity.
+
+### Local development
+
+Debug builds talk to the local Firebase emulators by default, so no project access is needed:
+
+```sh
+npx firebase-tools emulators:start --project demo-flutter-and-friends --config firebase/firebase.json
+flutter run
+```
+
+On an Android emulator the app reaches the emulators through `10.0.2.2` automatically. Pass `--dart-define=USE_FIREBASE_EMULATORS=false` to debug against the real project instead.
+
+### Connecting the real project
+
+[`lib/firebase_options.dart`](lib/firebase_options.dart) is a placeholder until the app is registered in the Firebase project. Generate the real one with [FlutterFire](https://firebase.google.com/docs/flutter/setup):
+
+```sh
+dart pub global activate flutterfire_cli
+flutterfire configure --project=flutter-and-friends-ad8fe
+```
+
+Then enable the Anonymous sign-in provider under Authentication in the Firebase console and deploy the security rules:
+
+```sh
+npx firebase-tools deploy --only firestore --config firebase/firebase.json
+```
+
+Release builds without the real options show the Q&A tab as unavailable instead of failing.
