@@ -7,7 +7,7 @@ on:
 
 env:
   SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
-  FLUTTER_VERSION: 3.35.2
+  FLUTTER_VERSION: 3.47.1
 
 jobs:
   release-android:
