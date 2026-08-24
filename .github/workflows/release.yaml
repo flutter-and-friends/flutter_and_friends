@@ -31,6 +31,23 @@ jobs:
         with:
           cache: true
 
+      - name: 🎯 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+
+      - name: 📚 Get Packages
+        run: flutter pub get
+
+      # Fetches the latest published schedule.json from the website and
+      # replaces the bundled snapshot before the build reads it. Hard-fails
+      # the build (non-zero exit) on any network error, non-JSON response,
+      # or shape mismatch (e.g. the website's SPA HTML fallback) rather than
+      # silently shipping a stale or wrong snapshot - see tool/sync_schedule.dart.
+      - name: 🗓️ Sync Schedule Snapshot
+        run: dart run tool/sync_schedule.dart
+
       - name: 🔐 Decode Keystore
         run: echo ${{ secrets.KEYSTORE }} | base64 --decode > ${{ github.workspace }}/keystore.jks
 
@@ -73,6 +90,23 @@ jobs:
         uses: shorebirdtech/setup-shorebird@v1
         with:
           cache: true
+
+      - name: 🎯 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+
+      - name: 📚 Get Packages
+        run: flutter pub get
+
+      # Fetches the latest published schedule.json from the website and
+      # replaces the bundled snapshot before the build reads it. Hard-fails
+      # the build (non-zero exit) on any network error, non-JSON response,
+      # or shape mismatch (e.g. the website's SPA HTML fallback) rather than
+      # silently shipping a stale or wrong snapshot - see tool/sync_schedule.dart.
+      - name: 🗓️ Sync Schedule Snapshot
+        run: dart run tool/sync_schedule.dart
 
       - name: 🛠️ Setup Xcode
         uses: maxim-lobanov/setup-xcode@v1
