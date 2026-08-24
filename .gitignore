@@ -25,6 +25,7 @@ migrate_working_dir/
 
 # Flutter/Dart/Pub related
 **/doc/api/
+pubspec_overrides.yaml
 **/ios/Flutter/.last_build_id
 .dart_tool/
 .flutter-plugins

@@ -20,6 +20,7 @@ dependencies:
   flutter_svg: ^2.0.0
   font_awesome_flutter: ^11.0.0
   friends_badge: ^0.1.5+1
+  google_fonts: ^8.2.1
   http: ^1.2.0
   hydrated_bloc: ^11.0.0
   image: ^4.5.4
@@ -47,5 +48,6 @@ flutter:
     - assets/schedule/
     - assets/sponsors/
     - assets/organizers/
+    - assets/badge_templates/capybaras/
     - shorebird.yaml
   uses-material-design: true

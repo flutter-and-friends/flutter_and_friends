@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_and_friends/collected_people/collected_people.dart';
 import 'package:flutter_and_friends/friends_badge/friends_badge.dart';
 import 'package:flutter_and_friends/organizers/organizers.dart';
 import 'package:flutter_and_friends/settings/settings.dart';
@@ -66,6 +67,14 @@ class SettingsView extends StatelessWidget {
               subtitle: const Text('Customize your badge'),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => Navigator.of(context).push(FriendsBadgePage.route()),
+            ),
+            ListTile(
+              leading: const Icon(Icons.contact_page),
+              title: const Text('Collected People'),
+              subtitle: const Text('People you met — tap a badge to collect'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () =>
+                  Navigator.of(context).push(CollectedPeoplePage.route()),
             ),
             ListTile(
               leading: const Icon(Icons.map),
