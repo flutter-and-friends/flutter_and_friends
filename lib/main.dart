@@ -1,11 +1,16 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_and_friends/config/config.dart';
 import 'package:flutter_and_friends/favorites/favorites.dart';
+import 'package:flutter_and_friends/firebase_options.dart';
 import 'package:flutter_and_friends/launchpad/launchpad.dart';
 import 'package:flutter_and_friends/organizers/organizers.dart';
+import 'package:flutter_and_friends/qa/qa.dart';
 import 'package:flutter_and_friends/schedule/schedule.dart';
 import 'package:flutter_and_friends/settings/settings.dart';
 import 'package:flutter_and_friends/sponsors/sponsors.dart';
@@ -34,6 +39,21 @@ Future<void> main() async {
     storageDirectory: storageDirectory,
   );
   if (kDebugMode) await HydratedBloc.storage.clear();
+  if (isQaConfigured) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    if (useFirebaseEmulators) {
+      await FirebaseAuth.instance.useAuthEmulator(
+        localHost,
+        firebaseAuthEmulatorPort,
+      );
+      FirebaseFirestore.instance.useFirestoreEmulator(
+        localHost,
+        firebaseFirestoreEmulatorPort,
+      );
+    }
+  }
   runApp(const App());
 }
 
@@ -57,6 +77,14 @@ class _AppState extends State<App> {
         ? _settingsCubit.state.effectiveFeedUrl
         : scheduleFeedUrl,
   );
+  // Only exists when this build can reach a Firebase project; `QaPage`
+  // checks `isQaConfigured` before reading it.
+  late final _qaRepository = isQaConfigured
+      ? QaRepository(
+          auth: FirebaseAuth.instance,
+          firestore: FirebaseFirestore.instance,
+        )
+      : null;
 
   @override
   void dispose() {
@@ -70,6 +98,8 @@ class _AppState extends State<App> {
       providers: [
         RepositoryProvider(create: (_) => ShorebirdUpdater()),
         RepositoryProvider.value(value: _scheduleRepository),
+        if (_qaRepository case final qaRepository?)
+          RepositoryProvider.value(value: qaRepository),
       ],
       child: MultiBlocProvider(
         providers: [

@@ -7,11 +7,7 @@ on:
 
 env:
   SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
-  # Must be a Shorebird-supported Flutter version (shorebird-release uses it
-  # to build; Shorebird's supported Flutter lags Flutter stable by a few days)
-  # and must satisfy pubspec.yaml's `flutter: ">=3.38.1"` floor. Latest
-  # Shorebird-supported Flutter is 3.44.9 (Shorebird release 1.6.116).
-  FLUTTER_VERSION: 3.44.9
+  FLUTTER_VERSION: 3.47.1
 
 jobs:
   release-android:
