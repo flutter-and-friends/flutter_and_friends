@@ -47,3 +47,5 @@ app.*.map.json
 
 # Secrets
 .secrets/
+# Firebase emulator logs
+*-debug.log

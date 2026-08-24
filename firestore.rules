@@ -1,0 +1,66 @@
+rules_version = '2';
+
+// Audience Q&A: anyone signed in (the app signs every device in
+// anonymously) can read every question, ask questions as themselves, delete
+// their own questions, and add or remove exactly their own vote.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /qa_sessions/{sessionId}/questions/{questionId} {
+      function signedIn() {
+        return request.auth != null;
+      }
+
+      function userId() {
+        return request.auth.uid;
+      }
+
+      function incoming() {
+        return request.resource.data;
+      }
+
+      function existing() {
+        return resource.data;
+      }
+
+      function validName() {
+        return !('authorName' in incoming())
+          || (incoming().authorName is string
+            && incoming().authorName.size() >= 1
+            && incoming().authorName.size() <= 60);
+      }
+
+      // The caller's id must be the one and only difference between the
+      // old and new voter lists, in either direction.
+      function addsOwnVote() {
+        return incoming().voterIds.size() == existing().voterIds.size() + 1
+          && incoming().voterIds.toSet().difference(existing().voterIds.toSet()) == [userId()].toSet();
+      }
+
+      function removesOwnVote() {
+        return incoming().voterIds.size() == existing().voterIds.size() - 1
+          && existing().voterIds.toSet().difference(incoming().voterIds.toSet()) == [userId()].toSet();
+      }
+
+      allow read: if signedIn();
+
+      allow create: if signedIn()
+        && incoming().keys().hasOnly(['body', 'authorId', 'authorName', 'createdAt', 'voterIds'])
+        && incoming().keys().hasAll(['body', 'authorId', 'createdAt', 'voterIds'])
+        && incoming().body is string
+        && incoming().body.trim().size() >= 1
+        && incoming().body.size() <= 500
+        && incoming().authorId == userId()
+        && validName()
+        && incoming().createdAt == request.time
+        && incoming().voterIds is list
+        && incoming().voterIds.size() == 0;
+
+      allow delete: if signedIn() && existing().authorId == userId();
+
+      allow update: if signedIn()
+        && incoming().diff(existing()).affectedKeys().hasOnly(['voterIds'])
+        && incoming().voterIds is list
+        && (addsOwnVote() || removesOwnVote());
+    }
+  }
+}
