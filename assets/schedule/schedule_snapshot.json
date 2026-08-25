@@ -324,9 +324,9 @@
       "title": "Lunch",
       "speaker_slugs": [],
       "day": "2026-09-04",
-      "start": "2026-09-04T11:50:00+02:00",
+      "start": "2026-09-04T11:45:00+02:00",
       "end": "2026-09-04T12:45:00+02:00",
-      "duration_minutes": 55,
+      "duration_minutes": 60,
       "track": null,
       "location": {
         "name": "Södra Teatern",
