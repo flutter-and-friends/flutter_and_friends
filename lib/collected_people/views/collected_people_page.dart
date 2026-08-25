@@ -157,8 +157,9 @@ class CollectedPeopleListView extends StatelessWidget {
         final capybaraAsset = capybaraAssetFor(person.capybaraId);
         return ListTile(
           leading: CircleAvatar(
-            backgroundImage:
-                capybaraAsset == null ? null : AssetImage(capybaraAsset),
+            backgroundImage: capybaraAsset == null
+                ? null
+                : AssetImage(capybaraAsset),
             child: capybaraAsset == null
                 ? Text(
                     person.name.isEmpty ? '?' : person.name[0].toUpperCase(),

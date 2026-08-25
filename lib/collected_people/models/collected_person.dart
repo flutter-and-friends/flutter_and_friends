@@ -122,8 +122,7 @@ class CollectedPerson extends Equatable {
 ///   segments) pass through unchanged; both are `null` on pre-v2 badges.
 CollectedPerson toCollectedPerson(BadgePerson person, {DateTime? collectedAt}) {
   final urls = <String>[
-    if (person.primaryUri != null)
-      _ensureScheme(person.primaryUri.toString()),
+    if (person.primaryUri != null) _ensureScheme(person.primaryUri.toString()),
     for (final url in person.urls) _ensureScheme(url),
   ];
   return CollectedPerson(
@@ -136,5 +135,4 @@ CollectedPerson toCollectedPerson(BadgePerson person, {DateTime? collectedAt}) {
   );
 }
 
-String _ensureScheme(String url) =>
-    url.contains('://') ? url : 'https://$url';
+String _ensureScheme(String url) => url.contains('://') ? url : 'https://$url';

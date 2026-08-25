@@ -180,7 +180,10 @@ class BadgeComposer {
 
     double measure(String text, double fontSize, m.TextStyle base) {
       final painter = TextPainter(
-        text: TextSpan(text: text, style: base.copyWith(fontSize: fontSize)),
+        text: TextSpan(
+          text: text,
+          style: base.copyWith(fontSize: fontSize),
+        ),
         maxLines: 1,
         textDirection: m.TextDirection.ltr,
       )..layout();
@@ -217,32 +220,32 @@ class BadgeComposer {
 
     if (shownName.isNotEmpty) {
       TextPainter(
-        text: TextSpan(
-          text: shownName,
-          style: displayStyle.copyWith(
-            fontSize: fittedName,
-            color: textColor,
+          text: TextSpan(
+            text: shownName,
+            style: displayStyle.copyWith(
+              fontSize: fittedName,
+              color: textColor,
+            ),
           ),
-        ),
-        maxLines: 1,
-        textDirection: m.TextDirection.ltr,
-      )
+          maxLines: 1,
+          textDirection: m.TextDirection.ltr,
+        )
         ..layout(maxWidth: layout.nameRect.width)
         ..paint(canvas, layout.nameRect.topLeft);
     }
 
     if (shownRole.isNotEmpty) {
       TextPainter(
-        text: TextSpan(
-          text: shownRole,
-          style: sansStyle.copyWith(
-            fontSize: fittedRole,
-            color: textColor,
+          text: TextSpan(
+            text: shownRole,
+            style: sansStyle.copyWith(
+              fontSize: fittedRole,
+              color: textColor,
+            ),
           ),
-        ),
-        maxLines: 1,
-        textDirection: m.TextDirection.ltr,
-      )
+          maxLines: 1,
+          textDirection: m.TextDirection.ltr,
+        )
         ..layout(maxWidth: layout.roleRect.width)
         ..paint(canvas, layout.roleRect.topLeft);
     }

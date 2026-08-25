@@ -150,18 +150,20 @@ void main() {
       expect(cubit.state.template, BadgeTemplate.classic);
     });
 
-    test('identity mutators forward to the identity cubit (persist on change)',
-        () async {
-      final identity = BadgeIdentityCubit();
-      addTearDown(identity.close);
-      final cubit = FriendsBadgeCubit(identity: identity);
-      addTearDown(cubit.close);
+    test(
+      'identity mutators forward to the identity cubit (persist on change)',
+      () async {
+        final identity = BadgeIdentityCubit();
+        addTearDown(identity.close);
+        final cubit = FriendsBadgeCubit(identity: identity);
+        addTearDown(cubit.close);
 
-      await cubit.updateName('Typed Name');
-      cubit.updateUrl('typed.example');
+        await cubit.updateName('Typed Name');
+        cubit.updateUrl('typed.example');
 
-      expect(identity.state.name, 'Typed Name');
-      expect(identity.state.url, 'typed.example');
-    });
+        expect(identity.state.name, 'Typed Name');
+        expect(identity.state.url, 'typed.example');
+      },
+    );
   });
 }

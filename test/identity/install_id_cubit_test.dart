@@ -59,17 +59,19 @@ void main() {
       expect(InstallIdCubit().state.id, id);
     });
 
-    test('a wiped storage regenerates a NEW id (reinstall semantics)',
-        () async {
-      final first = InstallIdCubit();
-      final id = first.state.id;
-      await first.close();
-      await storage.clear();
+    test(
+      'a wiped storage regenerates a NEW id (reinstall semantics)',
+      () async {
+        final first = InstallIdCubit();
+        final id = first.state.id;
+        await first.close();
+        await storage.clear();
 
-      final regenerated = InstallIdCubit().state.id;
-      expect(regenerated, matches(_uuidV4Pattern));
-      expect(regenerated, isNot(id));
-    });
+        final regenerated = InstallIdCubit().state.id;
+        expect(regenerated, matches(_uuidV4Pattern));
+        expect(regenerated, isNot(id));
+      },
+    );
 
     test('a malformed stored id regenerates instead of crashing', () async {
       await storage.write('InstallIdCubit', {'id': ''});

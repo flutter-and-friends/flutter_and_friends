@@ -34,8 +34,7 @@ void main() {
       expect(collected.collectedAt, at);
     });
 
-    test('prefixes bare URLs with https:// so url_launcher can open them',
-        () {
+    test('prefixes bare URLs with https:// so url_launcher can open them', () {
       final person = BadgePerson.fromNdefMessage(
         NdefMessage([
           NdefRecord.text('A · B · x.com/johannes'),
@@ -97,8 +96,7 @@ void main() {
       expect(collected.urls, isEmpty);
     });
 
-    test('dedupes the primary URI when it also appears in the Text record',
-        () {
+    test('dedupes the primary URI when it also appears in the Text record', () {
       // The app's own writer puts the same link in both the U record and
       // the T record — the common case should yield a single URL.
       final person = BadgePerson.fromNdefMessage(

@@ -266,7 +266,8 @@ class _NameRoleFieldsState extends State<_NameRoleFields> {
           controller: _urlController,
           decoration: const InputDecoration(
             labelText: 'Link (optional)',
-            hintText: 'x.com/FlutterNFriends or linkedin.com/company/flutter-friends',
+            hintText:
+                'x.com/FlutterNFriends or linkedin.com/company/flutter-friends',
             helperText: 'Written to the badge as an NFC link.',
             border: OutlineInputBorder(),
           ),

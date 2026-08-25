@@ -33,7 +33,8 @@ class BadgeIdentityCubit extends HydratedCubit<BadgeIdentityState> {
       name: json['name'] as String? ?? '',
       role: json['role'] as String? ?? '',
       url: json['url'] as String? ?? '',
-      template: BadgeTemplate.values.asNameMap()[json['template']] ??
+      template:
+          BadgeTemplate.values.asNameMap()[json['template']] ??
           BadgeTemplate.imageOnly,
       font: BadgeFont.values.asNameMap()[json['font']] ?? BadgeFont.display,
     );

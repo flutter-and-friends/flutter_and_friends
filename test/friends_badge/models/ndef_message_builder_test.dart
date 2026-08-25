@@ -42,19 +42,21 @@ void main() {
         expect(message.records[1].type.single, 0x54);
       });
 
-      test('T record segments in canonical v2 order without tagged segments',
-          () {
-        final message = buildBadgeNdefMessage(
-          name: 'Johannes Pietilä Löhnn',
-          role: 'Organizer',
-          url: 'x.com/johannes',
-        )!;
+      test(
+        'T record segments in canonical v2 order without tagged segments',
+        () {
+          final message = buildBadgeNdefMessage(
+            name: 'Johannes Pietilä Löhnn',
+            role: 'Organizer',
+            url: 'x.com/johannes',
+          )!;
 
-        expect(
-          _decodeTextRecord(message.records[1]),
-          'Johannes Pietilä Löhnn · Organizer · x.com/johannes',
-        );
-      });
+          expect(
+            _decodeTextRecord(message.records[1]),
+            'Johannes Pietilä Löhnn · Organizer · x.com/johannes',
+          );
+        },
+      );
 
       test('appends id: segment when installId is given', () {
         final message = buildBadgeNdefMessage(
@@ -84,8 +86,7 @@ void main() {
         );
       });
 
-      test('appends id: then capy: when both are given (canonical order)',
-          () {
+      test('appends id: then capy: when both are given (canonical order)', () {
         final message = buildBadgeNdefMessage(
           name: 'A',
           role: 'B',

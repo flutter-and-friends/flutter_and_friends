@@ -136,8 +136,9 @@ void main() {
         },
       );
 
-      testWidgets('falls back to the initial letter without a capybaraId',
-          (tester) async {
+      testWidgets('falls back to the initial letter without a capybaraId', (
+        tester,
+      ) async {
         final cubit = CollectedPeopleCubit()..collect(_person());
         await tester.pumpWidget(_subject(cubit));
 

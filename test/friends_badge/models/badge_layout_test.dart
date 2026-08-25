@@ -126,8 +126,7 @@ void main() {
   group('fitFontSize', () {
     // Stub measurer: 10 px per character per font-size-10 unit, i.e.
     // width = text.length * fontSize. Deterministic, no TextPainter.
-    double stubMeasure(String text, double fontSize) =>
-        text.length * fontSize;
+    double stubMeasure(String text, double fontSize) => text.length * fontSize;
 
     test('returns maxFontSize when text already fits', () {
       expect(
@@ -184,8 +183,7 @@ void main() {
   });
 
   group('truncateToFit', () {
-    double stubMeasure(String text, double fontSize) =>
-        text.length * fontSize;
+    double stubMeasure(String text, double fontSize) => text.length * fontSize;
 
     test('returns text unchanged when it fits', () {
       expect(
