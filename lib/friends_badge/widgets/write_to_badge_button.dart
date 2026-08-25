@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_and_friends/friends_badge/friends_badge.dart';
+import 'package:flutter_and_friends/identity/identity.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:friends_badge/friends_badge.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 
@@ -15,8 +17,17 @@ class WriteToBadgeButton extends StatelessWidget {
       heroTag: 'WriteToBadgeButton',
       tooltip: 'Write to badge',
       onPressed: () async {
+        final badgeCubit = context.read<FriendsBadgeCubit>();
+        final state = badgeCubit.state;
+        final ndef = buildBadgeNdefMessage(
+          name: state.name,
+          role: state.role,
+          url: state.url,
+          installId: context.read<InstallIdCubit>().state.id,
+          capybaraId: badgeCubit.capybaraId,
+        );
         try {
-          await _writeToBadge(context: context, badge: badge);
+          await _writeToBadge(context: context, badge: badge, ndef: ndef);
         } on PlatformException catch (e) {
           if (!context.mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
@@ -38,11 +49,12 @@ Error: $e''',
 Future<void> _writeToBadge({
   required BuildContext context,
   required FriendsBadge badge,
+  NdefMessage? ndef,
 }) async {
   try {
     await WaitingForNfcTap.showLoading(
       context: context,
-      job: badge.image.writeToBadge(kernel: badge.ditherKernel),
+      job: badge.image.writeToBadge(kernel: badge.ditherKernel, ndef: ndef),
     );
   } on PlatformException catch (e) {
     // On iOS for some reason previous nfc sessions aren't automatically
@@ -53,7 +65,7 @@ Future<void> _writeToBadge({
       if (!context.mounted) return;
       await WaitingForNfcTap.showLoading(
         context: context,
-        job: badge.image.writeToBadge(kernel: badge.ditherKernel),
+        job: badge.image.writeToBadge(kernel: badge.ditherKernel, ndef: ndef),
       );
       return;
     }

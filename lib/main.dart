@@ -5,9 +5,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_and_friends/collected_people/collected_people.dart';
 import 'package:flutter_and_friends/config/config.dart';
 import 'package:flutter_and_friends/favorites/favorites.dart';
 import 'package:flutter_and_friends/firebase_options.dart';
+import 'package:flutter_and_friends/identity/identity.dart';
 import 'package:flutter_and_friends/launchpad/launchpad.dart';
 import 'package:flutter_and_friends/organizers/organizers.dart';
 import 'package:flutter_and_friends/qa/qa.dart';
@@ -111,6 +113,8 @@ class _AppState extends State<App> {
             )..init(),
           ),
           BlocProvider(create: (_) => FavoritesCubit()),
+          BlocProvider(create: (_) => CollectedPeopleCubit()),
+          BlocProvider(create: (_) => InstallIdCubit()),
           BlocProvider(
             create: (context) => UpdaterCubit(
               updater: context.read<ShorebirdUpdater>(),

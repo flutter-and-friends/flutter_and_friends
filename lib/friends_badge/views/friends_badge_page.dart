@@ -11,8 +11,15 @@ class FriendsBadgePage extends StatelessWidget {
   );
 
   @override
-  Widget build(BuildContext context) => BlocProvider(
-    create: (_) => FriendsBadgeCubit(),
+  Widget build(BuildContext context) => MultiBlocProvider(
+    providers: [
+      BlocProvider(create: (_) => BadgeIdentityCubit()),
+      BlocProvider(
+        create: (context) => FriendsBadgeCubit(
+          identity: context.read<BadgeIdentityCubit>(),
+        ),
+      ),
+    ],
     child: const FriendsBadgeView(),
   );
 }
@@ -26,14 +33,8 @@ class FriendsBadgeView extends StatelessWidget {
     final state = context.watch<FriendsBadgeCubit>().state;
     final badge = state.badge;
     final body = badge == null
-        ? Center(
-            child: Text(
-              'Pick an image to get started',
-              textAlign: TextAlign.center,
-              style: theme.textTheme.headlineMedium,
-            ),
-          )
-        : _BadgeEditor(badge: badge);
+        ? const _BadgeSourcePicker()
+        : _BadgeEditor(badge: badge, state: state);
 
     return BlocListener<FriendsBadgeCubit, FriendsBadgeState>(
       listenWhen: (previous, current) => previous.status != current.status,
@@ -64,16 +65,58 @@ class FriendsBadgeView extends StatelessWidget {
               const PickImageButton(),
           ],
         ),
-        body: body,
+        body: badge == null
+            ? Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  spacing: 16,
+                  children: [
+                    Text(
+                      'Pick a capybara, or use the gallery button below',
+                      textAlign: TextAlign.center,
+                      style: theme.textTheme.titleMedium,
+                    ),
+                    Expanded(child: body),
+                  ],
+                ),
+              )
+            : body,
       ),
     );
   }
 }
 
+/// Grid of bundled capybara templates shown when no image has been picked.
+class _BadgeSourcePicker extends StatelessWidget {
+  const _BadgeSourcePicker();
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        mainAxisSpacing: 8,
+        crossAxisSpacing: 8,
+      ),
+      itemCount: kCapybaraAssets.length,
+      itemBuilder: (context, index) {
+        final asset = kCapybaraAssets[index];
+        return InkWell(
+          onTap: () =>
+              context.read<FriendsBadgeCubit>().updateImageFromAsset(asset),
+          child: Image.asset(asset, fit: BoxFit.cover),
+        );
+      },
+    );
+  }
+}
+
 class _BadgeEditor extends StatelessWidget {
-  const _BadgeEditor({required this.badge});
+  const _BadgeEditor({required this.badge, required this.state});
 
   final FriendsBadge badge;
+  final FriendsBadgeState state;
 
   @override
   Widget build(BuildContext context) {
@@ -88,6 +131,11 @@ class _BadgeEditor extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 spacing: 16,
                 children: [
+                  const _TemplatePicker(),
+                  if (state.template.usesText) ...[
+                    _NameRoleFields(state: state),
+                    const _FontPicker(),
+                  ],
                   SizedBox(
                     height: constraints.maxHeight * 1 / 6,
                     child: Center(
@@ -106,6 +154,128 @@ class _BadgeEditor extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+}
+
+class _TemplatePicker extends StatelessWidget {
+  const _TemplatePicker();
+
+  @override
+  Widget build(BuildContext context) {
+    final selected = context.select(
+      (FriendsBadgeCubit c) => c.state.template,
+    );
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      alignment: WrapAlignment.center,
+      children: [
+        for (final template in BadgeTemplate.values)
+          ChoiceChip(
+            label: Text(template.label),
+            selected: template == selected,
+            onSelected: (_) =>
+                context.read<FriendsBadgeCubit>().updateTemplate(template),
+          ),
+      ],
+    );
+  }
+}
+
+class _FontPicker extends StatelessWidget {
+  const _FontPicker();
+
+  @override
+  Widget build(BuildContext context) {
+    final selected = context.select(
+      (FriendsBadgeCubit c) => c.state.font,
+    );
+    return Wrap(
+      spacing: 8,
+      alignment: WrapAlignment.center,
+      children: [
+        for (final font in BadgeFont.values)
+          ChoiceChip(
+            label: Text(font.label),
+            selected: font == selected,
+            onSelected: (_) =>
+                context.read<FriendsBadgeCubit>().updateFont(font),
+          ),
+      ],
+    );
+  }
+}
+
+class _NameRoleFields extends StatefulWidget {
+  const _NameRoleFields({required this.state});
+
+  final FriendsBadgeState state;
+
+  @override
+  State<_NameRoleFields> createState() => _NameRoleFieldsState();
+}
+
+class _NameRoleFieldsState extends State<_NameRoleFields> {
+  late final TextEditingController _nameController;
+  late final TextEditingController _roleController;
+  late final TextEditingController _urlController;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(text: widget.state.name);
+    _roleController = TextEditingController(text: widget.state.role);
+    _urlController = TextEditingController(text: widget.state.url);
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _roleController.dispose();
+    _urlController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cubit = context.read<FriendsBadgeCubit>();
+    return Column(
+      spacing: 12,
+      children: [
+        TextField(
+          controller: _nameController,
+          decoration: const InputDecoration(
+            labelText: 'Name',
+            hintText: 'Your Name',
+            border: OutlineInputBorder(),
+          ),
+          textCapitalization: TextCapitalization.words,
+          onChanged: cubit.updateName,
+        ),
+        TextField(
+          controller: _roleController,
+          decoration: const InputDecoration(
+            labelText: 'Role',
+            hintText: 'Flutter Friend',
+            border: OutlineInputBorder(),
+          ),
+          onChanged: cubit.updateRole,
+        ),
+        TextField(
+          controller: _urlController,
+          decoration: const InputDecoration(
+            labelText: 'Link (optional)',
+            hintText:
+                'x.com/FlutterNFriends or linkedin.com/company/flutter-friends',
+            helperText: 'Written to the badge as an NFC link.',
+            border: OutlineInputBorder(),
+          ),
+          keyboardType: TextInputType.url,
+          autocorrect: false,
+          onChanged: cubit.updateUrl,
+        ),
+      ],
     );
   }
 }

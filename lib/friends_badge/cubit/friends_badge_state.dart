@@ -8,23 +8,57 @@ enum FriendsBadgeStatus {
 }
 
 class FriendsBadgeState extends Equatable {
-  const FriendsBadgeState({this.badge, this.status = FriendsBadgeStatus.idle});
+  const FriendsBadgeState({
+    this.badge,
+    this.status = FriendsBadgeStatus.idle,
+    this.template = BadgeTemplate.imageOnly,
+    this.name = '',
+    this.role = '',
+    this.font = BadgeFont.display,
+    this.url = '',
+  });
 
   final FriendsBadge? badge;
   final FriendsBadgeStatus status;
+  final BadgeTemplate template;
+  final String name;
+  final String role;
+  final BadgeFont font;
+
+  /// The personal link the user wants on their badge. Collected ahead of
+  /// NDEF support landing in `friends_badge`; not yet sent to the badge.
+  final String url;
 
   FriendsBadgeState copyWith({
     FriendsBadge? badge,
     FriendsBadgeStatus? status,
+    BadgeTemplate? template,
+    String? name,
+    String? role,
+    BadgeFont? font,
+    String? url,
   }) {
     return FriendsBadgeState(
       badge: badge ?? this.badge,
       status: status ?? this.status,
+      template: template ?? this.template,
+      name: name ?? this.name,
+      role: role ?? this.role,
+      font: font ?? this.font,
+      url: url ?? this.url,
     );
   }
 
   @override
-  List<Object?> get props => [badge, status];
+  List<Object?> get props => [
+    badge,
+    status,
+    template,
+    name,
+    role,
+    font,
+    url,
+  ];
 }
 
 class FriendsBadge extends Equatable {
