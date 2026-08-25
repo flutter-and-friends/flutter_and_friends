@@ -40,7 +40,6 @@ Future<void> main() async {
   HydratedBloc.storage = await HydratedStorage.build(
     storageDirectory: storageDirectory,
   );
-  if (kDebugMode) await HydratedBloc.storage.clear();
   if (isQaConfigured) {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
