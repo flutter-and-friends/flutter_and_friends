@@ -240,7 +240,7 @@ class _NameRoleFieldsState extends State<_NameRoleFields> {
           controller: _nameController,
           decoration: const InputDecoration(
             labelText: 'Name',
-            hintText: 'Johannes Pietilä Löhnn',
+            hintText: 'Your Name',
             border: OutlineInputBorder(),
           ),
           textCapitalization: TextCapitalization.words,
@@ -250,7 +250,7 @@ class _NameRoleFieldsState extends State<_NameRoleFields> {
           controller: _roleController,
           decoration: const InputDecoration(
             labelText: 'Role',
-            hintText: 'Organizer',
+            hintText: 'Flutter Friend',
             border: OutlineInputBorder(),
           ),
           onChanged: cubit.updateRole,
@@ -259,7 +259,7 @@ class _NameRoleFieldsState extends State<_NameRoleFields> {
           controller: _urlController,
           decoration: const InputDecoration(
             labelText: 'Link (optional)',
-            hintText: 'x.com/johannes or linkedin.com/in/johannes',
+            hintText: 'x.com/FlutterNFriends or linkedin.com/company/flutter-friends',
             helperText:
                 'Written to the badge as an NFC link once NDEF support lands.',
             border: OutlineInputBorder(),
