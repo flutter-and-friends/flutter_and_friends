@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart' as m;
@@ -10,10 +11,17 @@ import 'package:image/image.dart' as img;
 /// Renders a badge composition (image + template + name/role) to a
 /// [BadgeImage] suitable for the existing write flow.
 ///
-/// The composition happens on an offscreen 240x416 Flutter [Canvas] via
-/// [TextPainter]; the resulting PNG is decoded with `package:image` and
-/// wrapped in [BadgeImage], which the rest of the badge pipeline (dither
-/// carousel, `writeToBadge`) already understands.
+/// The pipeline has two phases with different threading constraints:
+///
+/// 1. [renderPng] — rasterizes the composition on an offscreen 240x416
+///    Flutter Canvas via [TextPainter] and encodes it as PNG. `dart:ui`
+///    raster APIs only run on the root isolate, so this phase stays there.
+///    It takes a ready [ui.Image] of the source photo (cached by the caller)
+///    so no image decoding happens per compose.
+/// 2. [badgeImageFromPng] — decodes the PNG and builds the [BadgeImage]
+///    (which resizes into badge spec). Pure Dart on plain data — this is the
+///    phase that crosses the `integral_isolates` boundary in the cubit, so
+///    it is a top-level function taking and returning transferable values.
 ///
 /// Only pure black / white / red / yellow are painted so the output
 /// quantizes cleanly onto the badge's `blackWhiteYellowRed` palette.
@@ -26,10 +34,13 @@ class BadgeComposer {
   static const _red = m.Color(0xFFFF0000);
   static const _yellow = m.Color(0xFFFFFF00);
 
-  /// Composes a [BadgeImage] from [image], laying out [name] and [role]
-  /// per [template] and using [font] for the display face.
-  static Future<BadgeImage> compose({
-    required img.Image image,
+  /// Rasterizes the composition to PNG bytes on the root isolate.
+  ///
+  /// [sourceImage] is the user's photo as a [ui.Image] — convert once (see
+  /// [toUiImage]) and reuse across composes; converting per compose would
+  /// re-encode the full-resolution source every keystroke.
+  static Future<Uint8List> renderPng({
+    required ui.Image sourceImage,
     required BadgeTemplate template,
     required String name,
     required String role,
@@ -44,8 +55,7 @@ class BadgeComposer {
     // margin) quantize to white, not black.
     canvas.drawRect(panelRect, Paint()..color = _white);
 
-    final uiImage = await _toUiImage(image);
-    _drawImage(canvas, uiImage: uiImage, layout: layout);
+    _drawImage(canvas, uiImage: sourceImage, layout: layout);
 
     if (template.usesText) {
       _drawTemplateChrome(canvas, layout);
@@ -64,20 +74,19 @@ class BadgeComposer {
       kBadgePanelSize.height.toInt(),
     );
     final byteData = await rendered.toByteData(format: ui.ImageByteFormat.png);
-    final decoded = img.decodePng(byteData!.buffer.asUint8List());
-    return BadgeImage(decoded!);
+    return byteData!.buffer.asUint8List();
   }
 
-  // -- Painting --------------------------------------------------------------
-
-  /// Bridges an `img.Image` (what the cubit decodes) into a `ui.Image` (what
-  /// the Canvas draws) by round-tripping through PNG.
-  static Future<ui.Image> _toUiImage(img.Image image) async {
+  /// Bridges an `img.Image` (what the cubit decodes) into a [ui.Image] (what
+  /// the Canvas draws) by round-tripping through PNG. Root-isolate only.
+  static Future<ui.Image> toUiImage(img.Image image) async {
     final pngBytes = img.encodePng(image);
     final codec = await ui.instantiateImageCodec(pngBytes);
     final frame = await codec.getNextFrame();
     return frame.image;
   }
+
+  // -- Painting --------------------------------------------------------------
 
   static void _drawImage(
     m.Canvas canvas, {
@@ -262,4 +271,14 @@ class BadgeComposer {
       color: _black,
     ),
   };
+}
+
+/// Isolate entrypoint for the second compose phase: decode the rendered PNG
+/// and build the [BadgeImage] (the constructor resizes into badge spec).
+///
+/// Must be a top-level function so it can be sent to a spawned isolate via
+/// `integral_isolates`. Everything crossing the boundary is plain data:
+/// `Uint8List` in, `BadgeImage` (two `img.Image` bitmaps) out.
+BadgeImage badgeImageFromPng(Uint8List png) {
+  return BadgeImage(img.decodePng(png)!);
 }

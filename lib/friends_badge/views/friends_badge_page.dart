@@ -11,8 +11,15 @@ class FriendsBadgePage extends StatelessWidget {
   );
 
   @override
-  Widget build(BuildContext context) => BlocProvider(
-    create: (_) => FriendsBadgeCubit(),
+  Widget build(BuildContext context) => MultiBlocProvider(
+    providers: [
+      BlocProvider(create: (_) => BadgeIdentityCubit()),
+      BlocProvider(
+        create: (context) => FriendsBadgeCubit(
+          identity: context.read<BadgeIdentityCubit>(),
+        ),
+      ),
+    ],
     child: const FriendsBadgeView(),
   );
 }
@@ -260,8 +267,7 @@ class _NameRoleFieldsState extends State<_NameRoleFields> {
           decoration: const InputDecoration(
             labelText: 'Link (optional)',
             hintText: 'x.com/FlutterNFriends or linkedin.com/company/flutter-friends',
-            helperText:
-                'Written to the badge as an NFC link once NDEF support lands.',
+            helperText: 'Written to the badge as an NFC link.',
             border: OutlineInputBorder(),
           ),
           keyboardType: TextInputType.url,

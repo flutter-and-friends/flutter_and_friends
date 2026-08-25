@@ -37,3 +37,16 @@ const List<String> kCapybaraAssets = [
   'assets/badge_templates/capybaras/winner.jpeg',
   'assets/badge_templates/capybaras/yoga.jpeg',
 ];
+
+/// Maps a bundled capybara asset path (e.g.
+/// `assets/badge_templates/capybaras/coffee_mode.jpeg`) to its capybara ID
+/// (`coffee_mode`) — the value written into the badge's `capy:` NDEF segment.
+///
+/// Returns `null` for paths that are not bundled capybaras (e.g. gallery
+/// picks), which is exactly the `capybaraId` contract for
+/// `NdefRecord.badgePerson`.
+String? capybaraIdForAsset(String? assetPath) {
+  if (assetPath == null || !kCapybaraAssets.contains(assetPath)) return null;
+  final fileName = assetPath.split('/').last;
+  return fileName.substring(0, fileName.length - '.jpeg'.length);
+}

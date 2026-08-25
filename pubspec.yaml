@@ -25,6 +25,7 @@ dependencies:
   hydrated_bloc: ^11.0.0
   image: ^4.5.4
   image_picker: ^1.2.0
+  integral_isolates: ^0.5.0
   intl: ^0.20.0
   json_annotation: ^4.9.0
   nfc_manager: ^4.1.0

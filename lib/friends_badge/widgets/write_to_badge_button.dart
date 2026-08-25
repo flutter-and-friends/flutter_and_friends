@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_and_friends/friends_badge/friends_badge.dart';
+import 'package:flutter_and_friends/identity/identity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:friends_badge/friends_badge.dart';
 import 'package:nfc_manager/nfc_manager.dart';
@@ -16,11 +17,14 @@ class WriteToBadgeButton extends StatelessWidget {
       heroTag: 'WriteToBadgeButton',
       tooltip: 'Write to badge',
       onPressed: () async {
-        final state = context.read<FriendsBadgeCubit>().state;
+        final badgeCubit = context.read<FriendsBadgeCubit>();
+        final state = badgeCubit.state;
         final ndef = buildBadgeNdefMessage(
           name: state.name,
           role: state.role,
           url: state.url,
+          installId: context.read<InstallIdCubit>().state.id,
+          capybaraId: badgeCubit.capybaraId,
         );
         try {
           await _writeToBadge(context: context, badge: badge, ndef: ndef);
