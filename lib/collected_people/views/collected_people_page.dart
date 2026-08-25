@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_and_friends/collected_people/collected_people.dart';
+import 'package:flutter_and_friends/friends_badge/friends_badge.dart'
+    show kCapybaraAssets;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+
+/// The asset path for a collected person's capybara avatar, or `null` when
+/// there is nothing to show (no capybaraId, or an id that doesn't match a
+/// bundled capybara — defensive against hand-edited / future badges).
+String? capybaraAssetFor(String? capybaraId) {
+  if (capybaraId == null || capybaraId.isEmpty) return null;
+  const folder = 'assets/badge_templates/capybaras';
+  final path = '$folder/$capybaraId.jpeg';
+  return kCapybaraAssets.contains(path) ? path : null;
+}
 
 class CollectedPeoplePage extends StatelessWidget {
   const CollectedPeoplePage({super.key});
@@ -142,11 +154,16 @@ class CollectedPeopleListView extends StatelessWidget {
       itemCount: people.length,
       itemBuilder: (context, index) {
         final person = people[index];
+        final capybaraAsset = capybaraAssetFor(person.capybaraId);
         return ListTile(
           leading: CircleAvatar(
-            child: Text(
-              person.name.isEmpty ? '?' : person.name[0].toUpperCase(),
-            ),
+            backgroundImage:
+                capybaraAsset == null ? null : AssetImage(capybaraAsset),
+            child: capybaraAsset == null
+                ? Text(
+                    person.name.isEmpty ? '?' : person.name[0].toUpperCase(),
+                  )
+                : null,
           ),
           title: Text(person.name.isEmpty ? 'Unknown' : person.name),
           subtitle: person.role.isEmpty ? null : Text(person.role),

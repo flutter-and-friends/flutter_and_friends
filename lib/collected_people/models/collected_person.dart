@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:friends_badge/friends_badge.dart';
 
 /// A person collected by tapping their conference badge, stored in the
-/// Capydex-style dex.
+/// Pokédex-style dex.
 ///
 /// Pure data — JSON serialization lives here next to the model (hand-written,
 /// mirroring how `FavoritesCubit` keeps its persistence simple), and the
@@ -13,6 +13,8 @@ class CollectedPerson extends Equatable {
     required this.role,
     required this.urls,
     required this.collectedAt,
+    this.installId,
+    this.capybaraId,
   });
 
   factory CollectedPerson.fromJson(Map<String, dynamic> json) {
@@ -25,6 +27,10 @@ class CollectedPerson extends Equatable {
       collectedAt:
           DateTime.tryParse(json['collectedAt'] as String? ?? '') ??
           DateTime.fromMillisecondsSinceEpoch(0),
+      // Additive v2 fields: entries hydrated from a pre-v2 build simply
+      // have no installId/capybaraId.
+      installId: json['installId'] as String?,
+      capybaraId: json['capybaraId'] as String?,
     );
   }
 
@@ -39,8 +45,41 @@ class CollectedPerson extends Equatable {
   /// name-only badge.
   final List<String> urls;
 
-  /// When this person was collected (local time).
+  /// When this person was first collected (local time).
   final DateTime collectedAt;
+
+  /// The badge owner's app install ID (v2 wire format), or `null` for
+  /// badges written before v2. When present, this is the dex dedupe
+  /// identity (see CollectedPeopleCubit).
+  final String? installId;
+
+  /// The bundled capybara asset name (e.g. `"coffee_mode"`) when the
+  /// person's badge image is a bundled capybara; `null` for gallery-image
+  /// badges and pre-v2 badges.
+  final String? capybaraId;
+
+  /// Returns a copy with the given fields replaced.
+  ///
+  /// Note: nullable fields ([installId], [capybaraId]) cannot be reset to
+  /// `null` through this method — the dex never needs to (a re-collected
+  /// badge either carries an ID or the entry keeps its existing one).
+  CollectedPerson copyWith({
+    String? name,
+    String? role,
+    List<String>? urls,
+    DateTime? collectedAt,
+    String? installId,
+    String? capybaraId,
+  }) {
+    return CollectedPerson(
+      name: name ?? this.name,
+      role: role ?? this.role,
+      urls: urls ?? this.urls,
+      collectedAt: collectedAt ?? this.collectedAt,
+      installId: installId ?? this.installId,
+      capybaraId: capybaraId ?? this.capybaraId,
+    );
+  }
 
   Map<String, dynamic> toJson() {
     return {
@@ -48,11 +87,20 @@ class CollectedPerson extends Equatable {
       'role': role,
       'urls': urls,
       'collectedAt': collectedAt.toIso8601String(),
+      if (installId != null) 'installId': installId,
+      if (capybaraId != null) 'capybaraId': capybaraId,
     };
   }
 
   @override
-  List<Object> get props => [name, role, urls, collectedAt];
+  List<Object?> get props => [
+    name,
+    role,
+    urls,
+    collectedAt,
+    installId,
+    capybaraId,
+  ];
 }
 
 /// Maps a decoded [BadgePerson] (the `friends_badge` package's read-side
@@ -70,6 +118,8 @@ class CollectedPerson extends Equatable {
 ///   it directly. URLs that already carry a scheme are stored unchanged.
 /// - Name and role pass through as-is (both may be empty when the badge's
 ///   Text record was absent or malformed).
+/// - [BadgePerson.installId] and [BadgePerson.capybaraId] (v2 tagged
+///   segments) pass through unchanged; both are `null` on pre-v2 badges.
 CollectedPerson toCollectedPerson(BadgePerson person, {DateTime? collectedAt}) {
   final urls = <String>[
     if (person.primaryUri != null)
@@ -81,6 +131,8 @@ CollectedPerson toCollectedPerson(BadgePerson person, {DateTime? collectedAt}) {
     role: person.role,
     urls: urls.toSet().toList(),
     collectedAt: collectedAt ?? DateTime.now(),
+    installId: person.installId,
+    capybaraId: person.capybaraId,
   );
 }
 

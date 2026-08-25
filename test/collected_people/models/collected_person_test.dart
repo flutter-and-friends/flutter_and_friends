@@ -169,6 +169,8 @@ void main() {
         role: 'Organizer',
         urls: const ['https://x.com/johannes'],
         collectedAt: DateTime(2026, 8, 24, 12, 30),
+        installId: 'id-1',
+        capybaraId: 'coffee_mode',
       );
 
       final restored = CollectedPerson.fromJson(person.toJson());
@@ -182,6 +184,58 @@ void main() {
       expect(restored.name, isEmpty);
       expect(restored.role, isEmpty);
       expect(restored.urls, isEmpty);
+      expect(restored.installId, isNull);
+      expect(restored.capybaraId, isNull);
+    });
+
+    test(
+      'decodes a pre-v2 entry (no installId/capybaraId keys) with nulls',
+      () {
+        // Shape written by the pre-v2 build of the app.
+        final restored = CollectedPerson.fromJson(const {
+          'name': 'Johannes',
+          'role': 'Organizer',
+          'urls': ['https://x.com/johannes'],
+          'collectedAt': '2026-08-24T12:00:00.000',
+        });
+
+        expect(restored.name, 'Johannes');
+        expect(restored.installId, isNull);
+        expect(restored.capybaraId, isNull);
+      },
+    );
+  });
+
+  group('toCollectedPerson v2 fields', () {
+    final at = DateTime(2026, 8, 24, 12);
+
+    test('passes installId and capybaraId through from the badge', () {
+      final person = BadgePerson.fromNdefMessage(
+        NdefMessage([
+          NdefRecord.text(
+            'Johannes · Organizer · x.com/johannes · id:abc-123 · '
+            'capy:coffee_mode',
+          ),
+        ]),
+      );
+
+      final collected = toCollectedPerson(person, collectedAt: at);
+
+      expect(collected.installId, 'abc-123');
+      expect(collected.capybaraId, 'coffee_mode');
+      // Tagged segments are not URLs.
+      expect(collected.urls, ['https://x.com/johannes']);
+    });
+
+    test('pre-v2 badge (no tagged segments) maps both fields to null', () {
+      final person = BadgePerson.fromNdefMessage(
+        NdefMessage([NdefRecord.text('Johannes · Organizer')]),
+      );
+
+      final collected = toCollectedPerson(person, collectedAt: at);
+
+      expect(collected.installId, isNull);
+      expect(collected.capybaraId, isNull);
     });
   });
 }
