@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-08-10T13:27:36+00:00",
-  "version": 2349407148993926,
+  "generated_at": "2026-08-26T12:27:48+00:00",
+  "version": 4674723212842671,
   "days": [
     {
       "date": "2026-09-03",
@@ -13,11 +13,11 @@
       "tracks": [
         {
           "id": "main",
-          "label": "Main Stage (Theatre)"
+          "label": "THEATRE STAGE"
         },
         {
           "id": "second",
-          "label": "Second Stage (Kägelbanan)"
+          "label": "Kägelbanan STAGE"
         }
       ]
     },
@@ -45,14 +45,32 @@
       "id": "bike-tour",
       "type": "activity",
       "category": "activity",
-      "title": "Bike Tour",
+      "title": "City bike riding",
       "speaker_slugs": [],
       "day": "2026-09-03",
       "start": "2026-09-03T13:00:00+02:00",
-      "end": "2026-09-03T15:00:00+02:00",
-      "duration_minutes": 120,
+      "end": "2026-09-03T17:00:00+02:00",
+      "duration_minutes": 240,
       "track": null,
-      "location": null,
+      "location": {
+        "name": "Route coming soon"
+      },
+      "published": true
+    },
+    {
+      "id": "boardgames",
+      "type": "activity",
+      "category": "activity",
+      "title": "Boardgames day",
+      "speaker_slugs": [],
+      "day": "2026-09-03",
+      "start": "2026-09-03T13:00:00+02:00",
+      "end": "2026-09-03T17:00:00+02:00",
+      "duration_minutes": 240,
+      "track": null,
+      "location": {
+        "name": "A park near Lukas's apartment"
+      },
       "published": true
     },
     {
@@ -63,31 +81,13 @@
       "speaker_slugs": [],
       "day": "2026-09-03",
       "start": "2026-09-03T13:00:00+02:00",
-      "end": "2026-09-03T15:00:00+02:00",
-      "duration_minutes": 120,
+      "end": "2026-09-03T17:00:00+02:00",
+      "duration_minutes": 240,
       "track": null,
       "location": {
-        "name": "Klättercentret Telefonplan",
+        "name": "BLX Bouldering Club",
         "lat": 59.299091,
         "lng": 17.991537
-      },
-      "published": true
-    },
-    {
-      "id": "disc-golf",
-      "type": "activity",
-      "category": "activity",
-      "title": "Disc Golf",
-      "speaker_slugs": [],
-      "day": "2026-09-03",
-      "start": "2026-09-03T13:00:00+02:00",
-      "end": "2026-09-03T15:00:00+02:00",
-      "duration_minutes": 120,
-      "track": null,
-      "location": {
-        "name": "Kaknäs DiscGolfPark",
-        "lat": 59.334168,
-        "lng": 18.12829
       },
       "published": true
     },
@@ -95,12 +95,12 @@
       "id": "grona-lund-theme-park",
       "type": "activity",
       "category": "activity",
-      "title": "Gröna Lund Theme Park",
+      "title": "Gröna Lund Stockholm",
       "speaker_slugs": [],
       "day": "2026-09-03",
       "start": "2026-09-03T13:00:00+02:00",
-      "end": "2026-09-03T15:00:00+02:00",
-      "duration_minutes": 120,
+      "end": "2026-09-03T17:00:00+02:00",
+      "duration_minutes": 240,
       "track": null,
       "location": {
         "name": "Gröna Lund",
@@ -113,12 +113,12 @@
       "id": "islands-kayak-tour",
       "type": "activity",
       "category": "activity",
-      "title": "Islands Kayak Tour",
+      "title": "Kayaking",
       "speaker_slugs": [],
       "day": "2026-09-03",
       "start": "2026-09-03T13:00:00+02:00",
-      "end": "2026-09-03T15:00:00+02:00",
-      "duration_minutes": 120,
+      "end": "2026-09-03T17:00:00+02:00",
+      "duration_minutes": 240,
       "track": null,
       "location": {
         "name": "Eden Kajak",
@@ -131,35 +131,52 @@
       "id": "skansen-tour",
       "type": "activity",
       "category": "activity",
-      "title": "Skansen Zoo & Village Tour",
+      "title": "Skansen Stockholm",
       "speaker_slugs": [],
       "day": "2026-09-03",
       "start": "2026-09-03T13:00:00+02:00",
-      "end": "2026-09-03T15:00:00+02:00",
-      "duration_minutes": 120,
+      "end": "2026-09-03T17:00:00+02:00",
+      "duration_minutes": 240,
       "track": null,
       "location": {
-        "name": "Skansenbutiken",
+        "name": "Skansen",
         "lat": 59.324379,
         "lng": 18.101077
       },
       "published": true
     },
     {
-      "id": "vr-games-arcade",
+      "id": "social-activities-meetup",
       "type": "activity",
-      "category": "activity",
-      "title": "VR Games & Arcade",
+      "category": "logistics",
+      "title": "Social activities begin",
+      "description": "The first activities start around 13:00, with exact start times depending on which activity you choose.",
       "speaker_slugs": [],
       "day": "2026-09-03",
-      "start": "2026-09-03T14:30:00+02:00",
-      "end": "2026-09-03T16:30:00+02:00",
+      "start": "2026-09-03T13:00:00+02:00",
+      "end": "2026-09-03T13:15:00+02:00",
+      "duration_minutes": 15,
+      "track": null,
+      "location": {
+        "name": "Meeting point coming soon"
+      },
+      "published": true
+    },
+    {
+      "id": "sauna-bathing",
+      "type": "activity",
+      "category": "activity",
+      "title": "Sauna bathing",
+      "speaker_slugs": [],
+      "day": "2026-09-03",
+      "start": "2026-09-03T14:00:00+02:00",
+      "end": "2026-09-03T16:00:00+02:00",
       "duration_minutes": 120,
       "track": null,
       "location": {
-        "name": "VREX City",
-        "lat": 59.33216,
-        "lng": 18.065369
+        "name": "Söder Mälarstrand 24X",
+        "lat": 59.321203,
+        "lng": 18.058561
       },
       "published": true
     },
@@ -168,7 +185,7 @@
       "type": "activity",
       "category": "social",
       "title": "Dinner with Strangers",
-      "description": "Dinner with Strangers splits attendees into small groups, each heading to a different restaurant around Stockholm. It is the easiest way to meet people you have not met yet — you will be told your group and restaurant closer to the day.",
+      "description": "Dinner with Strangers splits attendees into small groups, each heading to a different restaurant around Stockholm. You will be told your group and restaurant closer to the day.",
       "speaker_slugs": [],
       "day": "2026-09-03",
       "start": "2026-09-03T18:00:00+02:00",
@@ -179,28 +196,11 @@
       "published": true
     },
     {
-      "id": "speakers-dinner",
-      "type": "activity",
-      "category": "social",
-      "title": "Speakers' Dinner",
-      "speaker_slugs": [],
-      "day": "2026-09-03",
-      "start": "2026-09-03T18:00:00+02:00",
-      "end": "2026-09-03T20:30:00+02:00",
-      "duration_minutes": 150,
-      "track": null,
-      "location": {
-        "name": "Google Office",
-        "lat": 59.3334327,
-        "lng": 18.0545033
-      },
-      "published": true
-    },
-    {
       "id": "pub-quiz",
       "type": "activity",
       "category": "social",
       "title": "Flutter & Fun Pub Quiz",
+      "description": "Gather from 20:00 at Parken Söder (Fatbursgatan 1, 118 52 Stockholm) after Dinner with Strangers. The quiz starts around 21:00.",
       "speaker_slugs": [],
       "day": "2026-09-03",
       "start": "2026-09-03T20:00:00+02:00",
@@ -208,9 +208,9 @@
       "duration_minutes": 180,
       "track": null,
       "location": {
-        "name": "International Bar",
-        "lat": 59.335595,
-        "lng": 18.070912
+        "name": "Parken Söder",
+        "lat": 59.314623,
+        "lng": 18.066859
       },
       "published": true
     },
@@ -218,7 +218,7 @@
       "id": "registration",
       "type": "activity",
       "category": "logistics",
-      "title": "Registration / Fika",
+      "title": "Registration",
       "speaker_slugs": [],
       "day": "2026-09-04",
       "start": "2026-09-04T09:00:00+02:00",
@@ -243,43 +243,26 @@
       ],
       "day": "2026-09-04",
       "start": "2026-09-04T09:30:00+02:00",
-      "end": "2026-09-04T10:10:00+02:00",
-      "duration_minutes": 40,
-      "track": null,
-      "location": null,
-      "published": true
-    },
-    {
-      "id": "add-3d-to-your-flutter-apps",
-      "type": "talk",
-      "category": "lightning",
-      "title": "Add 3D to your Flutter apps",
-      "description": "Did you know that Flutter natively supports building arbitrary renderers with zero external dependencies?\n\nUse Flutter Scene (https://pub.dev/packages/flutter_scene) to easily add good looking 3D to your Flutter apps today!\n",
-      "speaker_slugs": [
-        "brandon-derosier"
-      ],
-      "day": "2026-09-04",
-      "start": "2026-09-04T10:15:00+02:00",
-      "end": "2026-09-04T10:35:00+02:00",
-      "duration_minutes": 20,
+      "end": "2026-09-04T10:15:00+02:00",
+      "duration_minutes": 45,
       "track": "main",
       "location": null,
       "published": true
     },
     {
-      "id": "building-flitz-how-we-modified-the-flutter-engine-so-your-team-could-iterate-faster",
+      "id": "qa-with-the-flutter-core-team",
       "type": "talk",
-      "category": "talk",
-      "title": "Building Flitz: How We Modified the Flutter Engine So Your Team Could Iterate Faster",
-      "description": "Your designer would like to check out your changes, but they can't just flutter run it.\n\nWhat if you could build the app, send a QR code, and have your designer scan it and tap around? That's what we're gonna show.\n\nIt's a talk about a collaboration problem solved by going pretty deep into the Dart VM.\n",
+      "category": "panel",
+      "title": "Q&A with the Flutter Core Team: Featuring Emma Twersky and Michael Thomsen",
+      "description": "Panel with members of the Flutter Core Team, taking questions from the audience. Featuring Emma Twersky and Michael Thomsen, and maybe Parker Lougheed and Brandon DeRosier.\n",
       "speaker_slugs": [
-        "jakub-fijalkowski"
+        "emma-twersky"
       ],
       "day": "2026-09-04",
       "start": "2026-09-04T10:15:00+02:00",
-      "end": "2026-09-04T10:55:00+02:00",
-      "duration_minutes": 40,
-      "track": "second",
+      "end": "2026-09-04T10:50:00+02:00",
+      "duration_minutes": 35,
+      "track": "main",
       "location": null,
       "published": true
     },
@@ -294,8 +277,8 @@
       ],
       "day": "2026-09-04",
       "start": "2026-09-04T11:00:00+02:00",
-      "end": "2026-09-04T11:40:00+02:00",
-      "duration_minutes": 40,
+      "end": "2026-09-04T11:45:00+02:00",
+      "duration_minutes": 45,
       "track": "main",
       "location": null,
       "published": true
@@ -311,8 +294,8 @@
       ],
       "day": "2026-09-04",
       "start": "2026-09-04T11:00:00+02:00",
-      "end": "2026-09-04T11:40:00+02:00",
-      "duration_minutes": 40,
+      "end": "2026-09-04T11:45:00+02:00",
+      "duration_minutes": 45,
       "track": "second",
       "location": null,
       "published": true
@@ -337,20 +320,19 @@
     },
     {
       "id": "slides-karaoke",
-      "type": "activity",
-      "category": "activity",
-      "title": "Slides Karaoke 2.0: Generating presentations on the fly",
-      "speaker_slugs": [],
+      "type": "talk",
+      "category": "talk",
+      "title": "Slide Karaoke during lunch",
+      "description": "A light lunch session with on-the-fly presentations.\n",
+      "speaker_slugs": [
+        "mangirdas-kazlauskas"
+      ],
       "day": "2026-09-04",
       "start": "2026-09-04T12:05:00+02:00",
-      "end": "2026-09-04T12:25:00+02:00",
-      "duration_minutes": 20,
-      "track": null,
-      "location": {
-        "name": "Södra Teatern",
-        "lat": 59.3183836,
-        "lng": 18.0743121
-      },
+      "end": "2026-09-04T12:30:00+02:00",
+      "duration_minutes": 25,
+      "track": "main",
+      "location": null,
       "published": true
     },
     {
@@ -364,8 +346,8 @@
       ],
       "day": "2026-09-04",
       "start": "2026-09-04T12:45:00+02:00",
-      "end": "2026-09-04T13:25:00+02:00",
-      "duration_minutes": 40,
+      "end": "2026-09-04T13:30:00+02:00",
+      "duration_minutes": 45,
       "track": "main",
       "location": null,
       "published": true
@@ -382,8 +364,8 @@
       ],
       "day": "2026-09-04",
       "start": "2026-09-04T12:45:00+02:00",
-      "end": "2026-09-04T13:25:00+02:00",
-      "duration_minutes": 40,
+      "end": "2026-09-04T13:30:00+02:00",
+      "duration_minutes": 45,
       "track": "second",
       "location": null,
       "published": true
@@ -399,8 +381,8 @@
       ],
       "day": "2026-09-04",
       "start": "2026-09-04T13:30:00+02:00",
-      "end": "2026-09-04T13:50:00+02:00",
-      "duration_minutes": 20,
+      "end": "2026-09-04T13:55:00+02:00",
+      "duration_minutes": 25,
       "track": "main",
       "location": null,
       "published": true
@@ -416,8 +398,8 @@
       ],
       "day": "2026-09-04",
       "start": "2026-09-04T13:30:00+02:00",
-      "end": "2026-09-04T13:50:00+02:00",
-      "duration_minutes": 20,
+      "end": "2026-09-04T13:55:00+02:00",
+      "duration_minutes": 25,
       "track": "second",
       "location": null,
       "published": true
@@ -433,8 +415,8 @@
       ],
       "day": "2026-09-04",
       "start": "2026-09-04T14:00:00+02:00",
-      "end": "2026-09-04T14:40:00+02:00",
-      "duration_minutes": 40,
+      "end": "2026-09-04T14:45:00+02:00",
+      "duration_minutes": 45,
       "track": "main",
       "location": null,
       "published": true
@@ -450,8 +432,8 @@
       ],
       "day": "2026-09-04",
       "start": "2026-09-04T14:00:00+02:00",
-      "end": "2026-09-04T14:40:00+02:00",
-      "duration_minutes": 40,
+      "end": "2026-09-04T14:45:00+02:00",
+      "duration_minutes": 45,
       "track": "second",
       "location": null,
       "published": true
@@ -464,8 +446,8 @@
       "speaker_slugs": [],
       "day": "2026-09-04",
       "start": "2026-09-04T14:45:00+02:00",
-      "end": "2026-09-04T15:45:00+02:00",
-      "duration_minutes": 60,
+      "end": "2026-09-04T15:30:00+02:00",
+      "duration_minutes": 45,
       "track": null,
       "location": {
         "name": "Södra Teatern",
@@ -475,18 +457,18 @@
       "published": true
     },
     {
-      "id": "raindrop-a-type-safe-sql-toolkit-for-dart",
+      "id": "building-flitz-how-we-modified-the-flutter-engine-so-your-team-could-iterate-faster",
       "type": "talk",
-      "category": "lightning",
-      "title": "Raindrop: A Type-Safe SQL Toolkit for Dart",
-      "description": "Type-safe SQL in Dart without code-gen? Impossible, you say? Not anymore. Raindrop lets you query your database in pure Dart that reads just like SQL and the best part? No new syntax to learn, no build_runner, no build step. Fully type-safe, backend-agnostic, and with automated schema-diff migrations.\n",
+      "category": "talk",
+      "title": "Building Flutter Go: How We Modified the Flutter Engine So Your Team Could Iterate Faster",
+      "description": "Your designer would like to check out your changes, but they can't just flutter run it.\n\nWhat if you could build the app, send a QR code, and have your designer scan it and tap around? That's what we're gonna show.\n\nIt's a talk about a collaboration problem solved by going pretty deep into the Dart VM.\n",
       "speaker_slugs": [
-        "jochum-van-der-ploeg"
+        "jakub-fijalkowski"
       ],
       "day": "2026-09-04",
-      "start": "2026-09-04T15:45:00+02:00",
-      "end": "2026-09-04T16:05:00+02:00",
-      "duration_minutes": 20,
+      "start": "2026-09-04T15:30:00+02:00",
+      "end": "2026-09-04T16:15:00+02:00",
+      "duration_minutes": 45,
       "track": "second",
       "location": null,
       "published": true
@@ -501,9 +483,9 @@
         "dominik-roszkowski"
       ],
       "day": "2026-09-04",
-      "start": "2026-09-04T15:45:00+02:00",
-      "end": "2026-09-04T16:25:00+02:00",
-      "duration_minutes": 40,
+      "start": "2026-09-04T15:30:00+02:00",
+      "end": "2026-09-04T16:15:00+02:00",
+      "duration_minutes": 45,
       "track": "main",
       "location": null,
       "published": true
@@ -518,9 +500,9 @@
         "mateusz-wojtczak"
       ],
       "day": "2026-09-04",
-      "start": "2026-09-04T16:35:00+02:00",
-      "end": "2026-09-04T17:15:00+02:00",
-      "duration_minutes": 40,
+      "start": "2026-09-04T16:20:00+02:00",
+      "end": "2026-09-04T17:05:00+02:00",
+      "duration_minutes": 45,
       "track": "main",
       "location": null,
       "published": true
@@ -536,27 +518,44 @@
         "albert-wolszon"
       ],
       "day": "2026-09-04",
-      "start": "2026-09-04T16:35:00+02:00",
-      "end": "2026-09-04T17:15:00+02:00",
-      "duration_minutes": 40,
+      "start": "2026-09-04T16:20:00+02:00",
+      "end": "2026-09-04T17:05:00+02:00",
+      "duration_minutes": 45,
       "track": "second",
       "location": null,
       "published": true
     },
     {
-      "id": "qa-with-the-flutter-core-team",
+      "id": "add-3d-to-your-flutter-apps",
       "type": "talk",
-      "category": "panel",
-      "title": "Q&A with the Flutter Core Team",
-      "description": "Closing panel with members of the Flutter Core Team, taking questions from the audience. Featuring Emma Twersky and Michael Thomsen.\n",
+      "category": "talk",
+      "title": "Add 3D to your Flutter apps",
+      "description": "Flutter is now a 3D engine. Flutter Scene is a complete realtime 3D engine built on Flutter GPU, rendering into the same context as the rest of your app on every platform, web included, enabling you to build incredible multiplatform 3D experiences. You can use it to tackle a huge range of different use cases, from simple model viewers to complex games.\n\nThis talk covers how little it costs to get started, how the declarative and imperative APIs fit together, advanced rendering features, physics, audio, and networking, plus the newest tooling, a visual scene editor and agent skills for AI-assisted development. You'll leave knowing exactly how to start.\n",
       "speaker_slugs": [
-        "emma-twersky"
+        "brandon-derosier"
       ],
       "day": "2026-09-04",
-      "start": "2026-09-04T17:30:00+02:00",
+      "start": "2026-09-04T17:10:00+02:00",
       "end": "2026-09-04T17:55:00+02:00",
-      "duration_minutes": 25,
+      "duration_minutes": 45,
       "track": "main",
+      "location": null,
+      "published": true
+    },
+    {
+      "id": "raindrop-a-type-safe-sql-toolkit-for-dart",
+      "type": "talk",
+      "category": "lightning",
+      "title": "Raindrop: A Type-Safe SQL Toolkit for Dart",
+      "description": "Type-safe SQL in Dart without code-gen? Impossible, you say? Not anymore. Raindrop lets you query your database in pure Dart that reads just like SQL and the best part? No new syntax to learn, no build_runner, no build step. Fully type-safe, backend-agnostic, and with automated schema-diff migrations.\n",
+      "speaker_slugs": [
+        "jochum-van-der-ploeg"
+      ],
+      "day": "2026-09-04",
+      "start": "2026-09-04T17:10:00+02:00",
+      "end": "2026-09-04T17:35:00+02:00",
+      "duration_minutes": 25,
+      "track": "second",
       "location": null,
       "published": true
     },
@@ -567,9 +566,9 @@
       "title": "Wrapping up and closing + speakers, volunteers & ambassadors gifts",
       "speaker_slugs": [],
       "day": "2026-09-04",
-      "start": "2026-09-04T17:55:00+02:00",
-      "end": "2026-09-04T18:15:00+02:00",
-      "duration_minutes": 20,
+      "start": "2026-09-04T18:00:00+02:00",
+      "end": "2026-09-04T18:10:00+02:00",
+      "duration_minutes": 10,
       "track": "main",
       "location": null,
       "published": true
@@ -578,7 +577,7 @@
       "id": "conference-party",
       "type": "activity",
       "category": "social",
-      "title": "Flutter & Friends Party",
+      "title": "After party & Flutter in the Dark",
       "speaker_slugs": [],
       "day": "2026-09-04",
       "start": "2026-09-04T19:00:00+02:00",
@@ -586,94 +585,29 @@
       "duration_minutes": 300,
       "track": null,
       "location": {
-        "name": "Södra Teatern",
+        "name": "Kägelbanan, Södra Teatern",
         "lat": 59.3183836,
         "lng": 18.0743121
       },
       "published": true
     },
     {
-      "id": "from-pair-programming-to-digital-twins-scaling-flutter-development-with-bob-s-workshop-and-the-frank-engine",
-      "type": "workshop",
-      "category": "workshop",
-      "title": "From Pair Programming to Digital Twins: Scaling Flutter Development with Bob's Workshop and the Frank Engine",
-      "description": "In this hands-on workshop, we will dive into the next evolution of AI-assisted Flutter development. Moving beyond stateless code-completion tools, we will explore Bob's Workshop and the proprietary Frank Engine — a dynamically stateful, self-modifying intelligence layer that develops its own internal heuristics and relational patterns.\n\nFirst, attendees will learn how to leverage BobCA (Bob Code Assistant) for granular, user-to-agent pair programming, utilizing dynamic multi-model orchestration (Gemini/Claude) and real-time web grounding for hallucination-free coding.\n\nThen, we will shift gears into agent-to-agent workflows. I will demonstrate how to deploy a 'User Proxy' — a digital twin that synthesizes your specific coding style and architectural DNA to autonomously negotiate technical conflicts, execute background builds, and resolve Jira tickets.\n\nAttendees will leave understanding how to transition from managing AI as a passive tool to directing it as a collaborative, self-healing digital workforce.\n",
-      "speaker_slugs": [
-        "kemone-phillips"
-      ],
+      "id": "free-hackathon",
+      "type": "activity",
+      "category": "activity",
+      "title": "Free hackathon (all day)",
+      "description": "A free hackathon runs all day at Skandia Bank for attendees who are not joining a paid workshop.",
+      "speaker_slugs": [],
       "day": "2026-09-05",
-      "start": "2026-09-05T09:00:00+02:00",
-      "end": "2026-09-05T10:30:00+02:00",
-      "duration_minutes": 90,
-      "track": "ai",
-      "location": null,
-      "published": true
-    },
-    {
-      "id": "lukas-klingsbo-supabase-workshop",
-      "type": "workshop",
-      "category": "workshop",
-      "title": "Supabase workshop",
-      "speaker_slugs": [
-        "lukas-klingsbo"
-      ],
-      "day": "2026-09-05",
-      "start": "2026-09-05T09:00:00+02:00",
-      "end": "2026-09-05T10:30:00+02:00",
-      "duration_minutes": 90,
-      "track": "turbo",
-      "location": null,
-      "published": true
-    },
-    {
-      "id": "stop-playing-the-waiting-game-deliver-instant-updates-with-shorebird",
-      "type": "workshop",
-      "category": "workshop",
-      "title": "Stop playing the waiting game, deliver instant updates with Shorebird",
-      "description": "The traditional mobile app release cycle is often a bottleneck for innovation due to the lengthy store review processes. Shorebird changes this with over-the-air (OTA) updates, enabling you to deploy logic changes and bug fixes in real-time to users' devices.\n\nThis introductory workshop provides a hands-on deep dive into integrating Shorebird into your existing Flutter workflow. We will explore the architecture behind Shorebird, walk through initialization, and demonstrate how to push OTA updates without lengthy store reviews (while maintaining compliance). Whether you're looking to fix a critical production crash or iterate on features at the speed of web development, this session will equip you with the tools to take back control of your app's lifecycle.\n\nBy the end of this workshop, participants will:\n- Understand the difference between releases and patches.\n- Initialize Shorebird in a Flutter app.\n- Instantly deploy a patch.\n- Rollback a patch.\n",
-      "speaker_slugs": [
-        "brandon-derosier"
-      ],
-      "day": "2026-09-05",
-      "start": "2026-09-05T09:00:00+02:00",
-      "end": "2026-09-05T10:30:00+02:00",
-      "duration_minutes": 90,
-      "track": "dash",
-      "location": null,
-      "published": true
-    },
-    {
-      "id": "hands-on-writing-flutter-e2e-tests-with-ai-and-patrol",
-      "type": "workshop",
-      "category": "workshop",
-      "title": "Hands-On: Writing Flutter E2E Tests with AI and Patrol",
-      "description": "Most developers have tried asking an AI to write end-to-end tests and watched it flail. This workshop is the fix.\n\nWorking on a provided workshop Flutter app, you'll connect an AI agent to Patrol MCP and drive it to write, run, and fix real E2E tests in a tight feedback loop. This is not a \"paste my prompt and watch\" session — you'll do the directing.\n\nYou'll learn:\n- How to fix a failing E2E test with an AI agent (guided warmup).\n- How to write a new test from a short feature spec (guided warmup).\n- How to chain Marionette MCP and Patrol MCP on an open task: hand over a vague scenario, let Marionette explore the app and draft a spec, then have Patrol MCP turn it into a test that passes.\n\nYou'll leave with a working setup and a sample repo to use on your own project.\n\nLearning outcomes — by the end of this workshop, attendees will be able to:\n- Connect an AI agent (Claude Code, Cursor, Copilot, or Gemini CLI) to Patrol MCP and point it at a running Flutter app.\n- Direct an agent to debug and fix a failing Patrol E2E test, using screenshots and the native widget tree to ground its fixes rather than guessing from source.\n- Direct an agent to write a new Patrol E2E test from a short feature spec.\n- Understand why a short feedback loop (build once, rerun on demand) makes AI test-writing practical, versus writing code blind and waiting for full runs.\n- Compose two MCP servers on an open-ended task: use Marionette MCP to explore a running app and draft a scenario spec, then hand that spec to Patrol MCP to produce a durable test.\n- Understand the division of labor between the two tools: Marionette for fast in-app runtime checks during development, Patrol MCP for writing E2E tests that include native interactions and run on CI.\n- Recognize where this workflow is reliable today and where the rough edges still are.\n- Leave with a configured sample repo (both MCP servers pre-wired) to apply to their own project.\n\nSpecial setup / requirements:\n- Bring a laptop with Flutter (pinned version via fvm), Patrol CLI, and a working emulator/simulator. Exact prerequisites and a pre-built sample repo will be shared ahead of time.\n- Bring your own AI coding tool with active API credits/access for the session (Claude Code recommended).\n",
-      "speaker_slugs": [
-        "oskar-zajac"
-      ],
-      "day": "2026-09-05",
-      "start": "2026-09-05T11:00:00+02:00",
-      "end": "2026-09-05T12:30:00+02:00",
-      "duration_minutes": 90,
-      "track": "turbo",
-      "location": null,
-      "published": true
-    },
-    {
-      "id": "homescreen-widgets-now-in-dart",
-      "type": "workshop",
-      "category": "workshop",
-      "title": "Homescreen Widgets - Now in Dart?!",
-      "description": "In the past adding Homescreen Widgets involved a lot of native code interactions:\n- Creating Infrastructure Files and Changes in Android Studio\n- Clicking around in Xcode to create additional Targets\n\nAnd crucially writing Widget code in Kotlin and Swift, losing all the benefits of Flutter with \"Write once run anywhere\".\n\nWith some new additions to the home_widget ecosystem this is now a thing of the past! Either create Widget infrastructure from the CLI so only the Widget code needs to be handwritten — or even better: write Widget code once in Dart with a Flutter-like syntax and generate the full code with a single CLI command. You don't even need a Mac to write iOS Widgets!\n\nIn this session we will explore and go through all the (few) necessary steps to set this up and learn how fast it is now to write Homescreen Widgets for your Flutter apps.\n",
-      "speaker_slugs": [
-        "anton-borries"
-      ],
-      "day": "2026-09-05",
-      "start": "2026-09-05T11:00:00+02:00",
-      "end": "2026-09-05T12:30:00+02:00",
-      "duration_minutes": 90,
-      "track": "dash",
-      "location": null,
+      "start": "2026-09-05T10:00:00+02:00",
+      "end": "2026-09-05T16:30:00+02:00",
+      "duration_minutes": 390,
+      "track": null,
+      "location": {
+        "name": "Skandia Bank, Lindhagensgatan 86",
+        "lat": 59.3335042,
+        "lng": 18.0170753
+      },
       "published": true
     },
     {
@@ -686,11 +620,99 @@
         "sasha-denisov"
       ],
       "day": "2026-09-05",
-      "start": "2026-09-05T11:00:00+02:00",
-      "end": "2026-09-05T12:30:00+02:00",
+      "start": "2026-09-05T10:00:00+02:00",
+      "end": "2026-09-05T11:30:00+02:00",
       "duration_minutes": 90,
       "track": "ai",
-      "location": null,
+      "location": {
+        "name": "Skandia Bank, Lindhagensgatan 86",
+        "lat": 59.3335042,
+        "lng": 18.0170753
+      },
+      "published": true
+    },
+    {
+      "id": "stop-playing-the-waiting-game-deliver-instant-updates-with-shorebird",
+      "type": "workshop",
+      "category": "workshop",
+      "title": "Stop playing the waiting game, deliver instant updates with Shorebird",
+      "description": "The traditional mobile app release cycle is often a bottleneck for innovation due to the lengthy store review processes. Shorebird changes this with over-the-air (OTA) updates, enabling you to deploy logic changes and bug fixes in real-time to users' devices.\n\nThis introductory workshop provides a hands-on deep dive into integrating Shorebird into your existing Flutter workflow. We will explore the architecture behind Shorebird, walk through initialization, and demonstrate how to push OTA updates without lengthy store reviews (while maintaining compliance). Whether you're looking to fix a critical production crash or iterate on features at the speed of web development, this session will equip you with the tools to take back control of your app's lifecycle.\n\nBy the end of this workshop, participants will:\n- Understand the difference between releases and patches.\n- Initialize Shorebird in a Flutter app.\n- Instantly deploy a patch.\n- Rollback a patch.\n",
+      "speaker_slugs": [
+        "renuka-kelkar"
+      ],
+      "day": "2026-09-05",
+      "start": "2026-09-05T10:00:00+02:00",
+      "end": "2026-09-05T11:30:00+02:00",
+      "duration_minutes": 90,
+      "track": "dash",
+      "location": {
+        "name": "Skandia Bank, Lindhagensgatan 86",
+        "lat": 59.3335042,
+        "lng": 18.0170753
+      },
+      "published": true
+    },
+    {
+      "id": "hands-on-writing-flutter-e2e-tests-with-ai-and-patrol",
+      "type": "workshop",
+      "category": "workshop",
+      "title": "Hands-On: Writing Flutter E2E Tests with AI and Patrol",
+      "description": "Most developers have tried asking an AI to write end-to-end tests and watched it flail. This workshop is the fix.\n\nWorking on a provided workshop Flutter app, you'll connect an AI agent to Patrol MCP and drive it to write, run, and fix real E2E tests in a tight feedback loop. This is not a \"paste my prompt and watch\" session — you'll do the directing.\n\nYou'll learn:\n- How to fix a failing E2E test with an AI agent (guided warmup).\n- How to write a new test from a short feature spec (guided warmup).\n- How to chain Marionette MCP and Patrol MCP on an open task: hand over a vague scenario, let Marionette explore the app and draft a spec, then have Patrol MCP turn it into a test that passes.\n\nYou'll leave with a working setup and a sample repo to use on your own project.\n\nLearning outcomes — by the end of this workshop, attendees will be able to:\n- Connect an AI agent (Claude Code, Cursor, Copilot, or Gemini CLI) to Patrol MCP and point it at a running Flutter app.\n- Direct an agent to debug and fix a failing Patrol E2E test, using screenshots and the native widget tree to ground its fixes rather than guessing from source.\n- Direct an agent to write a new Patrol E2E test from a short feature spec.\n- Understand why a short feedback loop (build once, rerun on demand) makes AI test-writing practical, versus writing code blind and waiting for full runs.\n- Compose two MCP servers on an open-ended task: use Marionette MCP to explore a running app and draft a scenario spec, then hand that spec to Patrol MCP to produce a durable test.\n- Understand the division of labor between the two tools: Marionette for fast in-app runtime checks during development, Patrol MCP for writing E2E tests that include native interactions and run on CI.\n- Recognize where this workflow is reliable today and where the rough edges still are.\n- Leave with a configured sample repo (both MCP servers pre-wired) to apply to their own project.\n\nSpecial setup / requirements:\n- Bring a laptop with Flutter (pinned version via fvm), Patrol CLI, and a working emulator/simulator. Exact prerequisites and a pre-built sample repo will be shared ahead of time.\n- Bring your own AI coding tool with active API credits/access for the session (Claude Code recommended).\n",
+      "speaker_slugs": [
+        "oskar-zajac"
+      ],
+      "day": "2026-09-05",
+      "start": "2026-09-05T13:00:00+02:00",
+      "end": "2026-09-05T14:30:00+02:00",
+      "duration_minutes": 90,
+      "track": "turbo",
+      "location": {
+        "name": "Skandia Bank, Lindhagensgatan 86",
+        "lat": 59.3335042,
+        "lng": 18.0170753
+      },
+      "published": true
+    },
+    {
+      "id": "homescreen-widgets-now-in-dart",
+      "type": "workshop",
+      "category": "workshop",
+      "title": "Homescreen Widgets - Now in Dart?!",
+      "description": "In the past adding Homescreen Widgets involved a lot of native code interactions:\n- Creating Infrastructure Files and Changes in Android Studio\n- Clicking around in Xcode to create additional Targets\n\nAnd crucially writing Widget code in Kotlin and Swift, losing all the benefits of Flutter with \"Write once run anywhere\".\n\nWith some new additions to the home_widget ecosystem this is now a thing of the past! Either create Widget infrastructure from the CLI so only the Widget code needs to be handwritten — or even better: write Widget code once in Dart with a Flutter-like syntax and generate the full code with a single CLI command. You don't even need a Mac to write iOS Widgets!\n\nIn this session we will explore and go through all the (few) necessary steps to set this up and learn how fast it is now to write Homescreen Widgets for your Flutter apps.\n",
+      "speaker_slugs": [
+        "anton-borries"
+      ],
+      "day": "2026-09-05",
+      "start": "2026-09-05T13:00:00+02:00",
+      "end": "2026-09-05T14:30:00+02:00",
+      "duration_minutes": 90,
+      "track": "dash",
+      "location": {
+        "name": "Skandia Bank, Lindhagensgatan 86",
+        "lat": 59.3335042,
+        "lng": 18.0170753
+      },
+      "published": true
+    },
+    {
+      "id": "let-s-build-a-nano-banana-app-with-flutter",
+      "type": "workshop",
+      "category": "workshop",
+      "title": "Let's Build a Nano Banana App with Flutter",
+      "description": "In this hands-on workshop, we'll build a fun, creative mobile app using Flutter powered by Nano Banana.\n\nWe'll focus on turning simple prompts into rich visual experiences and shaping an interface that feels fast, interactive, and intuitive. Using Firebase, we'll connect everything into a smooth, real-time flow so users can generate and refine results instantly.\n\nBy the end of the workshop, you will:\n- Build a Flutter app that generates and edits images\n- Turn user input into dynamic visual results\n- Design a clean, responsive UI around generative features\n- Explore how AI reshapes modern app experiences\n\nThis session is practical, with a strong focus on building something real. You'll leave with a new Flutter app added to your developer portfolio and a clear sense of how to bring AI-driven creativity into your own projects.\n\nNo special prerequisites are required, just Flutter set up on your machine and an existing Firebase account.\n",
+      "speaker_slugs": [
+        "ivanna-kacevica"
+      ],
+      "day": "2026-09-05",
+      "start": "2026-09-05T13:00:00+02:00",
+      "end": "2026-09-05T14:30:00+02:00",
+      "duration_minutes": 90,
+      "track": "ai",
+      "location": {
+        "name": "Skandia Bank, Lindhagensgatan 86",
+        "lat": 59.3335042,
+        "lng": 18.0170753
+      },
       "published": true
     },
     {
@@ -704,45 +726,35 @@
         "jan-vincent-hoffbauer"
       ],
       "day": "2026-09-05",
-      "start": "2026-09-05T13:30:00+02:00",
-      "end": "2026-09-05T15:00:00+02:00",
-      "duration_minutes": 90,
-      "track": "dash",
-      "location": null,
-      "published": true
-    },
-    {
-      "id": "let-s-build-a-nano-banana-app-with-flutter",
-      "type": "workshop",
-      "category": "workshop",
-      "title": "Let's Build a Nano Banana App with Flutter",
-      "description": "In this hands-on workshop, we'll build a fun, creative mobile app using Flutter powered by Nano Banana.\n\nWe'll focus on turning simple prompts into rich visual experiences and shaping an interface that feels fast, interactive, and intuitive. Using Firebase, we'll connect everything into a smooth, real-time flow so users can generate and refine results instantly.\n\nBy the end of the workshop, you will:\n- Build a Flutter app that generates and edits images\n- Turn user input into dynamic visual results\n- Design a clean, responsive UI around generative features\n- Explore how AI reshapes modern app experiences\n\nThis session is practical, with a strong focus on building something real. You'll leave with a new Flutter app added to your developer portfolio and a clear sense of how to bring AI-driven creativity into your own projects.\n\nNo special prerequisites are required, just Flutter set up on your machine and an existing Firebase account.\n",
-      "speaker_slugs": [
-        "ivanna-kacevica"
-      ],
-      "day": "2026-09-05",
-      "start": "2026-09-05T13:30:00+02:00",
-      "end": "2026-09-05T15:00:00+02:00",
+      "start": "2026-09-05T15:00:00+02:00",
+      "end": "2026-09-05T16:30:00+02:00",
       "duration_minutes": 90,
       "track": "ai",
-      "location": null,
+      "location": {
+        "name": "Skandia Bank, Lindhagensgatan 86",
+        "lat": 59.3335042,
+        "lng": 18.0170753
+      },
       "published": true
     },
     {
-      "id": "optional-afterparty",
-      "type": "activity",
-      "category": "social",
-      "title": "Optional Afterparty",
-      "speaker_slugs": [],
+      "id": "lukas-klingsbo-supabase-workshop",
+      "type": "workshop",
+      "category": "workshop",
+      "title": "Building a Real-Time Multiplayer Space Game with Flame and Supabase",
+      "description": "Building real-time multiplayer games traditionally meant setting up dedicated game servers, orchestrating complex WebSocket states, and dealing with massive infrastructure overhead. But what if you could manage a global game loop using only Flutter and serverless primitives?\n\nLed by a core maintainer of Flame and a Supabase SDK engineer, this hands-on workshop walks you through building a fast-paced multiplayer space shooter from scratch. We'll skip the backend infrastructure headaches and leverage Supabase Realtime to power our netcode. You will learn how to initialize a high-performance 2D canvas with the Flame engine, bind player inputs to ship physics, and synchronize positions at 60 FPS across clients using Supabase Broadcast events. Furthermore, we'll use Supabase Presence to build dynamic game lobbies and handle abrupt player disconnections cleanly. Stop dreaming about your multiplayer game idea and come build it, run it locally, and deploy it globally in a single session.\n",
+      "speaker_slugs": [
+        "lukas-klingsbo"
+      ],
       "day": "2026-09-05",
-      "start": "2026-09-05T16:30:00+02:00",
-      "end": "2026-09-05T18:00:00+02:00",
+      "start": "2026-09-05T15:00:00+02:00",
+      "end": "2026-09-05T16:30:00+02:00",
       "duration_minutes": 90,
-      "track": null,
+      "track": "turbo",
       "location": {
-        "name": "Stockholm Under Stjärnorna",
-        "lat": 59.3307344,
-        "lng": 18.0669868
+        "name": "Skandia Bank, Lindhagensgatan 86",
+        "lat": 59.3335042,
+        "lng": 18.0170753
       },
       "published": true
     }
@@ -808,11 +820,21 @@
       "slug": "brandon-derosier",
       "name": "Brandon DeRosier",
       "role": "",
-      "bio": "",
+      "bio": "Brandon (bdero) is the creator of Flutter GPU and Flutter Scene. He spent years on Flutter's engine team at Google building Impeller, Flutter's rendering backend, and now works independently full time on Flutter's graphics stack and the Scene ecosystem, including its editor and tooling.\n",
       "photo": "https://flutterfriends.dev/images/speakers/brandon-derosier.jpg",
       "social": {
         "x": "https://x.com/algebrandon",
         "github": "https://github.com/bdero"
+      }
+    },
+    {
+      "slug": "renuka-kelkar",
+      "name": "Renuka Kelkar",
+      "role": "Flutter GDE",
+      "bio": "",
+      "photo": "https://flutterfriends.dev/images/speakers/renuka-kelkar.png",
+      "social": {
+        "x": "https://x.com/KelkarRenuka"
       }
     },
     {
@@ -956,16 +978,6 @@
       }
     },
     {
-      "slug": "kemone-phillips",
-      "name": "Kemone Phillips II",
-      "role": "",
-      "bio": "",
-      "photo": "https://flutterfriends.dev/images/speakers/kemone-phillips.jpg",
-      "social": {
-        "linkedin": "https://www.linkedin.com/in/kemone-phillips-ii-5a050760/"
-      }
-    },
-    {
       "slug": "jochum-van-der-ploeg",
       "name": "Jochum van der Ploeg",
       "role": "",
@@ -1004,13 +1016,15 @@
       "bio": "Lukas Klingsbo is a Flutter and Dart Google Developer Expert (GDE) and a lead maintainer of Flame, the most popular 2D game engine for Flutter. As a member of the Blue Fire open source collective, he actively contributes to widely used packages like Flame and Audioplayers. Lukas also builds and maintains the Flutter SDK at Supabase and is a core maintainer of Melos, a CLI tool for managing Dart monorepos. In his free time, he enjoys rock climbing, backpacking, and building split ergonomic keyboards.\n",
       "photo": "https://flutterfriends.dev/images/lukas-profile.jpg",
       "social": {
-        "x": "https://x.com/spydon"
+        "x": "https://x.com/spydon",
+        "linkedin": "https://linkedin.com/in/spydon",
+        "bluesky": "https://bsky.app/profile/spydon.dev"
       }
     },
     {
       "slug": "oskar-zajac",
       "name": "Oskar Zając",
-      "role": "",
+      "role": "QA Engineer @ LeanCode",
       "bio": "",
       "photo": "https://flutterfriends.dev/images/speakers/oskar-zajac.jpg",
       "social": {
