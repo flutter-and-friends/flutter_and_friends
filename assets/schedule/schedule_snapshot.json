@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-08-25T15:19:00+00:00",
-  "version": 239436001938412,
+  "generated_at": "2026-08-26T11:36:06+00:00",
+  "version": 2763342782607530,
   "days": [
     {
       "date": "2026-09-03",
@@ -159,6 +159,22 @@
       "track": null,
       "location": {
         "name": "Meeting point coming soon"
+      },
+      "published": true
+    },
+    {
+      "id": "sauna-bathing",
+      "type": "activity",
+      "category": "activity",
+      "title": "Sauna bathing",
+      "speaker_slugs": [],
+      "day": "2026-09-03",
+      "start": "2026-09-03T14:00:00+02:00",
+      "end": "2026-09-03T16:00:00+02:00",
+      "duration_minutes": 120,
+      "track": null,
+      "location": {
+        "name": "Venue coming soon"
       },
       "published": true
     },
