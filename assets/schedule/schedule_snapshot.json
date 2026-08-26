@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-08-26T11:36:06+00:00",
-  "version": 2763342782607530,
+  "generated_at": "2026-08-26T11:47:56+00:00",
+  "version": 4674723212842671,
   "days": [
     {
       "date": "2026-09-03",
@@ -174,7 +174,9 @@
       "duration_minutes": 120,
       "track": null,
       "location": {
-        "name": "Venue coming soon"
+        "name": "Söder Mälarstrand 24X",
+        "lat": 59.321203,
+        "lng": 18.058561
       },
       "published": true
     },
