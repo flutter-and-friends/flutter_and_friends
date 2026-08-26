@@ -1,5 +1,5 @@
 {
-  "version": 515301040,
+  "version": 846022414,
   "tiers": [
     {
       "id": "platinum",
@@ -52,6 +52,12 @@
           "name": "DCM",
           "url": "https://dcm.dev",
           "logo": "assets/sponsors/dcm.svg"
+        },
+        {
+          "id": "widgetbook",
+          "name": "Widgetbook",
+          "url": "https://www.widgetbook.io",
+          "logo": "assets/sponsors/widgetbook.svg"
         }
       ]
     },
@@ -59,12 +65,6 @@
       "id": "event_sponsor",
       "displayName": "Event Sponsor",
       "sponsors": [
-        {
-          "id": "widgetbook",
-          "name": "Widgetbook",
-          "url": "https://www.widgetbook.io",
-          "logo": "assets/sponsors/widgetbook.svg"
-        },
         {
           "id": "firebase",
           "name": "Firebase",
