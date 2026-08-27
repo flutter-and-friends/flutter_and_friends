@@ -63,7 +63,7 @@ jobs:
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           platform: android
-          args: "--verbose --artifact=apk"
+          args: "--verbose --artifact=apk --dry-run"
 
       - name: 📦 Upload APK
         uses: actions/upload-artifact@v4
@@ -153,7 +153,7 @@ jobs:
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           platform: ios
-          args: "--export-options-plist ios/GHAExportOptions.plist --verbose"
+          args: "--export-options-plist ios/GHAExportOptions.plist --verbose --dry-run"
 
       - name: 🧹 Clean Up
         if: ${{ always() }}
