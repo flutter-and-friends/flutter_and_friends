@@ -15,12 +15,12 @@
     <key>provisioningProfiles</key>
     <dict>
     <key>com.felangel.flutter-and-friends</key>
-    <string>Felix Flutter &amp; Friends</string>
+    <string>Flutter and Friends App Store</string>
     </dict>
 	<key>stripSwiftSymbols</key>
 	<true/>
 	<key>teamID</key>
-	<string>HNHCWRWB4P</string>
+	<string>BS5QLG3TVU</string>
 	<key>testFlightInternalTestingOnly</key>
 	<false/>
 	<key>uploadSymbols</key>
