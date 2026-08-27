@@ -1,7 +1,7 @@
 name: flutter_and_friends
 description: The official Flutter & Friends conference app.
 publish_to: none
-version: 1.1.14+24
+version: 1.1.15+25
 
 environment:
   sdk: ">=3.13.0 <4.0.0"
