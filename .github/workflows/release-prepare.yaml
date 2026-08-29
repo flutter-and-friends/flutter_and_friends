@@ -26,7 +26,7 @@ jobs:
           channel: stable
 
       - name: 🏷️ Version and open release PR
-        uses: bluefireteam/melos-action@v3
+        uses: bluefireteam/melos-action@v3.9.0
         with:
           melos-version: ^8.6.0
           run-versioning: true
