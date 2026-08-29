@@ -56,6 +56,6 @@ The Anonymous sign-in provider must be enabled under Authentication in the Fireb
 Releases are versioned with [melos](https://melos.invertase.dev) from the conventional commit history, so PR titles must follow the [conventional commits](https://www.conventionalcommits.org) format (enforced by the `PR title is conventional` workflow). `feat` bumps the minor version, `fix`, `perf`, `refactor` and `revert` bump the patch version, and the build number is incremented on every release.
 
 1. Run the [Prepare release](https://github.com/flutter-and-friends/flutter_and_friends/actions/workflows/release-prepare.yaml) workflow. It bumps the version in `pubspec.yaml`, updates `CHANGELOG.md`, and opens a `chore(release)` PR.
-2. Review and merge the PR. The `Tag release` workflow tags the merge commit as `flutter_and_friends-v<version>` and starts the `release` workflow on that tag, which builds and uploads the Android and iOS releases through Shorebird.
+2. Review and merge the PR. The `Tag release` workflow tags the merge commit as `v<version>` and starts the `release` workflow on that tag, which builds and uploads the Android and iOS releases through Shorebird.
 
 The `release` workflow can also be started by hand from the Actions tab (pick the release tag under "Use workflow from") to retry a failed build.

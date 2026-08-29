@@ -41,7 +41,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   json_serializable: ^6.8.0
-  melos: ^8.5.0
+  melos: ^8.6.0
   very_good_analysis: ^10.0.0
 
 flutter:

@@ -28,6 +28,7 @@ jobs:
       - name: 🏷️ Version and open release PR
         uses: bluefireteam/melos-action@v3
         with:
+          melos-version: ^8.6.0
           run-versioning: true
           include-private: true
           create-pr: true
