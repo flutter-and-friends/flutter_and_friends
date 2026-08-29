@@ -30,15 +30,16 @@ class LocationDetails extends StatelessWidget {
           size: 18,
           color: theme.colorScheme.secondary,
         ),
-        if (coordinates != null)
-          InkWell(
-            onTap: () => launchUrlString(
-              'https://maps.google.com/?q=${coordinates.$1},${coordinates.$2}',
-            ),
-            child: label,
-          )
-        else
-          label,
+        Flexible(
+          child: coordinates != null
+              ? InkWell(
+                  onTap: () => launchUrlString(
+                    'https://maps.google.com/?q=${coordinates.$1},${coordinates.$2}',
+                  ),
+                  child: label,
+                )
+              : label,
+        ),
       ],
     );
   }

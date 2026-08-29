@@ -313,6 +313,22 @@ class ScheduleRepository {
     return parsed.add(Duration(hours: hours, minutes: minutes) * sign);
   }
 
+  /// The feed's stage labels are styled for the website's headings; the app
+  /// shows them as plain names, and sentence-cases any other all-caps label.
+  static const _trackLabelOverrides = {
+    'THEATRE STAGE': 'Theatre stage',
+    'Kägelbanan STAGE': 'Kägelbanan',
+  };
+
+  static String _displayTrackLabel(String label) {
+    final override = _trackLabelOverrides[label];
+    if (override != null) return override;
+    final isAllCaps =
+        label == label.toUpperCase() && label != label.toLowerCase();
+    if (isAllCaps) return label[0] + label.substring(1).toLowerCase();
+    return label;
+  }
+
   Location? _locationFromWire(
     Map<String, dynamic> json,
     Map<String, Map<String, String>> trackLabelsByDay,
@@ -333,7 +349,7 @@ class ScheduleRepository {
       // but if it ever slips through, don't fabricate a label - no
       // location is preferable to a wrong one, consistent with the
       // location fix already shipped.
-      if (label != null) trackLabel = label;
+      if (label != null) trackLabel = _displayTrackLabel(label);
     }
 
     final rawLocation = json['location'] as Map<String, dynamic>?;

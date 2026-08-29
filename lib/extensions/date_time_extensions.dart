@@ -3,6 +3,13 @@ import 'package:intl/intl.dart';
 
 extension DateTimeX on DateTime {
   String prettyPrint(BuildContext context, Duration duration) {
-    return '''${DateFormat.MMMMd().format(this)}, ${TimeOfDay.fromDateTime(this).format(context)} - ${TimeOfDay.fromDateTime(add(duration)).format(context)}''';
+    final date = DateFormat.MMMMd().format(this);
+    return '$date, ${prettyPrintTime(context, duration)}';
+  }
+
+  String prettyPrintTime(BuildContext context, Duration duration) {
+    final start = TimeOfDay.fromDateTime(this).format(context);
+    final end = TimeOfDay.fromDateTime(add(duration)).format(context);
+    return '$start - $end';
   }
 }

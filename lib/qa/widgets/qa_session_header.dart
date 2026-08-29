@@ -55,10 +55,12 @@ class QaSessionHeader extends StatelessWidget {
                     color: theme.colorScheme.secondary,
                   ),
                   const SizedBox(width: 4),
-                  Text(
-                    talk.startTime.prettyPrint(context, talk.duration),
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      color: theme.colorScheme.secondary,
+                  Flexible(
+                    child: Text(
+                      talk.startTime.prettyPrint(context, talk.duration),
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        color: theme.colorScheme.secondary,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 4),

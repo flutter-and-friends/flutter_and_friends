@@ -154,7 +154,8 @@ class ScheduleListView extends StatelessWidget {
       separatorBuilder: (_, _) => const SizedBox(height: 16),
       padding: const EdgeInsets.all(12),
       itemCount: events.length,
-      itemBuilder: (context, index) => EventCard(event: events[index]),
+      itemBuilder: (context, index) =>
+          EventCard(event: events[index], showDate: false),
     );
   }
 }
