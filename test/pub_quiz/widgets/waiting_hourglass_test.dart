@@ -9,24 +9,40 @@ Finder get _rotation => find
     )
     .first;
 
+HourglassPainter _painter(WidgetTester tester) {
+  final paint = tester.widget<CustomPaint>(
+    find.descendant(
+      of: find.byType(WaitingHourglass),
+      matching: find.byType(CustomPaint),
+    ),
+  );
+  return paint.painter! as HourglassPainter;
+}
+
 void main() {
-  testWidgets('runs the sand through and flips the glass', (tester) async {
+  testWidgets('runs the sand through, then flips back to the start', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       const MaterialApp(home: Scaffold(body: WaitingHourglass())),
     );
 
-    expect(find.byIcon(Icons.hourglass_top), findsOneWidget);
+    expect(_painter(tester).sand, 0);
+    expect(tester.widget<Transform>(_rotation).transform, Matrix4.identity());
+
+    await tester.pump(const Duration(milliseconds: 1080));
+    expect(_painter(tester).sand, closeTo(0.5, 0.01));
+    expect(tester.widget<Transform>(_rotation).transform, Matrix4.identity());
 
     await tester.pump(const Duration(milliseconds: 1500));
-    expect(find.byIcon(Icons.hourglass_bottom), findsOneWidget);
-    var rotate = tester.widget<Transform>(_rotation);
-    expect(rotate.transform, Matrix4.identity());
+    expect(_painter(tester).sand, 1);
+    expect(
+      tester.widget<Transform>(_rotation).transform,
+      isNot(Matrix4.identity()),
+    );
 
-    await tester.pump(const Duration(milliseconds: 700));
-    rotate = tester.widget<Transform>(_rotation);
-    expect(rotate.transform, isNot(Matrix4.identity()));
-
-    await tester.pump(const Duration(milliseconds: 600));
-    expect(find.byIcon(Icons.hourglass_top), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 420));
+    expect(_painter(tester).sand, 0);
+    expect(tester.widget<Transform>(_rotation).transform, Matrix4.identity());
   });
 }

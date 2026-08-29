@@ -23,6 +23,7 @@ class LobbyView extends StatelessWidget {
       children: [
         Card(
           child: ListTile(
+            contentPadding: const EdgeInsets.only(left: 16, right: 4),
             leading: const Icon(Icons.groups),
             title: Text(
               myTeam?.name ?? '',
