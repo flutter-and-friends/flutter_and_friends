@@ -9,7 +9,7 @@
           "id": "flutter",
           "name": "Flutter",
           "url": "https://flutter.dev",
-          "logo": "assets/sponsors/flutter.svg"
+          "logo": "assets/sponsors/flutter.png"
         }
       ]
     },
@@ -21,13 +21,13 @@
           "id": "revenuecat",
           "name": "RevenueCat",
           "url": "https://www.revenuecat.com",
-          "logo": "assets/sponsors/revenuecat.svg"
+          "logo": "assets/sponsors/revenuecat.png"
         },
         {
           "id": "serverpod",
           "name": "Serverpod",
           "url": "https://serverpod.dev",
-          "logo": "assets/sponsors/serverpod.svg"
+          "logo": "assets/sponsors/serverpod.png"
         },
         {
           "id": "leancode",
@@ -45,19 +45,19 @@
           "id": "shorebird",
           "name": "Shorebird",
           "url": "https://shorebird.dev",
-          "logo": "assets/sponsors/shorebird.svg"
+          "logo": "assets/sponsors/shorebird.png"
         },
         {
           "id": "dcm",
           "name": "DCM",
           "url": "https://dcm.dev",
-          "logo": "assets/sponsors/dcm.svg"
+          "logo": "assets/sponsors/dcm.png"
         },
         {
           "id": "widgetbook",
           "name": "Widgetbook",
           "url": "https://www.widgetbook.io",
-          "logo": "assets/sponsors/widgetbook.svg"
+          "logo": "assets/sponsors/widgetbook.png"
         }
       ]
     },
@@ -69,13 +69,13 @@
           "id": "firebase",
           "name": "Firebase",
           "url": "https://firebase.google.com",
-          "logo": "assets/sponsors/firebase.svg"
+          "logo": "assets/sponsors/firebase.png"
         },
         {
           "id": "skandia",
           "name": "Skandia",
           "url": "https://www.skandia.se",
-          "logo": "assets/sponsors/skandia.svg"
+          "logo": "assets/sponsors/skandia.png"
         }
       ]
     }
