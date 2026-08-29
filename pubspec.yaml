@@ -1,6 +1,7 @@
 name: flutter_and_friends
 description: The official Flutter & Friends conference app.
 publish_to: none
+repository: https://github.com/flutter-and-friends/flutter_and_friends
 version: 1.1.15+25
 
 environment:
@@ -40,6 +41,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   json_serializable: ^6.8.0
+  melos: ^8.5.0
   very_good_analysis: ^10.0.0
 
 flutter:
@@ -52,3 +54,13 @@ flutter:
     - assets/badge_templates/capybaras/
     - shorebird.yaml
   uses-material-design: true
+
+melos:
+  useRootAsPackage: true
+  command:
+    version:
+      branch: main
+      releaseUrl: true
+      includeCommitId: true
+      linkToCommits: true
+      workspaceChangelog: false
