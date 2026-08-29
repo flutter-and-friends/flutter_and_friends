@@ -99,29 +99,36 @@ class _VoteStatisticsState extends State<VoteStatistics>
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Expanded(
-          child: Column(
-            children: [
-              for (var i = 0; i < question.options.length; i++) ...[
-                if (i > 0) const SizedBox(height: 10),
-                Expanded(
-                  child: AnimatedBuilder(
-                    animation: _bars[i],
-                    builder: (context, _) {
-                      final count = i < counts.length ? counts[i] : 0;
-                      final share = total == 0 ? 0.0 : count / total;
-                      final progress = _bars[i].value;
-                      return QuizOptionButton(
-                        index: i,
-                        label: question.options[i],
-                        style: _styleOf(i),
-                        count: (count * progress).round(),
-                        share: share * progress,
-                      );
-                    },
-                  ),
+          child: LayoutBuilder(
+            builder: (context, constraints) => SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (var i = 0; i < question.options.length; i++) ...[
+                      if (i > 0) const SizedBox(height: 10),
+                      AnimatedBuilder(
+                        animation: _bars[i],
+                        builder: (context, _) {
+                          final count = i < counts.length ? counts[i] : 0;
+                          final share = total == 0 ? 0.0 : count / total;
+                          final progress = _bars[i].value;
+                          return QuizOptionButton(
+                            index: i,
+                            label: question.options[i],
+                            style: _styleOf(i),
+                            count: (count * progress).round(),
+                            share: share * progress,
+                          );
+                        },
+                      ),
+                    ],
+                  ],
                 ),
-              ],
-            ],
+              ),
+            ),
           ),
         ),
         const SizedBox(height: 16),

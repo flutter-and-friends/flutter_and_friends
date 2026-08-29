@@ -29,7 +29,8 @@ enum QuizOptionStyle {
 }
 
 /// A big tappable answer, doubling as the revealed result once the answer is
-/// known: [count] and [share] draw how many teams picked it.
+/// known: [count] and [share] show how many teams picked it, as a number
+/// with a percentage and as a bar under the label.
 class QuizOptionButton extends StatelessWidget {
   const QuizOptionButton({
     required this.index,
@@ -49,8 +50,9 @@ class QuizOptionButton extends StatelessWidget {
   /// How many teams picked this option, shown after the reveal.
   final int? count;
 
-  /// [count] as a fraction of all answers, drawn as a bar behind the label.
-  /// Drawn as given, so the caller decides how the bar grows in.
+  /// [count] as a fraction of all answers, drawn as a bar under the label
+  /// and written as a percentage. Drawn as given, so the caller decides how
+  /// the bar grows in.
   final double? share;
 
   @override
@@ -70,6 +72,7 @@ class QuizOptionButton extends StatelessWidget {
       QuizOptionStyle.wrong => Icons.cancel,
       _ => null,
     };
+    final foreground = Colors.white.withValues(alpha: dimmed ? 0.7 : 1);
     return Semantics(
       button: onPressed != null,
       selected: style == QuizOptionStyle.selected,
@@ -89,65 +92,117 @@ class QuizOptionButton extends StatelessWidget {
           type: MaterialType.transparency,
           child: InkWell(
             onTap: onPressed,
-            child: Stack(
-              children: [
-                if (share case final share?)
-                  Positioned.fill(
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: FractionallySizedBox(
-                        widthFactor: share.clamp(0, 1),
-                        child: ColoredBox(
-                          color: Colors.black.withValues(alpha: 0.2),
-                        ),
-                      ),
-                    ),
-                  ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  child: Row(
-                    children: [
-                      _Letter(
-                        letter: quizOptionLetters[index],
-                        dimmed: dimmed,
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                children: [
+                  _Letter(letter: quizOptionLetters[index], dimmed: dimmed),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
                           label,
                           style: theme.textTheme.titleMedium?.copyWith(
-                            color: Colors.white.withValues(
-                              alpha: dimmed ? 0.7 : 1,
-                            ),
+                            color: foreground,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                      ),
-                      if (count case final count?) ...[
-                        const SizedBox(width: 8),
-                        Text(
-                          '$count',
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
+                        if (share case final share?) ...[
+                          const SizedBox(height: 8),
+                          _ShareBar(share: share, color: foreground),
+                        ],
                       ],
-                      if (trailing case final trailing?) ...[
-                        const SizedBox(width: 8),
-                        Icon(trailing, color: Colors.white),
-                      ],
-                    ],
+                    ),
                   ),
-                ),
-              ],
+                  if (count case final count?) ...[
+                    const SizedBox(width: 12),
+                    _VoteCount(count: count, share: share, color: foreground),
+                  ],
+                  if (trailing case final trailing?) ...[
+                    const SizedBox(width: 8),
+                    Icon(trailing, color: Colors.white),
+                  ],
+                ],
+              ),
             ),
           ),
         ),
       ),
+    );
+  }
+}
+
+/// A slim track under the label, filled from the left by [share].
+class _ShareBar extends StatelessWidget {
+  const _ShareBar({required this.share, required this.color});
+
+  final double share;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(3),
+      child: SizedBox(
+        height: 6,
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: ColoredBox(color: color.withValues(alpha: 0.3)),
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: FractionallySizedBox(
+                widthFactor: share.clamp(0, 1),
+                child: ColoredBox(color: color),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// How many teams picked the option, with the percentage underneath.
+class _VoteCount extends StatelessWidget {
+  const _VoteCount({
+    required this.count,
+    required this.share,
+    required this.color,
+  });
+
+  final int count;
+  final double? share;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text(
+          '$count',
+          style: theme.textTheme.titleMedium?.copyWith(
+            color: color,
+            fontWeight: FontWeight.w700,
+            fontFeatures: const [FontFeature.tabularFigures()],
+          ),
+        ),
+        if (share case final share?)
+          Text(
+            '${(share * 100).round()}%',
+            style: theme.textTheme.labelSmall?.copyWith(
+              color: color,
+              fontFeatures: const [FontFeature.tabularFigures()],
+            ),
+          ),
+      ],
     );
   }
 }
