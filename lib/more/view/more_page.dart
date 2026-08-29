@@ -4,7 +4,6 @@ import 'package:flutter_and_friends/friends_badge/friends_badge.dart';
 import 'package:flutter_and_friends/pub_quiz/pub_quiz.dart';
 import 'package:flutter_and_friends/qa/qa.dart';
 import 'package:flutter_and_friends/theme/theme.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 class MorePage extends StatelessWidget {
   const MorePage({super.key});
@@ -21,47 +20,81 @@ class MoreView extends StatelessWidget {
     return Scaffold(
       appBar: FFAppBar(),
       body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        padding: const EdgeInsets.all(12),
         children: [
-          ListTile(
-            leading: const Icon(Icons.question_answer),
-            title: const Text('Q&A'),
-            subtitle: const Text('Ask the panel a question'),
-            trailing: const Icon(Icons.chevron_right),
+          MoreItem(
+            icon: Icons.question_answer,
+            title: 'Q&A',
+            subtitle: 'Ask the panel a question',
             onTap: () => Navigator.of(context).push(QaPage.route()),
           ),
-          ListTile(
-            leading: const Icon(Icons.quiz),
-            title: const Text('Pub Quiz'),
-            subtitle: const Text('Play the Flutter & Fun Pub Quiz'),
-            trailing: const Icon(Icons.chevron_right),
+          MoreItem(
+            icon: Icons.quiz,
+            title: 'Pub Quiz',
+            subtitle: 'Play the Flutter & Fun Pub Quiz',
             onTap: () => Navigator.of(context).push(PubQuizPage.route()),
           ),
-          ListTile(
-            leading: const Icon(Icons.badge_outlined),
-            title: const Text('Friends Badge'),
-            subtitle: const Text('Customize your badge'),
-            trailing: const Icon(Icons.chevron_right),
+          MoreItem(
+            icon: Icons.badge_outlined,
+            title: 'Friends Badge',
+            subtitle: 'Customize your badge',
             onTap: () => Navigator.of(context).push(FriendsBadgePage.route()),
           ),
-          ListTile(
-            leading: const Icon(Icons.contact_page),
-            title: const Text('Collected People'),
-            subtitle: const Text('People you met, tap a badge to collect'),
-            trailing: const Icon(Icons.chevron_right),
+          MoreItem(
+            icon: Icons.contact_page,
+            title: 'Collected People',
+            subtitle: 'People you met, tap a badge to collect',
             onTap: () =>
                 Navigator.of(context).push(CollectedPeoplePage.route()),
           ),
-          ListTile(
-            leading: const Icon(Icons.map),
-            title: const Text('Activity Map'),
-            subtitle: const Text('View the locations of all activities'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () => launchUrlString(
-              'https://www.google.com/maps/d/u/0/viewer?mid=102KWzlh5enCfJXbgTu8wN8FSfeOzsMw&femb=1&ll=59.32440113540593%2C18.059913600000016&z=13',
-            ),
-          ),
         ],
+      ),
+    );
+  }
+}
+
+/// One entry on the More page: a card with an icon, a title, a short
+/// description and a chevron, styled like the schedule cards.
+class MoreItem extends StatelessWidget {
+  const MoreItem({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+    super.key,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Card(
+      clipBehavior: Clip.hardEdge,
+      margin: const EdgeInsets.only(bottom: 12),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 4,
+        ),
+        leading: Icon(icon, color: theme.colorScheme.primary),
+        title: Text(
+          title,
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: onTap,
       ),
     );
   }

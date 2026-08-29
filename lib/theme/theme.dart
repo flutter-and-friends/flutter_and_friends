@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_and_friends/theme/widgets/ff_app_bar.dart';
 
 export 'cubit/theme_cubit.dart';
 export 'widgets/widgets.dart';
@@ -6,7 +7,7 @@ export 'widgets/widgets.dart';
 final lightTheme = ThemeData(
   appBarTheme: AppBarTheme(
     centerTitle: true,
-    toolbarHeight: kToolbarHeight + 16,
+    toolbarHeight: ffToolbarHeight,
     scrolledUnderElevation: 1,
     elevation: 1,
     shadowColor: _lightColorScheme.secondary,
@@ -29,7 +30,7 @@ final lightTheme = ThemeData(
 final darkTheme = ThemeData(
   appBarTheme: AppBarTheme(
     centerTitle: true,
-    toolbarHeight: kToolbarHeight + 16,
+    toolbarHeight: ffToolbarHeight,
     scrolledUnderElevation: 1,
     elevation: 1,
     shadowColor: _darkColorScheme.secondary,
@@ -51,7 +52,7 @@ final darkTheme = ThemeData(
 
 const _lightColorScheme = ColorScheme(
   brightness: Brightness.light,
-  primary: Color(0xFF005AC1),
+  primary: Color(0xFF3D8EF2),
   onPrimary: Color(0xFFFFFFFF),
   primaryContainer: Color(0xFFD8E2FF),
   onPrimaryContainer: Color(0xFF001A41),
@@ -72,7 +73,7 @@ const _lightColorScheme = ColorScheme(
   inverseSurface: Color(0xFF303033),
   inversePrimary: Color(0xFFADC6FF),
   shadow: Color(0xFF000000),
-  surfaceTint: Color(0xFF005AC1),
+  surfaceTint: Color(0xFF3D8EF2),
   outlineVariant: Color(0xFFC4C6D0),
   scrim: Color(0xFF000000),
   surface: Color(0xFFFAF9FD),
@@ -102,7 +103,7 @@ const _darkColorScheme = ColorScheme(
   outline: Color(0xFF8E9099),
   onInverseSurface: Color(0xFF1B1B1F),
   inverseSurface: Color(0xFFE3E2E6),
-  inversePrimary: Color(0xFF005AC1),
+  inversePrimary: Color(0xFF3D8EF2),
   shadow: Color(0xFF000000),
   surfaceTint: Color(0xFFADC6FF),
   outlineVariant: Color(0xFF44474F),

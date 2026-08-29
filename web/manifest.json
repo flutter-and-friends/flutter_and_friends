@@ -4,7 +4,7 @@
     "start_url": ".",
     "display": "standalone",
     "background_color": "#FAF9FD",
-    "theme_color": "#005AC1",
+    "theme_color": "#3D8EF2",
     "description": "The official Flutter & Friends conference app.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,

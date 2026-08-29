@@ -50,6 +50,7 @@ class QuizOptionButton extends StatelessWidget {
   final int? count;
 
   /// [count] as a fraction of all answers, drawn as a bar behind the label.
+  /// Drawn as given, so the caller decides how the bar grows in.
   final double? share;
 
   @override
@@ -94,9 +95,7 @@ class QuizOptionButton extends StatelessWidget {
                   Positioned.fill(
                     child: Align(
                       alignment: Alignment.centerLeft,
-                      child: AnimatedFractionallySizedBox(
-                        duration: const Duration(milliseconds: 800),
-                        curve: Curves.easeOutCubic,
+                      child: FractionallySizedBox(
                         widthFactor: share.clamp(0, 1),
                         child: ColoredBox(
                           color: Colors.black.withValues(alpha: 0.2),

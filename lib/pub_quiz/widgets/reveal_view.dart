@@ -3,12 +3,12 @@ import 'package:flutter_and_friends/pub_quiz/cubit/pub_quiz_cubit.dart';
 import 'package:flutter_and_friends/pub_quiz/models/models.dart';
 import 'package:flutter_and_friends/pub_quiz/widgets/award_badge.dart';
 import 'package:flutter_and_friends/pub_quiz/widgets/question_view.dart';
-import 'package:flutter_and_friends/pub_quiz/widgets/quiz_option_button.dart';
+import 'package:flutter_and_friends/pub_quiz/widgets/vote_statistics.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-/// The moment after a question closes: the correct answer lights up, this
-/// device's pick is marked right or wrong, every option shows how many
-/// teams chose it, and the team learns what it just earned.
+/// The moment after a question closes: how many teams chose each option
+/// grows in bar by bar, then the correct answer lights up, this device's
+/// pick is marked right or wrong, and the team learns what it just earned.
 class RevealView extends StatelessWidget {
   const RevealView({super.key});
 
@@ -20,9 +20,6 @@ class RevealView extends StatelessWidget {
     if (quiz == null || question == null) {
       return const Center(child: CircularProgressIndicator());
     }
-    final correctIndex = question.correctIndex;
-    final counts = question.answerCounts ?? const <int>[];
-    final total = counts.fold<int>(0, (sum, count) => sum + count);
     final myChoice = state.myAward?.choice ?? state.myAnswer?.choice;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
@@ -39,31 +36,13 @@ class RevealView extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           Expanded(
-            child: Column(
-              children: [
-                for (var i = 0; i < question.options.length; i++) ...[
-                  if (i > 0) const SizedBox(height: 10),
-                  Expanded(
-                    child: QuizOptionButton(
-                      index: i,
-                      label: question.options[i],
-                      style: i == correctIndex
-                          ? QuizOptionStyle.correct
-                          : i == myChoice
-                          ? QuizOptionStyle.wrong
-                          : QuizOptionStyle.dimmed,
-                      count: i < counts.length ? counts[i] : 0,
-                      share: total == 0 || i >= counts.length
-                          ? 0
-                          : counts[i] / total,
-                    ),
-                  ),
-                ],
-              ],
+            child: VoteStatistics(
+              key: ValueKey(state.revealKey),
+              question: question,
+              myChoice: myChoice,
+              result: _MyResult(award: state.myAward),
             ),
           ),
-          const SizedBox(height: 16),
-          _MyResult(award: state.myAward),
         ],
       ),
     );

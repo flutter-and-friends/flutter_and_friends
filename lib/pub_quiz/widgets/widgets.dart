@@ -8,4 +8,5 @@ export 'reveal_view.dart';
 export 'scoreboard_view.dart';
 export 'team_name_field.dart';
 export 'team_setup_view.dart';
+export 'vote_statistics.dart';
 export 'waiting_hourglass.dart';

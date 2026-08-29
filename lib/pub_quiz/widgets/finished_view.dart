@@ -50,18 +50,15 @@ class Podium extends StatelessWidget {
   Widget build(BuildContext context) {
     ScoreboardEntry? at(int index) =>
         index < entries.length ? entries[index] : null;
-    return SizedBox(
-      height: 180,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Expanded(child: _PodiumStep(entry: at(1), rank: 2, height: 100)),
-          const SizedBox(width: 8),
-          Expanded(child: _PodiumStep(entry: at(0), rank: 1, height: 140)),
-          const SizedBox(width: 8),
-          Expanded(child: _PodiumStep(entry: at(2), rank: 3, height: 80)),
-        ],
-      ),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Expanded(child: _PodiumStep(entry: at(1), rank: 2, height: 100)),
+        const SizedBox(width: 8),
+        Expanded(child: _PodiumStep(entry: at(0), rank: 1, height: 140)),
+        const SizedBox(width: 8),
+        Expanded(child: _PodiumStep(entry: at(2), rank: 3, height: 80)),
+      ],
     );
   }
 }
@@ -84,25 +81,32 @@ class _PodiumStep extends StatelessWidget {
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0, end: 1),
       duration: Duration(milliseconds: 600 + rank * 200),
-      curve: Curves.easeOutBack,
+      curve: Curves.easeOutCubic,
       builder: (context, value, child) => Column(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Opacity(opacity: value.clamp(0, 1), child: child),
+          Opacity(opacity: value, child: child),
           const SizedBox(height: 6),
-          Container(
-            height: height * value,
-            decoration: BoxDecoration(
-              color: rank == 1
-                  ? theme.colorScheme.primary
-                  : theme.colorScheme.primaryContainer,
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(12),
+          SizedBox(
+            height: height,
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                height: height * value,
+                decoration: BoxDecoration(
+                  color: rank == 1
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.primaryContainer,
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(12),
+                  ),
+                ),
+                clipBehavior: Clip.antiAlias,
+                alignment: Alignment.topCenter,
+                padding: const EdgeInsets.only(top: 8),
+                child: RankMedal(rank: rank),
               ),
             ),
-            alignment: Alignment.topCenter,
-            padding: const EdgeInsets.only(top: 8),
-            child: RankMedal(rank: rank),
           ),
         ],
       ),
