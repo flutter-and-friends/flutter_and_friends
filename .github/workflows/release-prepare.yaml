@@ -1,0 +1,38 @@
+name: Prepare release
+
+on:
+  workflow_dispatch:
+
+env:
+  FLUTTER_VERSION: 3.47.1
+
+jobs:
+  prepare-release:
+    name: 📝 Prepare release
+    permissions:
+      contents: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📚 Git Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: 🎯 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+
+      - name: 🏷️ Version and open release PR
+        uses: bluefireteam/melos-action@v3
+        with:
+          melos-version: ^8.6.0
+          run-versioning: true
+          include-private: true
+          create-pr: true
+          pr-title: "chore(release): Release new app version"
+          pr-body: >-
+            Bumps the app version and updates the changelog. Merging this PR
+            tags the release and starts the release workflow.
