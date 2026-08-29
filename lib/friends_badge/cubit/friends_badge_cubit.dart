@@ -40,7 +40,7 @@ class FriendsBadgeCubit extends Cubit<FriendsBadgeState> {
   /// source on every keystroke, so it happens exactly once here.
   ui.Image? _sourceUiImage;
 
-  /// Long-lived isolate for the second compose phase (PNG decode +
+  /// Long-lived isolate for the second compose phase (RGBA wrap +
   /// [BadgeImage] construction).
   ///
   /// Back-pressure policy: [ReplaceBackpressureStrategy] — a queue of one,
@@ -169,7 +169,7 @@ class FriendsBadgeCubit extends Cubit<FriendsBadgeState> {
 
     // Phase 1 (root isolate): rasterize. Cheap at 240x416 with a cached
     // source image; dart:ui APIs cannot leave the root isolate.
-    final png = await BadgeComposer.renderPng(
+    final rgba = await BadgeComposer.renderRgba(
       sourceImage: source,
       template: state.template,
       name: state.name,
@@ -177,13 +177,16 @@ class FriendsBadgeCubit extends Cubit<FriendsBadgeState> {
       font: state.font,
     );
 
-    // Phase 2 (background isolate): PNG decode + BadgeImage construction.
+    // Phase 2 (background isolate): RGBA wrap + BadgeImage construction.
     // Stale requests dropped by the back-pressure strategy complete with
     // BackpressureDropException — expected, ignore.
     await _composeIsolate.init();
     _isolateInitialized = true;
     try {
-      final badgeImage = await _composeIsolate.compute(badgeImageFromPng, png);
+      final badgeImage = await _composeIsolate.compute(
+        badgeImageFromRgba,
+        rgba,
+      );
       emit(
         state.copyWith(
           badge: FriendsBadge(
