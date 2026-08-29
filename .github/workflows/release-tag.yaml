@@ -27,18 +27,14 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
 
-      # The root package is tagged as v<version>, matching what melos looks
-      # for when computing the next release.
       - name: 🏷️ Create and push tag
         id: melos
-        uses: bluefireteam/melos-action@v3.9.0
+        uses: bluefireteam/melos-action@v3
         with:
           melos-version: ^8.6.0
           tag: true
           include-private: true
 
-      # Tags pushed with GITHUB_TOKEN do not trigger other workflows, so the
-      # release workflow is started explicitly on the new tag.
       - name: 🚀 Start release workflow
         run: |
           for tag in ${{ steps.melos.outputs.tags }}; do
