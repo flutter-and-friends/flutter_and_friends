@@ -2,6 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+/// The sand in the waiting hourglass.
+const waitingSandColor = Color(0xFF3D8EF2);
+
 /// An hourglass that keeps running while the team waits: the sand runs from
 /// the top bulb into the bottom one, then the glass flips over and starts
 /// again.
@@ -23,7 +26,7 @@ class WaitingHourglass extends StatefulWidget {
   /// The glass. Defaults to the theme's `onSurfaceVariant`.
   final Color? color;
 
-  /// The sand. Defaults to the theme's `primary`.
+  /// The sand. Defaults to [waitingSandColor].
   final Color? sandColor;
 
   @override
@@ -51,7 +54,7 @@ class _WaitingHourglassState extends State<WaitingHourglass>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final color = widget.color ?? theme.colorScheme.onSurfaceVariant;
-    final sandColor = widget.sandColor ?? theme.colorScheme.primary;
+    final sandColor = widget.sandColor ?? waitingSandColor;
     return Semantics(
       label: 'Waiting',
       child: AnimatedBuilder(
