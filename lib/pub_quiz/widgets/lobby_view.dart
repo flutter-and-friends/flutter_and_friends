@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_and_friends/pub_quiz/cubit/pub_quiz_cubit.dart';
 import 'package:flutter_and_friends/pub_quiz/widgets/team_name_field.dart';
+import 'package:flutter_and_friends/pub_quiz/widgets/waiting_hourglass.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// Waiting for the host to start: the team's own name (still editable) and
@@ -38,11 +39,7 @@ class LobbyView extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 24),
-        Icon(
-          Icons.hourglass_empty,
-          size: 48,
-          color: theme.colorScheme.onSurfaceVariant,
-        ),
+        const WaitingHourglass(),
         const SizedBox(height: 12),
         Text(
           'Waiting for the host to start',
