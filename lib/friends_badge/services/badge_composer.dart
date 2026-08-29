@@ -13,15 +13,24 @@ import 'package:image/image.dart' as img;
 ///
 /// The pipeline has two phases with different threading constraints:
 ///
-/// 1. [renderPng] — rasterizes the composition on an offscreen 240x416
-///    Flutter Canvas via [TextPainter] and encodes it as PNG. `dart:ui`
-///    raster APIs only run on the root isolate, so this phase stays there.
-///    It takes a ready [ui.Image] of the source photo (cached by the caller)
-///    so no image decoding happens per compose.
-/// 2. [badgeImageFromPng] — decodes the PNG and builds the [BadgeImage]
-///    (which resizes into badge spec). Pure Dart on plain data — this is the
-///    phase that crosses the `integral_isolates` boundary in the cubit, so
-///    it is a top-level function taking and returning transferable values.
+/// 1. [renderRgba] — rasterizes the composition on an offscreen 240x416
+///    Flutter Canvas via [TextPainter] and reads it back as raw 8-bit RGBA.
+///    `dart:ui` raster APIs only run on the root isolate, so this phase
+///    stays there. It takes a ready [ui.Image] of the source photo (cached
+///    by the caller) so no image decoding happens per compose.
+/// 2. [badgeImageFromRgba] — wraps the RGBA bytes in an `img.Image` and
+///    builds the [BadgeImage] (which resizes into badge spec). Pure Dart on
+///    plain data — this is the phase that crosses the `integral_isolates`
+///    boundary in the cubit, so it is a top-level function taking and
+///    returning transferable values.
+///
+/// The hand-off is deliberately raw RGBA rather than PNG. On iOS, Impeller
+/// renders `Picture.toImage` into a wide-gamut (16-bit float) texture and
+/// `ImageByteFormat.png` encodes that as a 16-bit-per-channel PNG. The
+/// `friends_badge` quantizer compares raw channel values against a 0..255
+/// palette, so a 16-bit image dithers to an almost blank white panel.
+/// `ImageByteFormat.rawStraightRgba` is always converted to 8-bit RGBA by the
+/// engine, on every platform.
 ///
 /// Only pure black / white / red / yellow are painted so the output
 /// quantizes cleanly onto the badge's `blackWhiteYellowRed` palette.
@@ -34,12 +43,14 @@ class BadgeComposer {
   static const _red = m.Color(0xFFFF0000);
   static const _yellow = m.Color(0xFFFFFF00);
 
-  /// Rasterizes the composition to PNG bytes on the root isolate.
+  /// Rasterizes the composition to raw 8-bit straight-alpha RGBA bytes
+  /// ([kBadgePanelSize] wide and tall, 4 bytes per pixel) on the root
+  /// isolate.
   ///
   /// [sourceImage] is the user's photo as a [ui.Image] — convert once (see
   /// [toUiImage]) and reuse across composes; converting per compose would
   /// re-encode the full-resolution source every keystroke.
-  static Future<Uint8List> renderPng({
+  static Future<Uint8List> renderRgba({
     required ui.Image sourceImage,
     required BadgeTemplate template,
     required String name,
@@ -73,8 +84,18 @@ class BadgeComposer {
       kBadgePanelSize.width.toInt(),
       kBadgePanelSize.height.toInt(),
     );
-    final byteData = await rendered.toByteData(format: ui.ImageByteFormat.png);
-    return byteData!.buffer.asUint8List();
+    try {
+      final byteData = await rendered.toByteData(
+        format: ui.ImageByteFormat.rawStraightRgba,
+      );
+      return byteData!.buffer.asUint8List(
+        byteData.offsetInBytes,
+        byteData.lengthInBytes,
+      );
+    } finally {
+      rendered.dispose();
+      picture.dispose();
+    }
   }
 
   /// Bridges an `img.Image` (what the cubit decodes) into a [ui.Image] (what
@@ -276,12 +297,30 @@ class BadgeComposer {
   };
 }
 
-/// Isolate entrypoint for the second compose phase: decode the rendered PNG
-/// and build the [BadgeImage] (the constructor resizes into badge spec).
+/// Isolate entrypoint for the second compose phase: wrap the rendered RGBA
+/// bytes (see [BadgeComposer.renderRgba]) in an `img.Image` and build the
+/// [BadgeImage] (the constructor resizes into badge spec).
 ///
 /// Must be a top-level function so it can be sent to a spawned isolate via
 /// `integral_isolates`. Everything crossing the boundary is plain data:
 /// `Uint8List` in, `BadgeImage` (two `img.Image` bitmaps) out.
-BadgeImage badgeImageFromPng(Uint8List png) {
-  return BadgeImage(img.decodePng(png)!);
+BadgeImage badgeImageFromRgba(Uint8List rgba) {
+  final width = kBadgePanelSize.width.toInt();
+  final height = kBadgePanelSize.height.toInt();
+  final expectedLength = width * height * 4;
+  if (rgba.lengthInBytes != expectedLength) {
+    throw ArgumentError.value(
+      rgba.lengthInBytes,
+      'rgba',
+      'Expected $expectedLength bytes for a ${width}x$height RGBA image',
+    );
+  }
+  final image = img.Image.fromBytes(
+    width: width,
+    height: height,
+    bytes: rgba.buffer,
+    bytesOffset: rgba.offsetInBytes,
+    numChannels: 4,
+  );
+  return BadgeImage(image);
 }
