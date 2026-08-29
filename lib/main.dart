@@ -12,6 +12,7 @@ import 'package:flutter_and_friends/firebase_options.dart';
 import 'package:flutter_and_friends/identity/identity.dart';
 import 'package:flutter_and_friends/launchpad/launchpad.dart';
 import 'package:flutter_and_friends/organizers/organizers.dart';
+import 'package:flutter_and_friends/pub_quiz/pub_quiz.dart';
 import 'package:flutter_and_friends/qa/qa.dart';
 import 'package:flutter_and_friends/schedule/schedule.dart';
 import 'package:flutter_and_friends/settings/settings.dart';
@@ -78,12 +79,19 @@ class _AppState extends State<App> {
         ? _settingsCubit.state.effectiveFeedUrl
         : scheduleFeedUrl,
   );
-  // Only exists when this build can reach a Firebase project; `QaPage`
-  // checks `isQaConfigured` before reading it.
+  // Only exist when this build can reach a Firebase project; `QaPage` and
+  // `PubQuizPage` check the matching flag before reading them.
   late final _qaRepository = isQaConfigured
       ? QaRepository(
           auth: FirebaseAuth.instance,
           firestore: FirebaseFirestore.instance,
+        )
+      : null;
+  late final _pubQuizRepository = isPubQuizConfigured
+      ? PubQuizRepository(
+          auth: FirebaseAuth.instance,
+          firestore: FirebaseFirestore.instance,
+          quizId: pubQuizId,
         )
       : null;
 
@@ -101,6 +109,8 @@ class _AppState extends State<App> {
         RepositoryProvider.value(value: _scheduleRepository),
         if (_qaRepository case final qaRepository?)
           RepositoryProvider.value(value: qaRepository),
+        if (_pubQuizRepository case final pubQuizRepository?)
+          RepositoryProvider.value(value: pubQuizRepository),
       ],
       child: MultiBlocProvider(
         providers: [

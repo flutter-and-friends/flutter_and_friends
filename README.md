@@ -25,6 +25,10 @@
 
 The Q&A tab lets attendees ask the panel questions and upvote each other's questions. Questions and votes are shared between all attendees, so they live in Firestore in the same Firebase project as the [website](https://github.com/flutter-and-friends/flutter_friends_web) (`flutter-and-friends-ad8fe`). The app signs every device in with anonymous Firebase Auth, and the security rules in [`firestore.rules`](firestore.rules) tie each question and vote to that identity.
 
+## Pub quiz
+
+The Pub Quiz entry under More lets a table play the live quiz that an organizer runs from the website's `/admin/quiz` page. Each phone creates one team (keyed by the same anonymous identity as the Q&A), answers the open question once, and follows the reveal and the scoreboard as the website's server moves the quiz forward. The server publishes questions, closes them, scores the answers (two points for a correct answer, one more for the three fastest correct teams) and writes the standings; the rules in [`firestore.rules`](firestore.rules) make sure a phone can only ever create its own team and one immutable, server-timestamped answer per open question, and never sees the correct answer before it is revealed.
+
 ### Local development
 
 Debug builds talk to the local Firebase emulators by default, so no project access is needed. The emulators need a JDK; on a machine with Android Studio, point `JAVA_HOME` at its bundled one:
@@ -45,4 +49,4 @@ On an Android emulator the app reaches the emulators through `10.0.2.2` automati
 npx firebase-tools deploy --only firestore
 ```
 
-The Anonymous sign-in provider must be enabled under Authentication in the Firebase console for the Q&A to work.
+The Anonymous sign-in provider must be enabled under Authentication in the Firebase console for the Q&A and the pub quiz to work.

@@ -3,6 +3,12 @@ rules_version = '2';
 // Audience Q&A: anyone signed in (the app signs every device in
 // anonymously) can read every question, ask questions as themselves, delete
 // their own questions, and add or remove exactly their own vote.
+//
+// Pub quiz: the quiz itself, the published questions and the scores are
+// written only by the conference website's server (the Admin SDK bypasses
+// these rules). A signed-in device may create its own team and submit one
+// immutable answer per question while that question is open; the correct
+// answer only reaches Firestore when the server reveals it.
 service cloud.firestore {
   match /databases/{database}/documents {
     match /qa_sessions/{sessionId}/questions/{questionId} {
@@ -61,6 +67,101 @@ service cloud.firestore {
         && incoming().diff(existing()).affectedKeys().hasOnly(['voterIds'])
         && incoming().voterIds is list
         && (addsOwnVote() || removesOwnVote());
+    }
+
+    match /pub_quizzes/{quizId} {
+      function signedIn() {
+        return request.auth != null;
+      }
+
+      function userId() {
+        return request.auth.uid;
+      }
+
+      function incoming() {
+        return request.resource.data;
+      }
+
+      function existing() {
+        return resource.data;
+      }
+
+      // The quiz document itself, which the server keeps up to date with
+      // the current phase and question. Reading it is what makes the checks
+      // below possible; it also means nobody can join before the server has
+      // created it.
+      function quiz() {
+        return get(/databases/$(database)/documents/pub_quizzes/$(quizId)).data;
+      }
+
+      function hasTeam() {
+        return exists(/databases/$(database)/documents/pub_quizzes/$(quizId)/teams/$(userId()));
+      }
+
+      function validTeamName() {
+        return incoming().name is string
+          && incoming().name.trim().size() >= 1
+          && incoming().name.size() <= 30;
+      }
+
+      allow read: if signedIn();
+      allow write: if false;
+
+      // One team per device: the team id is the device's user id. Only the
+      // name is ever written by a device, and only while the quiz is in
+      // the lobby, so the leaderboard cannot be impersonated mid-game.
+      // Scores are written by the server alone.
+      match /teams/{teamId} {
+        allow read: if signedIn();
+
+        allow create: if signedIn()
+          && teamId == userId()
+          && quiz().phase != 'finished'
+          && incoming().keys().hasOnly(['name', 'createdAt', 'updatedAt'])
+          && incoming().keys().hasAll(['name', 'createdAt', 'updatedAt'])
+          && validTeamName()
+          && incoming().createdAt == request.time
+          && incoming().updatedAt == request.time;
+
+        allow update: if signedIn()
+          && teamId == userId()
+          && quiz().phase == 'lobby'
+          && incoming().diff(existing()).affectedKeys().hasOnly(['name', 'updatedAt'])
+          && validTeamName()
+          && incoming().updatedAt == request.time;
+
+        allow delete: if false;
+      }
+
+      // Published questions. The correct answer is added by the server at
+      // reveal time, so it is never readable while answering is open.
+      match /questions/{questionId} {
+        allow read: if signedIn();
+        allow write: if false;
+
+        // One answer per team per question (the answer id is the team id),
+        // accepted only while that exact question is open, stamped with the
+        // server's clock so speed cannot be forged, and never changed. A
+        // team can look at its own answer but nobody can list the others.
+        match /answers/{teamId} {
+          allow get: if signedIn() && teamId == userId();
+          allow list: if false;
+
+          allow create: if signedIn()
+            && teamId == userId()
+            && hasTeam()
+            && quiz().phase == 'answering'
+            && quiz().currentQuestionId == questionId
+            && incoming().keys().hasOnly(['choice', 'answeredAt'])
+            && incoming().keys().hasAll(['choice', 'answeredAt'])
+            && incoming().choice is int
+            && incoming().choice >= 0
+            && incoming().choice <= 3
+            && incoming().answeredAt == request.time;
+
+          allow update, delete: if false;
+        }
+      }
     }
   }
 }

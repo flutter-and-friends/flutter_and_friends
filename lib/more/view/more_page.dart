@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_and_friends/collected_people/collected_people.dart';
 import 'package:flutter_and_friends/friends_badge/friends_badge.dart';
+import 'package:flutter_and_friends/pub_quiz/pub_quiz.dart';
 import 'package:flutter_and_friends/qa/qa.dart';
 import 'package:flutter_and_friends/theme/theme.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -28,6 +29,13 @@ class MoreView extends StatelessWidget {
             subtitle: const Text('Ask the panel a question'),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => Navigator.of(context).push(QaPage.route()),
+          ),
+          ListTile(
+            leading: const Icon(Icons.quiz),
+            title: const Text('Pub Quiz'),
+            subtitle: const Text('Play the Flutter & Fun Pub Quiz'),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => Navigator.of(context).push(PubQuizPage.route()),
           ),
           ListTile(
             leading: const Icon(Icons.badge_outlined),
