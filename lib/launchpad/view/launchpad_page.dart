@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_and_friends/favorites/favorites.dart';
 import 'package:flutter_and_friends/launchpad/launchpad.dart';
-import 'package:flutter_and_friends/qa/qa.dart';
+import 'package:flutter_and_friends/more/more.dart';
 import 'package:flutter_and_friends/schedule/schedule.dart';
 import 'package:flutter_and_friends/speakers/speakers.dart';
 import 'package:flutter_and_friends/sponsors/sponsors.dart';
@@ -50,8 +50,8 @@ class _LaunchpadBody extends StatelessWidget {
         return const SpeakersPage();
       case LaunchpadState.sponsors:
         return const SponsorsPage();
-      case LaunchpadState.qa:
-        return const QaPage();
+      case LaunchpadState.more:
+        return const MorePage();
     }
   }
 }
@@ -80,10 +80,7 @@ class _BottomNavigationBar extends StatelessWidget {
           label: 'Speakers',
         ),
         BottomNavigationBarItem(icon: Icon(Icons.business), label: 'Sponsors'),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.question_answer),
-          label: 'Q&A',
-        ),
+        BottomNavigationBarItem(icon: Icon(Icons.more_horiz), label: 'More'),
       ],
     );
   }

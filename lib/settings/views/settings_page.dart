@@ -1,7 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_and_friends/collected_people/collected_people.dart';
-import 'package:flutter_and_friends/friends_badge/friends_badge.dart';
 import 'package:flutter_and_friends/organizers/organizers.dart';
 import 'package:flutter_and_friends/settings/settings.dart';
 import 'package:flutter_and_friends/theme/theme.dart';
@@ -60,32 +58,6 @@ class SettingsView extends StatelessWidget {
               const _DebugFeedHostSwitcher(),
               const SizedBox(height: 16),
             ],
-            Text('Extras', style: headingStyle),
-            ListTile(
-              leading: const Icon(Icons.badge_outlined),
-              title: const Text('Friends Badge'),
-              subtitle: const Text('Customize your badge'),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => Navigator.of(context).push(FriendsBadgePage.route()),
-            ),
-            ListTile(
-              leading: const Icon(Icons.contact_page),
-              title: const Text('Collected People'),
-              subtitle: const Text('People you met — tap a badge to collect'),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () =>
-                  Navigator.of(context).push(CollectedPeoplePage.route()),
-            ),
-            ListTile(
-              leading: const Icon(Icons.map),
-              title: const Text('Activity Map'),
-              subtitle: const Text('View the locations of all activities'),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => launchUrlString(
-                'https://www.google.com/maps/d/u/0/viewer?mid=102KWzlh5enCfJXbgTu8wN8FSfeOzsMw&femb=1&ll=59.32440113540593%2C18.059913600000016&z=13',
-              ),
-            ),
-            const SizedBox(height: 16),
             Text('Socials', style: headingStyle),
             ListTile(
               leading: const FaIcon(
