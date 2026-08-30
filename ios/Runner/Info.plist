@@ -24,12 +24,18 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NFCReaderUsageDescription</key>
 	<string>We use Near Field Communication (NFC) to wirelessly transfer your selected image to the e-ink display of the conference badge. Access is required to update the screen.</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Our app does not request this permission or utilize this functionality but it is included in our info.plist since our app utilizes the nfc_manager library, which references this permission in its code.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Our app does not request this permission or utilize this functionality but it is included in our info.plist since our app utilizes the image_picker and file_picker libraries, which reference this permission in their code.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We access your photo library so you can choose one of your own images to display on the e-ink screen of your conference badge.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
