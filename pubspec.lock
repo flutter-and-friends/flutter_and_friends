@@ -460,10 +460,10 @@ packages:
     dependency: "direct main"
     description:
       name: friends_badge
-      sha256: ef02491fa9cf157774dcb76730271fd568e0cecd1e82eafa84024bde93e9c254
+      sha256: f1b0d393d57a5a9fb51ec8d40ebdae974017cb9cd002fdc218e0a7761ccfc4e7
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.1"
+    version: "0.2.2"
   glob:
     dependency: transitive
     description:

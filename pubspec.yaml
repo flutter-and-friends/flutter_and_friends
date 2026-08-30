@@ -20,7 +20,7 @@ dependencies:
   flutter_bloc: ^9.0.0
   flutter_svg: ^2.0.0
   font_awesome_flutter: ^11.0.0
-  friends_badge: ^0.2.1
+  friends_badge: ^0.2.2
   google_fonts: ^8.2.1
   http: ^1.2.0
   hydrated_bloc: ^11.0.0
