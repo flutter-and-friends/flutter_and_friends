@@ -12,16 +12,13 @@ class FriendsBadgePage extends StatelessWidget {
     builder: (_) => const FriendsBadgePage(),
   );
 
+  /// The identity cubit is provided app-wide (see `main.dart`) because the
+  /// highscore publishes the badge name too.
   @override
-  Widget build(BuildContext context) => MultiBlocProvider(
-    providers: [
-      BlocProvider(create: (_) => BadgeIdentityCubit()),
-      BlocProvider(
-        create: (context) => FriendsBadgeCubit(
-          identity: context.read<BadgeIdentityCubit>(),
-        ),
-      ),
-    ],
+  Widget build(BuildContext context) => BlocProvider(
+    create: (context) => FriendsBadgeCubit(
+      identity: context.read<BadgeIdentityCubit>(),
+    ),
     child: const FriendsBadgeView(),
   );
 }

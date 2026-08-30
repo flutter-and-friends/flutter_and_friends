@@ -221,8 +221,15 @@ void main() {
     testWidgets('shows the capybara grid when no image is picked', (
       tester,
     ) async {
+      final identity = BadgeIdentityCubit();
+      addTearDown(identity.close);
       await tester.pumpWidget(
-        const MaterialApp(home: FriendsBadgePage()),
+        MaterialApp(
+          home: BlocProvider.value(
+            value: identity,
+            child: const FriendsBadgePage(),
+          ),
+        ),
       );
 
       expect(find.byType(GridView), findsOneWidget);
