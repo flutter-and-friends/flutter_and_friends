@@ -1,5 +1,6 @@
 export 'animated_scoreboard.dart';
 export 'award_badge.dart';
+export 'connection_banner.dart';
 export 'finished_view.dart';
 export 'lobby_view.dart';
 export 'question_view.dart';
@@ -8,4 +9,5 @@ export 'reveal_view.dart';
 export 'scoreboard_view.dart';
 export 'team_name_field.dart';
 export 'team_setup_view.dart';
+export 'vote_statistics.dart';
 export 'waiting_hourglass.dart';

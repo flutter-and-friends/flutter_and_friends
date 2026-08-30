@@ -49,28 +49,42 @@ class ScheduleView extends StatelessWidget {
       initialIndex: tabIndex,
       length: days.length,
       child: Scaffold(
-        appBar: FFAppBar(
-          bottom: TabBar(
-            isScrollable: days.length > 3,
-            onTap: (index) => context.read<ScheduleCubit>().toggleTab(index),
-            tabs: [
-              for (final day in days)
-                Tab(child: Text(DateFormat.MMMEd().format(day.date))),
-            ],
-          ),
-        ),
-        body: Column(
-          children: [
-            if (dataState.isStale)
-              _StaleBanner(generatedAt: dataState.generatedAt),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  for (final day in days) ScheduleListView(events: day.events),
-                ],
+        body: NestedScrollView(
+          floatHeaderSlivers: true,
+          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+            SliverOverlapAbsorber(
+              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+              sliver: FFSliverAppBar(
+                forceElevated: innerBoxIsScrolled,
+                bottom: TabBar(
+                  isScrollable: days.length > 3,
+                  onTap: (index) =>
+                      context.read<ScheduleCubit>().toggleTab(index),
+                  tabs: [
+                    for (final day in days)
+                      Tab(child: Text(DateFormat.MMMEd().format(day.date))),
+                  ],
+                ),
               ),
             ),
           ],
+          body: Column(
+            children: [
+              if (dataState.isStale)
+                _StaleBanner(generatedAt: dataState.generatedAt),
+              Expanded(
+                child: TabBarView(
+                  children: [
+                    for (final day in days)
+                      ScheduleListView(
+                        key: PageStorageKey(day.date),
+                        events: day.events,
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -143,6 +157,8 @@ class _ScheduleError extends StatelessWidget {
   }
 }
 
+/// One day's events. Built as slivers so that it scrolls together with the
+/// collapsing app bar of the [NestedScrollView] around it.
 class ScheduleListView extends StatelessWidget {
   const ScheduleListView({required this.events, super.key});
 
@@ -150,12 +166,21 @@ class ScheduleListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      separatorBuilder: (_, _) => const SizedBox(height: 16),
-      padding: const EdgeInsets.all(12),
-      itemCount: events.length,
-      itemBuilder: (context, index) =>
-          EventCard(event: events[index], showDate: false),
+    return CustomScrollView(
+      slivers: [
+        SliverOverlapInjector(
+          handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.all(12),
+          sliver: SliverList.separated(
+            itemCount: events.length,
+            itemBuilder: (context, index) =>
+                EventCard(event: events[index], showDate: false),
+            separatorBuilder: (_, _) => const SizedBox(height: 8),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -73,7 +73,7 @@ class FavoritesListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
-      separatorBuilder: (_, _) => const SizedBox(height: 16),
+      separatorBuilder: (_, _) => const SizedBox(height: 8),
       padding: const EdgeInsets.all(12),
       itemCount: events.length,
       itemBuilder: (context, index) => EventCard(event: events[index]),

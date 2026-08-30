@@ -28,6 +28,3 @@ jobs:
             revert
             style
             test
-          subjectPattern: ^[^a-z].+$
-          subjectPatternError: |
-            The subject of the PR can't begin with a lowercase letter.

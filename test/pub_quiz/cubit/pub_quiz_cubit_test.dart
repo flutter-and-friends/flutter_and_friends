@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 /// records what the cubit writes.
 class _FakeRepository implements PubQuizRepository {
   final quiz = StreamController<PubQuiz?>.broadcast();
+  final connected = StreamController<bool>.broadcast();
   final teams = StreamController<List<PubQuizTeam>>.broadcast();
   final answers = <String, StreamController<PubQuizAnswer?>>{};
   final submitted = <(String, int)>[];
@@ -21,6 +22,9 @@ class _FakeRepository implements PubQuizRepository {
 
   @override
   Stream<PubQuiz?> watchQuiz() => quiz.stream;
+
+  @override
+  Stream<bool> watchConnected() => connected.stream;
 
   @override
   Stream<List<PubQuizTeam>> watchTeams() => teams.stream;
@@ -107,6 +111,27 @@ void main() {
 
     expect(cubit.state.status, PubQuizStatus.loaded);
     expect(cubit.state.screen, PubQuizScreen.notReady);
+  });
+
+  test('tells connecting from a lost connection', () async {
+    await cubit.init();
+    expect(cubit.state.connection, PubQuizConnection.connecting);
+
+    repository.connected.add(false);
+    await _flush();
+    expect(cubit.state.connection, PubQuizConnection.connecting);
+
+    repository.connected.add(true);
+    await _flush();
+    expect(cubit.state.connection, PubQuizConnection.connected);
+
+    repository.connected.add(false);
+    await _flush();
+    expect(cubit.state.connection, PubQuizConnection.reconnecting);
+
+    repository.connected.add(true);
+    await _flush();
+    expect(cubit.state.connection, PubQuizConnection.connected);
   });
 
   test('asks for a team, then waits in the lobby', () async {

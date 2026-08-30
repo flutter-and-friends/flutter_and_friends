@@ -91,11 +91,22 @@ class _PubQuizBody extends StatelessWidget {
         PubQuizScreen.finished => const FinishedView(),
       },
     };
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 350),
-      switchInCurve: Curves.easeOut,
-      switchOutCurve: Curves.easeIn,
-      child: KeyedSubtree(key: ValueKey((status, screen)), child: child),
+    final connection = context.select(
+      (PubQuizCubit cubit) => cubit.state.connection,
+    );
+    return Column(
+      children: [
+        if (status == PubQuizStatus.loaded)
+          ConnectionBanner(connection: connection),
+        Expanded(
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 350),
+            switchInCurve: Curves.easeOut,
+            switchOutCurve: Curves.easeIn,
+            child: KeyedSubtree(key: ValueKey((status, screen)), child: child),
+          ),
+        ),
+      ],
     );
   }
 }

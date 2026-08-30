@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_and_friends/theme/widgets/ff_app_bar.dart';
 
 export 'cubit/theme_cubit.dart';
 export 'widgets/widgets.dart';
@@ -6,18 +7,12 @@ export 'widgets/widgets.dart';
 final lightTheme = ThemeData(
   appBarTheme: AppBarTheme(
     centerTitle: true,
-    toolbarHeight: kToolbarHeight + 16,
+    toolbarHeight: ffToolbarHeight,
     scrolledUnderElevation: 1,
     elevation: 1,
     shadowColor: _lightColorScheme.secondary,
   ),
-  bottomNavigationBarTheme: BottomNavigationBarThemeData(
-    backgroundColor: _lightColorScheme.surface,
-    selectedItemColor: _lightColorScheme.primary,
-    unselectedItemColor: _lightColorScheme.onSurfaceVariant,
-    showUnselectedLabels: true,
-    type: BottomNavigationBarType.fixed,
-  ),
+  navigationBarTheme: _navigationBarTheme(_lightColorScheme),
   cardTheme: CardThemeData(surfaceTintColor: _lightColorScheme.primary),
   colorScheme: _lightColorScheme,
   bannerTheme: MaterialBannerThemeData(
@@ -29,18 +24,12 @@ final lightTheme = ThemeData(
 final darkTheme = ThemeData(
   appBarTheme: AppBarTheme(
     centerTitle: true,
-    toolbarHeight: kToolbarHeight + 16,
+    toolbarHeight: ffToolbarHeight,
     scrolledUnderElevation: 1,
     elevation: 1,
     shadowColor: _darkColorScheme.secondary,
   ),
-  bottomNavigationBarTheme: BottomNavigationBarThemeData(
-    backgroundColor: _darkColorScheme.surface,
-    selectedItemColor: _darkColorScheme.primary,
-    unselectedItemColor: _darkColorScheme.onSurfaceVariant,
-    type: BottomNavigationBarType.fixed,
-    showUnselectedLabels: true,
-  ),
+  navigationBarTheme: _navigationBarTheme(_darkColorScheme),
   cardTheme: CardThemeData(surfaceTintColor: _darkColorScheme.primary),
   colorScheme: _darkColorScheme,
   bannerTheme: MaterialBannerThemeData(
@@ -49,9 +38,39 @@ final darkTheme = ThemeData(
   useMaterial3: true,
 );
 
+/// The tab bar at the bottom of the launchpad: a pill behind the active
+/// icon, with labels always shown so the five tabs stay easy to tell apart.
+NavigationBarThemeData _navigationBarTheme(ColorScheme colors) {
+  return NavigationBarThemeData(
+    backgroundColor: colors.surface,
+    surfaceTintColor: colors.primary,
+    indicatorColor: colors.primaryContainer,
+    height: 72,
+    labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+    iconTheme: WidgetStateProperty.resolveWith(
+      (states) => IconThemeData(
+        color: states.contains(WidgetState.selected)
+            ? colors.onPrimaryContainer
+            : colors.onSurfaceVariant,
+      ),
+    ),
+    labelTextStyle: WidgetStateProperty.resolveWith(
+      (states) => TextStyle(
+        fontSize: 12,
+        fontWeight: states.contains(WidgetState.selected)
+            ? FontWeight.w700
+            : FontWeight.w500,
+        color: states.contains(WidgetState.selected)
+            ? colors.onSurface
+            : colors.onSurfaceVariant,
+      ),
+    ),
+  );
+}
+
 const _lightColorScheme = ColorScheme(
   brightness: Brightness.light,
-  primary: Color(0xFF005AC1),
+  primary: Color(0xFF3D8EF2),
   onPrimary: Color(0xFFFFFFFF),
   primaryContainer: Color(0xFFD8E2FF),
   onPrimaryContainer: Color(0xFF001A41),
@@ -72,7 +91,7 @@ const _lightColorScheme = ColorScheme(
   inverseSurface: Color(0xFF303033),
   inversePrimary: Color(0xFFADC6FF),
   shadow: Color(0xFF000000),
-  surfaceTint: Color(0xFF005AC1),
+  surfaceTint: Color(0xFF3D8EF2),
   outlineVariant: Color(0xFFC4C6D0),
   scrim: Color(0xFF000000),
   surface: Color(0xFFFAF9FD),
@@ -102,7 +121,7 @@ const _darkColorScheme = ColorScheme(
   outline: Color(0xFF8E9099),
   onInverseSurface: Color(0xFF1B1B1F),
   inverseSurface: Color(0xFFE3E2E6),
-  inversePrimary: Color(0xFF005AC1),
+  inversePrimary: Color(0xFF3D8EF2),
   shadow: Color(0xFF000000),
   surfaceTint: Color(0xFFADC6FF),
   outlineVariant: Color(0xFF44474F),

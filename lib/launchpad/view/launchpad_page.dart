@@ -30,7 +30,7 @@ class LaunchpadView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(toolbarHeight: 0, shadowColor: Colors.transparent),
       body: const _LaunchpadBody(),
-      bottomNavigationBar: const _BottomNavigationBar(),
+      bottomNavigationBar: const _NavigationBar(),
     );
   }
 }
@@ -56,31 +56,44 @@ class _LaunchpadBody extends StatelessWidget {
   }
 }
 
-class _BottomNavigationBar extends StatelessWidget {
-  const _BottomNavigationBar();
+class _NavigationBar extends StatelessWidget {
+  const _NavigationBar();
 
   @override
   Widget build(BuildContext context) {
     final state = context.watch<LaunchpadCubit>().state;
-    return BottomNavigationBar(
-      useLegacyColorScheme: false,
-      onTap: (index) {
+    return NavigationBar(
+      onDestinationSelected: (index) {
         context.read<LaunchpadCubit>().toggleTab(index);
         unawaited(HapticFeedback.mediumImpact());
       },
-      currentIndex: state.index,
-      items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'Favorites'),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.calendar_today),
+      selectedIndex: state.index,
+      destinations: const [
+        NavigationDestination(
+          icon: Icon(Icons.favorite_outline),
+          selectedIcon: Icon(Icons.favorite),
+          label: 'Favorites',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.calendar_today_outlined),
+          selectedIcon: Icon(Icons.calendar_today),
           label: 'Schedule',
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.people_alt_rounded),
+        NavigationDestination(
+          icon: Icon(Icons.people_alt_outlined),
+          selectedIcon: Icon(Icons.people_alt_rounded),
           label: 'Speakers',
         ),
-        BottomNavigationBarItem(icon: Icon(Icons.business), label: 'Sponsors'),
-        BottomNavigationBarItem(icon: Icon(Icons.more_horiz), label: 'More'),
+        NavigationDestination(
+          icon: Icon(Icons.business_outlined),
+          selectedIcon: Icon(Icons.business),
+          label: 'Sponsors',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.more_horiz),
+          selectedIcon: Icon(Icons.more_horiz),
+          label: 'More',
+        ),
       ],
     );
   }

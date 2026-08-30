@@ -305,10 +305,11 @@ class _BadgeDitherKernelCarousel extends StatelessWidget {
       separatorBuilder: (context, index) => const SizedBox(width: 8),
       itemBuilder: (context, index) {
         final kernel = [...BadgeImage.allSupportedKernels.reversed][index];
+        final primary = Theme.of(context).colorScheme.primary;
         final decoration = kernel == badge.ditherKernel
             ? BoxDecoration(
-                color: Colors.blue.withValues(alpha: 0.4),
-                border: Border.all(width: 3),
+                color: primary.withValues(alpha: 0.4),
+                border: Border.all(width: 3, color: primary),
               )
             : const BoxDecoration();
         return DecoratedBox(
