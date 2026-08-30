@@ -1,3 +1,9 @@
+## 1.4.0+28
+
+ - **FIX**: Wait for a badge tap when collecting people ([#74](https://github.com/flutter-and-friends/flutter_and_friends/issues/74)). ([b2d9c807](https://github.com/flutter-and-friends/flutter_and_friends/commit/b2d9c807bf369a4eab02d92458d628bec72f7805))
+ - **FEAT**: Add a highscore of who has collected the most people ([#76](https://github.com/flutter-and-friends/flutter_and_friends/issues/76)). ([28161825](https://github.com/flutter-and-friends/flutter_and_friends/commit/281618254a2ef21b1629e74624ef0f8b89b02053))
+ - **FEAT**: Dedupe collected people by badge ID and make Classic the default badge template ([#75](https://github.com/flutter-and-friends/flutter_and_friends/issues/75)). ([b4d2f9a5](https://github.com/flutter-and-friends/flutter_and_friends/commit/b4d2f9a5e1c655f793b78e9c122a0ca1de68355a))
+
 ## 1.3.0+27
 
  - **FEAT**: Animate vote statistics on reveal, new primary blue, and UI polish ([#72](https://github.com/flutter-and-friends/flutter_and_friends/issues/72)). ([f50c90b8](https://github.com/flutter-and-friends/flutter_and_friends/commit/f50c90b819beb11c65eb7f50aa6180d95b921c49))
