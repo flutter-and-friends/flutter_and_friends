@@ -169,3 +169,29 @@ jobs:
         with:
           name: ${{ github.ref_name }}.ipa
           path: build/ios/ipa/flutter_and_friends.ipa
+
+  github-release:
+    runs-on: ubuntu-latest
+
+    name: 📣 GitHub Release
+
+    needs: [release-android, release-ios]
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: 📚 Git Checkout
+        uses: actions/checkout@v5
+
+      - name: 🎯 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+
+      - name: 📣 Create GitHub Release
+        uses: bluefireteam/melos-action@v3
+        with:
+          melos-version: ^8.6.0
+          create-release: true
