@@ -48,7 +48,10 @@ class FriendsBadgeView extends StatelessWidget {
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: const Text('Friends Badge')),
+        appBar: AppBar(
+          title: const Text('Friends Badge'),
+          bottom: badge == null ? null : const TemplateTabBar(),
+        ),
         floatingActionButton: Row(
           spacing: 8,
           mainAxisAlignment: MainAxisAlignment.end,
@@ -120,64 +123,89 @@ class _BadgeEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                spacing: 16,
-                children: [
-                  const _TemplatePicker(),
-                  if (state.template.usesText) ...[
-                    _NameRoleFields(state: state),
-                    const _FontPicker(),
-                  ],
-                  SizedBox(
-                    height: constraints.maxHeight * 1 / 6,
-                    child: Center(
-                      child: _BadgeDitherKernelCarousel(badge: badge),
-                    ),
-                  ),
-                  ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxHeight: constraints.maxHeight * 4 / 6,
-                    ),
-                    child: Center(child: _BadgePreview(badge: badge)),
-                  ),
+    const padding = EdgeInsets.all(16);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final height = constraints.maxHeight - padding.vertical;
+        return SingleChildScrollView(
+          padding: padding,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: height),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              spacing: 16,
+              children: [
+                if (state.template.usesText) ...[
+                  _NameRoleFields(state: state),
+                  const _FontPicker(),
                 ],
-              ),
+                SizedBox(
+                  height: height * 1 / 6,
+                  child: Center(
+                    child: _BadgeDitherKernelCarousel(badge: badge),
+                  ),
+                ),
+                ConstrainedBox(
+                  constraints: BoxConstraints(maxHeight: height * 4 / 6),
+                  child: Center(child: _BadgePreview(badge: badge)),
+                ),
+              ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }
 
-class _TemplatePicker extends StatelessWidget {
-  const _TemplatePicker();
+/// Template picker as app bar tabs, one per [BadgeTemplate] in declaration
+/// order. Keeps its tab controller in sync with the cubit's template so the
+/// persisted choice is selected when the editor opens.
+class TemplateTabBar extends StatefulWidget implements PreferredSizeWidget {
+  const TemplateTabBar({super.key});
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kTextTabBarHeight);
+
+  @override
+  State<TemplateTabBar> createState() => _TemplateTabBarState();
+}
+
+class _TemplateTabBarState extends State<TemplateTabBar>
+    with SingleTickerProviderStateMixin {
+  late final TabController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TabController(
+      length: BadgeTemplate.values.length,
+      initialIndex: context.read<FriendsBadgeCubit>().state.template.index,
+      vsync: this,
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final selected = context.select(
       (FriendsBadgeCubit c) => c.state.template,
     );
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      alignment: WrapAlignment.center,
-      children: [
-        for (final template in BadgeTemplate.values)
-          ChoiceChip(
-            label: Text(template.label),
-            selected: template == selected,
-            onSelected: (_) =>
-                context.read<FriendsBadgeCubit>().updateTemplate(template),
-          ),
+    if (_controller.index != selected.index) {
+      _controller.animateTo(selected.index);
+    }
+    return TabBar(
+      controller: _controller,
+      onTap: (index) => context.read<FriendsBadgeCubit>().updateTemplate(
+        BadgeTemplate.values[index],
+      ),
+      tabs: [
+        for (final template in BadgeTemplate.values) Tab(text: template.label),
       ],
     );
   }

@@ -77,16 +77,17 @@ class BadgeCollector {
 
   /// Starts an NFC session that ends on the first tapped tag.
   ///
-  /// [onCollected] is invoked with the person read off a tapped badge,
-  /// before the returned session's [BadgeCollectSession.result] completes
-  /// with [BadgeCollectResult.collected]. A tag that is not a readable badge
-  /// (not ISO-DEP, no NDEF payload, malformed payload) ends the session with
-  /// [BadgeCollectResult.notABadge].
+  /// [onCollected] is invoked with the person read off a tapped badge and
+  /// the badge's tag UID as lowercase hex (`null` if the platform did not
+  /// report one), before the returned session's [BadgeCollectSession.result]
+  /// completes with [BadgeCollectResult.collected]. A tag that is not a
+  /// readable badge (not ISO-DEP, no NDEF payload, malformed payload) ends
+  /// the session with [BadgeCollectResult.notABadge].
   ///
   /// Throws a [StateError] when NFC is unavailable and rethrows the platform
   /// error when the session cannot be started.
   Future<BadgeCollectSession> start({
-    required void Function(BadgePerson person) onCollected,
+    required void Function(BadgePerson person, String? badgeId) onCollected,
     String alertMessageIos = 'Hold your device near a badge to collect them',
   }) async {
     final availability = await NfcManager.instance.checkAvailability();
@@ -125,7 +126,7 @@ class BadgeCollector {
           finish(BadgeCollectResult.notABadge);
           return;
         }
-        onCollected(person);
+        onCollected(person, badgeIdFrom(tag));
         await stop(alertMessageIos: 'Collected!');
         finish(BadgeCollectResult.collected);
       },
@@ -164,6 +165,23 @@ class BadgeCollector {
       debugPrint('Skipping un-collectable tag: $e');
       return null;
     }
+  }
+
+  /// The tag UID of [tag] as lowercase hex, or `null` when the platform
+  /// reports none. Android exposes it on every tag, iOS on the ISO 7816
+  /// technology the badge speaks.
+  @visibleForTesting
+  static String? badgeIdFrom(NfcTag tag) {
+    final Uint8List? id;
+    if (Platform.isAndroid) {
+      id = NfcTagAndroid.from(tag)?.id;
+    } else if (Platform.isIOS) {
+      id = Iso7816Ios.from(tag)?.identifier;
+    } else {
+      id = null;
+    }
+    if (id == null || id.isEmpty) return null;
+    return id.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
   }
 
   /// Builds an [IsoDepTransceiver] over [tag], mirroring the `friends_badge`

@@ -69,18 +69,18 @@ class CollectedPeopleView extends StatelessWidget {
     final cubit = context.read<CollectedPeopleCubit>();
     final messenger = ScaffoldMessenger.of(context);
 
-    void onCollected(BadgePerson badgePerson) {
+    void onCollected(BadgePerson badgePerson, String? badgeId) {
       final existing = cubit.state.people.length;
-      final person = cubit.collect(toCollectedPerson(badgePerson));
+      final person = cubit.collect(
+        toCollectedPerson(badgePerson, badgeId: badgeId),
+      );
       final isNew = cubit.state.people.length > existing;
       messenger
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
             content: Text(
-              isNew
-                  ? 'Collected ${person.name} ✓'
-                  : '${person.name} is already in your dex',
+              isNew ? 'Collected ${person.name} ✓' : 'Updated ${person.name} ✓',
             ),
           ),
         );
@@ -128,7 +128,7 @@ class CollectedPeopleView extends StatelessWidget {
   /// session. iOS does not always clean up the previous session (for
   /// example from the badge write flow), mirroring WriteToBadgeButton.
   Future<BadgeCollectSession> _startSession(
-    void Function(BadgePerson person) onCollected,
+    void Function(BadgePerson person, String? badgeId) onCollected,
   ) async {
     try {
       return await collector.start(onCollected: onCollected);

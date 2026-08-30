@@ -11,7 +11,7 @@ class FriendsBadgeState extends Equatable {
   const FriendsBadgeState({
     this.badge,
     this.status = FriendsBadgeStatus.idle,
-    this.template = BadgeTemplate.imageOnly,
+    this.template = BadgeTemplate.classic,
     this.name = '',
     this.role = '',
     this.font = BadgeFont.display,

@@ -6,7 +6,7 @@ class BadgeIdentityState extends Equatable {
     this.name = '',
     this.role = '',
     this.url = '',
-    this.template = BadgeTemplate.imageOnly,
+    this.template = BadgeTemplate.classic,
     this.font = BadgeFont.display,
   });
 

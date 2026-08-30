@@ -15,6 +15,7 @@ class CollectedPerson extends Equatable {
     required this.collectedAt,
     this.installId,
     this.capybaraId,
+    this.badgeId,
   });
 
   factory CollectedPerson.fromJson(Map<String, dynamic> json) {
@@ -31,6 +32,7 @@ class CollectedPerson extends Equatable {
       // have no installId/capybaraId.
       installId: json['installId'] as String?,
       capybaraId: json['capybaraId'] as String?,
+      badgeId: json['badgeId'] as String?,
     );
   }
 
@@ -58,6 +60,11 @@ class CollectedPerson extends Equatable {
   /// badges and pre-v2 badges.
   final String? capybaraId;
 
+  /// The physical badge's NFC tag UID as lowercase hex, or `null` for
+  /// entries collected before the badge ID was recorded. When present, this
+  /// is the primary dex dedupe identity (see CollectedPeopleCubit).
+  final String? badgeId;
+
   /// Returns a copy with the given fields replaced.
   ///
   /// Note: nullable fields ([installId], [capybaraId]) cannot be reset to
@@ -70,6 +77,7 @@ class CollectedPerson extends Equatable {
     DateTime? collectedAt,
     String? installId,
     String? capybaraId,
+    String? badgeId,
   }) {
     return CollectedPerson(
       name: name ?? this.name,
@@ -78,6 +86,7 @@ class CollectedPerson extends Equatable {
       collectedAt: collectedAt ?? this.collectedAt,
       installId: installId ?? this.installId,
       capybaraId: capybaraId ?? this.capybaraId,
+      badgeId: badgeId ?? this.badgeId,
     );
   }
 
@@ -89,6 +98,7 @@ class CollectedPerson extends Equatable {
       'collectedAt': collectedAt.toIso8601String(),
       if (installId != null) 'installId': installId,
       if (capybaraId != null) 'capybaraId': capybaraId,
+      if (badgeId != null) 'badgeId': badgeId,
     };
   }
 
@@ -100,6 +110,7 @@ class CollectedPerson extends Equatable {
     collectedAt,
     installId,
     capybaraId,
+    badgeId,
   ];
 }
 
@@ -120,7 +131,13 @@ class CollectedPerson extends Equatable {
 ///   Text record was absent or malformed).
 /// - [BadgePerson.installId] and [BadgePerson.capybaraId] (v2 tagged
 ///   segments) pass through unchanged; both are `null` on pre-v2 badges.
-CollectedPerson toCollectedPerson(BadgePerson person, {DateTime? collectedAt}) {
+/// - [badgeId] is the physical badge's NFC tag UID, read by the collector
+///   from the tag itself rather than from the NDEF payload.
+CollectedPerson toCollectedPerson(
+  BadgePerson person, {
+  DateTime? collectedAt,
+  String? badgeId,
+}) {
   final urls = <String>[
     if (person.primaryUri != null) _ensureScheme(person.primaryUri.toString()),
     for (final url in person.urls) _ensureScheme(url),
@@ -132,6 +149,7 @@ CollectedPerson toCollectedPerson(BadgePerson person, {DateTime? collectedAt}) {
     collectedAt: collectedAt ?? DateTime.now(),
     installId: person.installId,
     capybaraId: person.capybaraId,
+    badgeId: badgeId,
   );
 }
 

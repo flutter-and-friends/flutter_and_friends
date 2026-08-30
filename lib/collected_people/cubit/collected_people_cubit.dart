@@ -9,24 +9,31 @@ part 'collected_people_state.dart';
 /// Mirrors the FavoritesCubit hydration pattern: the whole state
 /// serializes to JSON via HydratedBloc storage.
 ///
-/// ## Dedupe identity (v2)
+/// ## Dedupe identity
 ///
 /// Precedence when [collect]ing a person:
 ///
-/// 1. **Install ID first.** If the incoming person carries an
+/// 1. **Badge ID first.** If the incoming person carries a
+///    [CollectedPerson.badgeId] (the physical badge's NFC tag UID) and an
+///    existing entry has the SAME badgeId, that entry is *updated in
+///    place*: name, role, urls, capybaraId and installId refresh from the
+///    new tap, but the original `collectedAt` is kept (and the entry keeps
+///    its position in the dex). Tapping the same badge twice never creates
+///    a duplicate, even if it was rewritten with new details or by a
+///    different app installation in between.
+/// 2. **Install ID.** If the incoming person carries a
 ///    [CollectedPerson.installId] (v2 wire format) and an existing entry
-///    has the SAME installId, that entry is *updated in place*: name, role,
-///    urls and capybaraId refresh from the new badge, but the original
-///    `collectedAt` is kept (and the entry keeps its position in the dex).
-///    Rationale: an install ID identifies a specific app installation, so
-///    it survives that person rewriting their badge with a new name, role,
-///    or links — re-tapping must not create a duplicate.
-/// 2. **(name, role) fallback.** For ID-less badges (written pre-v2, or
-///    with no `id:` segment) identity is the `(name, role)` pair
-///    (case-sensitive): re-tapping returns the existing entry unchanged.
+///    has the SAME installId, that entry is updated in place the same way,
+///    picking up the badgeId when the entry had none. An install ID
+///    identifies a specific app installation, so it survives that person
+///    moving their details to a replacement badge.
+/// 3. **(name, role) fallback.** For badges carrying neither ID identity is
+///    the `(name, role)` pair (case-sensitive): re-tapping returns the
+///    existing entry unchanged.
 ///
-/// Two entries with the same `(name, role)` but DIFFERENT installIds are
-/// two different installations — both stay in the dex.
+/// A person carrying a badgeId or installId only ever matches by those IDs,
+/// never by (name, role): two badges or two installations with identical
+/// name and role are two dex entries.
 class CollectedPeopleCubit extends HydratedCubit<CollectedPeopleState> {
   CollectedPeopleCubit() : super(const CollectedPeopleState());
 
@@ -38,29 +45,40 @@ class CollectedPeopleCubit extends HydratedCubit<CollectedPeopleState> {
   CollectedPerson collect(CollectedPerson person) {
     final people = [...state.people];
 
-    // 1. Install-ID identity (v2). A person carrying an installId only
-    //    ever matches an existing entry by that id — never by
-    //    (name, role): two installations of the app are two dex entries
-    //    even when their badges carry identical name and role.
+    CollectedPerson updateAt(int index) {
+      final updated = people[index].copyWith(
+        name: person.name,
+        role: person.role,
+        urls: person.urls,
+        capybaraId: person.capybaraId,
+        installId: person.installId,
+        badgeId: person.badgeId,
+      );
+      people[index] = updated;
+      emit(state.copyWith(people: people));
+      return updated;
+    }
+
+    // 1. Badge identity: the physical badge's tag UID.
+    final badgeId = person.badgeId;
+    if (badgeId != null) {
+      final index = people.indexWhere((p) => p.badgeId == badgeId);
+      if (index != -1) return updateAt(index);
+    }
+
+    // 2. Install-ID identity (v2 wire format).
     final installId = person.installId;
     if (installId != null) {
       final index = people.indexWhere((p) => p.installId == installId);
-      if (index != -1) {
-        final updated = people[index].copyWith(
-          name: person.name,
-          role: person.role,
-          urls: person.urls,
-          capybaraId: person.capybaraId,
-        );
-        people[index] = updated;
-        emit(state.copyWith(people: people));
-        return updated;
-      }
+      if (index != -1) return updateAt(index);
+    }
+
+    if (badgeId != null || installId != null) {
       emit(state.copyWith(people: [...people, person]));
       return person;
     }
 
-    // 2. (name, role) fallback for ID-less badges.
+    // 3. (name, role) fallback for ID-less badges.
     for (final existing in people) {
       if (existing.name == person.name && existing.role == person.role) {
         return existing;

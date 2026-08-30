@@ -38,7 +38,7 @@ void main() {
       expect(cubit.state.name, isEmpty);
       expect(cubit.state.role, isEmpty);
       expect(cubit.state.url, isEmpty);
-      expect(cubit.state.template, BadgeTemplate.imageOnly);
+      expect(cubit.state.template, BadgeTemplate.classic);
       expect(cubit.state.font, BadgeFont.display);
     });
 
@@ -90,7 +90,7 @@ void main() {
 
       expect(cubit.state.name, 'A');
       expect(cubit.state.role, isEmpty);
-      expect(cubit.state.template, BadgeTemplate.imageOnly);
+      expect(cubit.state.template, BadgeTemplate.classic);
     });
 
     test('falls back to defaults for unknown enum names', () {
@@ -102,7 +102,7 @@ void main() {
       final cubit = BadgeIdentityCubit();
       addTearDown(cubit.close);
 
-      expect(cubit.state.template, BadgeTemplate.imageOnly);
+      expect(cubit.state.template, BadgeTemplate.classic);
       expect(cubit.state.font, BadgeFont.display);
     });
   });

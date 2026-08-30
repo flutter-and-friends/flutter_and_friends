@@ -32,6 +32,7 @@ CollectedPerson _person({
   List<String> urls = const ['https://x.com/johannes'],
   String? installId,
   String? capybaraId,
+  String? badgeId,
 }) {
   return CollectedPerson(
     name: name,
@@ -40,6 +41,7 @@ CollectedPerson _person({
     collectedAt: DateTime(2026, 8, 24, 12),
     installId: installId,
     capybaraId: capybaraId,
+    badgeId: badgeId,
   );
 }
 
@@ -53,7 +55,7 @@ class _FakeBadgeCollector extends BadgeCollector {
 
   @override
   Future<BadgeCollectSession> start({
-    required void Function(BadgePerson person) onCollected,
+    required void Function(BadgePerson person, String? badgeId) onCollected,
     String alertMessageIos = '',
   }) async {
     controller
@@ -73,12 +75,12 @@ class _FakeBadgeCollector extends BadgeCollector {
 
 class _FakeSessionController {
   final completer = Completer<BadgeCollectResult>();
-  void Function(BadgePerson person)? onCollected;
+  void Function(BadgePerson person, String? badgeId)? onCollected;
   int startCalls = 0;
   int cancelCalls = 0;
 
-  void tap(BadgePerson person) {
-    onCollected!(person);
+  void tap(BadgePerson person, {String? badgeId = '1dd4ad1958'}) {
+    onCollected!(person, badgeId);
     completer.complete(BadgeCollectResult.collected);
   }
 
@@ -194,7 +196,31 @@ void main() {
         expect(find.byType(CollectBadgeDialog), findsNothing);
         expect(find.text('Collected Ada Lovelace ✓'), findsOneWidget);
         expect(cubit.state.people.single.name, 'Ada Lovelace');
+        expect(cubit.state.people.single.badgeId, '1dd4ad1958');
         expect(find.text('Ada Lovelace'), findsOneWidget);
+      });
+
+      testWidgets('tapping the same badge again updates the entry', (
+        tester,
+      ) async {
+        final cubit = CollectedPeopleCubit()
+          ..collect(
+            _person(name: 'Ada', role: 'Dev', badgeId: '1dd4ad1958'),
+          );
+        final controller = _FakeSessionController();
+        await tester.pumpWidget(
+          _subject(cubit, collector: _FakeBadgeCollector(controller)),
+        );
+
+        await tester.tap(find.byIcon(Icons.nfc));
+        await tester.pumpAndSettle();
+        controller.tap(_badgePerson);
+        await tester.pumpAndSettle();
+
+        expect(find.text('Updated Ada Lovelace ✓'), findsOneWidget);
+        expect(cubit.state.people.single.name, 'Ada Lovelace');
+        expect(cubit.state.people.single.role, 'Speaker');
+        expect(find.text('Ada'), findsNothing);
       });
 
       testWidgets('cancel ends the session without a message', (
