@@ -125,6 +125,16 @@ class _AppState extends State<App> {
           BlocProvider(create: (_) => CollectedPeopleCubit()),
           BlocProvider(create: (_) => InstallIdCubit()),
           BlocProvider(
+            create: (context) {
+              final listener = BadgeListenerCubit(
+                people: context.read<CollectedPeopleCubit>(),
+                ownInstallId: () => context.read<InstallIdCubit>().state.id,
+              );
+              unawaited(listener.start());
+              return listener;
+            },
+          ),
+          BlocProvider(
             create: (context) => UpdaterCubit(
               updater: context.read<ShorebirdUpdater>(),
             )..init(),
@@ -138,8 +148,15 @@ class _AppState extends State<App> {
   }
 }
 
-class AppView extends StatelessWidget {
+class AppView extends StatefulWidget {
   const AppView({super.key});
+
+  @override
+  State<AppView> createState() => _AppViewState();
+}
+
+class _AppViewState extends State<AppView> {
+  final _navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context) {
@@ -161,7 +178,12 @@ class AppView extends StatelessWidget {
         // <title> from index.html with this at runtime.
         title: 'Flutter & Friends',
         debugShowCheckedModeBanner: false,
+        navigatorKey: _navigatorKey,
         home: const UpdateListener(child: LaunchpadPage()),
+        builder: (context, child) => BadgeCollectedListener(
+          navigatorKey: _navigatorKey,
+          child: child!,
+        ),
         themeMode: themeMode,
         theme: lightTheme,
         darkTheme: darkTheme,

@@ -27,6 +27,7 @@ CollectedPerson _person({
   List<String>? urls,
   String? installId,
   String? capybaraId,
+  String? badgeId,
 }) {
   return CollectedPerson(
     name: name,
@@ -35,6 +36,7 @@ CollectedPerson _person({
     collectedAt: DateTime(2026, 8, 24, 12),
     installId: installId,
     capybaraId: capybaraId,
+    badgeId: badgeId,
   );
 }
 
@@ -183,6 +185,105 @@ void main() {
           expect(existing.installId, 'id-1');
         },
       );
+    });
+
+    group('dedupe v3 (badge ID first)', () {
+      test(
+        'same badgeId updates the entry in place, keeping original '
+        'collectedAt and position, even when rewritten by another install',
+        () {
+          final cubit = CollectedPeopleCubit()
+            ..collect(_person(name: 'Bob'))
+            ..collect(
+              _person(
+                name: 'Lukas Klingsbo',
+                role: 'SDK Engineer',
+                installId: 'install-store',
+                capybaraId: 'zen',
+                badgeId: 'badge-1',
+              ),
+            );
+
+          final updated = cubit.collect(
+            _person(
+              name: 'Lukas',
+              role: 'Test',
+              urls: const ['https://x.com/spydon'],
+              installId: 'install-debug',
+              capybaraId: 'coder_face',
+              badgeId: 'badge-1',
+            ),
+          );
+
+          expect(cubit.state.people, hasLength(2));
+          final entry = cubit.state.people[1];
+          expect(identical(entry, updated), isTrue);
+          expect(entry.name, 'Lukas');
+          expect(entry.role, 'Test');
+          expect(entry.urls, ['https://x.com/spydon']);
+          expect(entry.installId, 'install-debug');
+          expect(entry.capybaraId, 'coder_face');
+          expect(entry.badgeId, 'badge-1');
+          expect(entry.collectedAt, DateTime(2026, 8, 24, 12));
+        },
+      );
+
+      test('same (name, role) on two different badges are two entries', () {
+        final cubit = CollectedPeopleCubit()
+          ..collect(_person(badgeId: 'badge-1'))
+          ..collect(_person(badgeId: 'badge-2'));
+
+        expect(cubit.state.people, hasLength(2));
+      });
+
+      test(
+        'a badge-carrying person does NOT match an ID-less entry with the '
+        'same (name, role)',
+        () {
+          final cubit = CollectedPeopleCubit()
+            ..collect(_person())
+            ..collect(_person(badgeId: 'badge-1'));
+
+          expect(cubit.state.people, hasLength(2));
+        },
+      );
+
+      test(
+        'an entry collected before badge IDs matches by installId and '
+        'picks up the badgeId',
+        () {
+          final cubit = CollectedPeopleCubit()
+            ..collect(_person(installId: 'id-1'));
+
+          final updated = cubit.collect(
+            _person(installId: 'id-1', badgeId: 'badge-1'),
+          );
+
+          expect(cubit.state.people, hasLength(1));
+          expect(updated.badgeId, 'badge-1');
+          expect(cubit.state.people.single.badgeId, 'badge-1');
+        },
+      );
+
+      test(
+        'a replacement badge with the same installId updates the badgeId',
+        () {
+          final cubit = CollectedPeopleCubit()
+            ..collect(_person(installId: 'id-1', badgeId: 'badge-1'))
+            ..collect(_person(installId: 'id-1', badgeId: 'badge-2'));
+
+          expect(cubit.state.people, hasLength(1));
+          expect(cubit.state.people.single.badgeId, 'badge-2');
+        },
+      );
+
+      test('badgeId survives hydration', () async {
+        final cubit = CollectedPeopleCubit()
+          ..collect(_person(badgeId: 'badge-1'));
+        await cubit.close();
+
+        expect(CollectedPeopleCubit().state.people.single.badgeId, 'badge-1');
+      });
     });
 
     group('hydration', () {

@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'dart:ui' show Offset, Rect, Size;
 
+import 'package:flutter_and_friends/friends_badge/models/badge_frame.dart';
 import 'package:flutter_and_friends/friends_badge/models/badge_template.dart';
 
 /// Dimensions of the badge panel the composer renders to.
@@ -26,16 +27,19 @@ class BadgeLayout {
     required this.roleMaxFontSize,
     this.dividerY,
     this.borderWidth = 0,
-    this.accentStripeRect,
     this.textOnDark = false,
+    this.frame,
+    this.imageCornerRadius = 0,
   });
 
-  /// Computes the layout for [template] on a panel of [panelSize].
+  /// Computes the layout for [template] on a panel of [panelSize]. [frame]
+  /// only matters for [BadgeTemplate.framed].
   ///
   /// For templates that do not use text, `nameRect`/`roleRect` are
   /// [Rect.zero] and font sizes are 0.
   factory BadgeLayout.forTemplate(
     BadgeTemplate template, {
+    BadgeFrame frame = BadgeFrame.bold,
     Size panelSize = kBadgePanelSize,
   }) {
     switch (template) {
@@ -53,7 +57,7 @@ class BadgeLayout {
       case BadgeTemplate.overlay:
         return _overlay(panelSize);
       case BadgeTemplate.framed:
-        return _framed(panelSize);
+        return _framed(panelSize, frame);
     }
   }
 
@@ -79,16 +83,19 @@ class BadgeLayout {
   /// (`classic` only).
   final double? dividerY;
 
-  /// Stroke width of the border drawn around [imageRect], if any
-  /// (`framed` only).
+  /// Total thickness of the frame drawn around [imageRect], if any
+  /// (`framed` only). Zero when the frame is drawn over the image instead.
   final double borderWidth;
-
-  /// Accent stripe (red/yellow) rect, if the template draws one (`framed`).
-  final Rect? accentStripeRect;
 
   /// True when text sits on a dark band and should render in white
   /// (`overlay`); false for black text on light background.
   final bool textOnDark;
+
+  /// The frame style, for the `framed` template only.
+  final BadgeFrame? frame;
+
+  /// Corner radius the image is clipped to, 0 for square corners.
+  final double imageCornerRadius;
 
   // -- Templates ------------------------------------------------------------
 
@@ -154,33 +161,33 @@ class BadgeLayout {
     );
   }
 
-  static BadgeLayout _framed(Size panel) {
-    // Inset image with a thick border + accent stripe; name/role beneath.
+  static BadgeLayout _framed(Size panel, BadgeFrame frame) {
+    // Inset image with a frame drawn around it (or over its corners), and
+    // name/role beneath.
     const margin = 12.0;
-    const borderWidth = 6.0;
-    const stripeHeight = 8.0;
     const textAreaHeight = 96.0;
     const hPad = 12.0;
     const gap = 6.0;
+    final borderWidth = switch (frame) {
+      BadgeFrame.bold => 6.0,
+      BadgeFrame.double => 9.0,
+      BadgeFrame.rounded => 8.0,
+      BadgeFrame.corners => 0.0,
+    };
     final imageRect = Rect.fromLTWH(
       margin + borderWidth,
       margin + borderWidth,
       panel.width - (margin + borderWidth) * 2,
       panel.height - textAreaHeight - (margin + borderWidth) * 2,
     );
-    final stripeTop = margin + borderWidth * 2 + imageRect.height;
-    final textTop = stripeTop + stripeHeight + 8;
+    final textTop = imageRect.bottom + borderWidth + 8;
     const nameHeight = 44.0;
     return BadgeLayout._(
       template: BadgeTemplate.framed,
+      frame: frame,
       imageRect: imageRect,
+      imageCornerRadius: frame == BadgeFrame.rounded ? 16 : 0,
       borderWidth: borderWidth,
-      accentStripeRect: Rect.fromLTWH(
-        margin + borderWidth,
-        stripeTop,
-        imageRect.width,
-        stripeHeight,
-      ),
       nameRect: Rect.fromLTWH(
         hPad,
         textTop,
@@ -262,6 +269,33 @@ String truncateToFit({
     }
   }
   return '${text.substring(0, lo)}$ellipsis';
+}
+
+/// Once a badge text line has this many characters, it breaks at the next
+/// space (see [breakBadgeText]).
+const int kBadgeTextBreakAfter = 8;
+
+/// Splits [text] onto two lines for the badge: the line breaks at the first
+/// space found at or after [kBadgeTextBreakAfter] characters.
+///
+/// Shorter texts, and texts whose only spaces come earlier, are returned
+/// unchanged. At most one break is inserted; the second line is fitted and
+/// truncated by the composer like any other line.
+String breakBadgeText(String text) {
+  if (text.length <= kBadgeTextBreakAfter) return text;
+  final breakAt = text.indexOf(' ', kBadgeTextBreakAfter);
+  if (breakAt == -1) return text;
+  final head = text.substring(0, breakAt).trimRight();
+  final tail = text.substring(breakAt + 1).trimLeft();
+  if (head.isEmpty || tail.isEmpty) return text;
+  return '$head\n$tail';
+}
+
+/// The text to draw for [text] on [template]: only the classic template
+/// breaks long text onto two lines (see [breakBadgeText]), the others keep
+/// it on one line and let it shrink to fit.
+String badgeTextLines(String text, BadgeTemplate template) {
+  return template == BadgeTemplate.classic ? breakBadgeText(text) : text;
 }
 
 /// Cover-fit source rect math: given a source image of [source] size and a

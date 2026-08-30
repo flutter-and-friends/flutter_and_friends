@@ -26,7 +26,7 @@ void main() {
       test('draws no chrome', () {
         expect(layout.dividerY, isNull);
         expect(layout.borderWidth, 0);
-        expect(layout.accentStripeRect, isNull);
+        expect(layout.frame, isNull);
       });
     });
 
@@ -106,20 +106,133 @@ void main() {
         expect(layout.borderWidth, greaterThanOrEqualTo(4));
       });
 
-      test('accent stripe sits between image and text', () {
-        final stripe = layout.accentStripeRect!;
-        expect(stripe.top, greaterThanOrEqualTo(layout.imageRect.bottom));
-        expect(stripe.bottom, lessThanOrEqualTo(layout.nameRect.top));
-        expect(stripe.width, layout.imageRect.width);
-      });
-
-      test('text below stripe, name above role', () {
+      test('text below the frame, name above role', () {
         expect(
           layout.nameRect.top,
-          greaterThan(layout.accentStripeRect!.bottom),
+          greaterThan(layout.imageRect.bottom + layout.borderWidth),
         );
         expect(layout.roleRect.top, greaterThan(layout.nameRect.top));
       });
+
+      test('defaults to the bold frame', () {
+        expect(layout.frame, BadgeFrame.bold);
+        expect(BadgeFrame.values.first, BadgeFrame.bold);
+      });
+    });
+
+    group('framed frames', () {
+      for (final frame in BadgeFrame.values) {
+        final layout = BadgeLayout.forTemplate(
+          BadgeTemplate.framed,
+          frame: frame,
+        );
+
+        test('$frame keeps the image inset and the text below it', () {
+          expect(layout.frame, frame);
+          expect(layout.imageRect.left, greaterThan(0));
+          expect(layout.imageRect.top, greaterThan(0));
+          expect(layout.imageRect.right, lessThan(kBadgePanelSize.width));
+          expect(
+            layout.nameRect.top,
+            greaterThanOrEqualTo(layout.imageRect.bottom + layout.borderWidth),
+          );
+          expect(layout.roleRect.top, greaterThan(layout.nameRect.top));
+          expect(layout.roleRect.bottom, lessThan(kBadgePanelSize.height));
+        });
+      }
+
+      test('bold, double and rounded surround the image with a border', () {
+        for (final frame in [
+          BadgeFrame.bold,
+          BadgeFrame.double,
+          BadgeFrame.rounded,
+        ]) {
+          final layout = BadgeLayout.forTemplate(
+            BadgeTemplate.framed,
+            frame: frame,
+          );
+          expect(layout.borderWidth, greaterThan(0), reason: '$frame');
+        }
+      });
+
+      test('only rounded clips the image corners', () {
+        for (final frame in BadgeFrame.values) {
+          final layout = BadgeLayout.forTemplate(
+            BadgeTemplate.framed,
+            frame: frame,
+          );
+          expect(
+            layout.imageCornerRadius,
+            frame == BadgeFrame.rounded ? greaterThan(0) : 0,
+            reason: '$frame',
+          );
+        }
+      });
+
+      test('corners draws over the image instead of around it', () {
+        final layout = BadgeLayout.forTemplate(
+          BadgeTemplate.framed,
+          frame: BadgeFrame.corners,
+        );
+        expect(layout.borderWidth, 0);
+      });
+    });
+  });
+
+  group('badgeTextLines', () {
+    test('breaks long text only for the classic template', () {
+      expect(
+        badgeTextLines('Software Engineer', BadgeTemplate.classic),
+        'Software\nEngineer',
+      );
+      for (final template in BadgeTemplate.values.where(
+        (t) => t != BadgeTemplate.classic,
+      )) {
+        expect(
+          badgeTextLines('Software Engineer', template),
+          'Software Engineer',
+          reason: '$template',
+        );
+      }
+    });
+  });
+
+  group('breakBadgeText', () {
+    test('leaves short text alone', () {
+      expect(breakBadgeText('Lukas'), 'Lukas');
+      expect(breakBadgeText('Flutter!'), 'Flutter!');
+    });
+
+    test('breaks at the first space at or after 8 characters', () {
+      expect(breakBadgeText('Software Engineer'), 'Software\nEngineer');
+      expect(
+        breakBadgeText('Johannes Pietilä Löhnn'),
+        'Johannes\nPietilä Löhnn',
+      );
+      expect(
+        breakBadgeText('Senior Flutter Developer'),
+        'Senior Flutter\nDeveloper',
+      );
+    });
+
+    test('does not break when the only spaces come before 8 characters', () {
+      expect(breakBadgeText('Lukas Klingsbo'), 'Lukas Klingsbo');
+      expect(breakBadgeText('SDK Engineer'), 'SDK Engineer');
+    });
+
+    test('never breaks text without spaces', () {
+      expect(breakBadgeText('Supercalifragilistic'), 'Supercalifragilistic');
+    });
+
+    test('inserts at most one break', () {
+      expect(
+        breakBadgeText('Senior Flutter Developer at Acme'),
+        'Senior Flutter\nDeveloper at Acme',
+      );
+    });
+
+    test('ignores a trailing space', () {
+      expect(breakBadgeText('Software '), 'Software ');
     });
   });
 

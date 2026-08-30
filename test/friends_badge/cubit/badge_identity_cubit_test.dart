@@ -38,7 +38,7 @@ void main() {
       expect(cubit.state.name, isEmpty);
       expect(cubit.state.role, isEmpty);
       expect(cubit.state.url, isEmpty);
-      expect(cubit.state.template, BadgeTemplate.imageOnly);
+      expect(cubit.state.template, BadgeTemplate.classic);
       expect(cubit.state.font, BadgeFont.display);
     });
 
@@ -48,7 +48,8 @@ void main() {
         ..updateRole('Organizer')
         ..updateUrl('x.com/johannes')
         ..updateTemplate(BadgeTemplate.framed)
-        ..updateFont(BadgeFont.sans);
+        ..updateFont(BadgeFont.sans)
+        ..updateFrame(BadgeFrame.rounded);
       addTearDown(cubit.close);
 
       // HydratedCubit writes synchronously through Storage.write; give the
@@ -61,6 +62,19 @@ void main() {
       expect(stored['url'], 'x.com/johannes');
       expect(stored['template'], 'framed');
       expect(stored['font'], 'sans');
+      expect(stored['frame'], 'rounded');
+    });
+
+    test('rehydrates the frame and defaults to bold without one', () {
+      storage._data['BadgeIdentityCubit'] = {'frame': 'corners'};
+      final withFrame = BadgeIdentityCubit();
+      addTearDown(withFrame.close);
+      expect(withFrame.state.frame, BadgeFrame.corners);
+
+      storage._data['BadgeIdentityCubit'] = {'name': 'A'};
+      final withoutFrame = BadgeIdentityCubit();
+      addTearDown(withoutFrame.close);
+      expect(withoutFrame.state.frame, BadgeFrame.bold);
     });
 
     test('rehydrates a previously saved identity on construction', () async {
@@ -90,7 +104,7 @@ void main() {
 
       expect(cubit.state.name, 'A');
       expect(cubit.state.role, isEmpty);
-      expect(cubit.state.template, BadgeTemplate.imageOnly);
+      expect(cubit.state.template, BadgeTemplate.classic);
     });
 
     test('falls back to defaults for unknown enum names', () {
@@ -102,7 +116,7 @@ void main() {
       final cubit = BadgeIdentityCubit();
       addTearDown(cubit.close);
 
-      expect(cubit.state.template, BadgeTemplate.imageOnly);
+      expect(cubit.state.template, BadgeTemplate.classic);
       expect(cubit.state.font, BadgeFont.display);
     });
   });

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_and_friends/collected_people/collected_people.dart';
 import 'package:flutter_and_friends/friends_badge/friends_badge.dart'
     show kCapybaraAssets;
+import 'package:flutter_and_friends/identity/identity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:friends_badge/friends_badge.dart' show BadgePerson;
 import 'package:nfc_manager/nfc_manager.dart';
@@ -23,7 +24,12 @@ String? capybaraAssetFor(String? capybaraId) {
 class CollectedPeoplePage extends StatelessWidget {
   const CollectedPeoplePage({super.key});
 
+  /// Route name, so the app-wide badge listener can tell whether this page
+  /// is already open before pushing it.
+  static const routeName = '/collected-people';
+
   static Route<void> route() => MaterialPageRoute(
+    settings: const RouteSettings(name: routeName),
     builder: (_) => const CollectedPeoplePage(),
   );
 
@@ -44,17 +50,31 @@ class CollectedPeopleView extends StatelessWidget {
     final people = context.select(
       (CollectedPeopleCubit cubit) => cubit.state.people,
     );
+    // The app-wide listener (Android) collects any tap while the app is in
+    // the foreground, so the explicit collect button is only needed when it
+    // is not running (iOS, or NFC unavailable).
+    final listening =
+        context.watch<BadgeListenerCubit?>()?.state.listening ?? false;
     return Scaffold(
       appBar: AppBar(title: const Text('Collected People')),
-      floatingActionButton: FloatingActionButton(
-        heroTag: 'CollectBadgeButton',
-        tooltip: 'Collect a badge',
-        onPressed: () => _collect(context),
-        child: const Icon(Icons.nfc),
+      floatingActionButton: listening
+          ? null
+          : FloatingActionButton(
+              heroTag: 'CollectBadgeButton',
+              tooltip: 'Collect a badge',
+              onPressed: () => _collect(context),
+              child: const Icon(Icons.nfc),
+            ),
+      body: Column(
+        children: [
+          if (listening) const ListeningBanner(),
+          Expanded(
+            child: people.isEmpty
+                ? EmptyCollectedPeople(listening: listening)
+                : CollectedPeopleListView(people: people),
+          ),
+        ],
       ),
-      body: people.isEmpty
-          ? const EmptyCollectedPeople()
-          : CollectedPeopleListView(people: people),
     );
   }
 
@@ -69,18 +89,28 @@ class CollectedPeopleView extends StatelessWidget {
     final cubit = context.read<CollectedPeopleCubit>();
     final messenger = ScaffoldMessenger.of(context);
 
-    void onCollected(BadgePerson badgePerson) {
+    final ownInstallId = context.read<InstallIdCubit?>()?.state.id;
+
+    void onCollected(BadgePerson badgePerson, String? badgeId) {
+      if (isOwnBadge(badgePerson, ownInstallId: ownInstallId)) {
+        messenger
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            const SnackBar(content: Text("That's your own badge")),
+          );
+        return;
+      }
       final existing = cubit.state.people.length;
-      final person = cubit.collect(toCollectedPerson(badgePerson));
+      final person = cubit.collect(
+        toCollectedPerson(badgePerson, badgeId: badgeId),
+      );
       final isNew = cubit.state.people.length > existing;
       messenger
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
             content: Text(
-              isNew
-                  ? 'Collected ${person.name} ✓'
-                  : '${person.name} is already in your dex',
+              isNew ? 'Collected ${person.name} ✓' : 'Updated ${person.name} ✓',
             ),
           ),
         );
@@ -110,6 +140,9 @@ class CollectedPeopleView extends StatelessWidget {
       builder: (_) => CollectBadgeDialog(session: session),
     );
     await session.cancel();
+    if (context.mounted) {
+      unawaited(context.read<BadgeListenerCubit?>()?.rearm());
+    }
 
     switch (await session.result) {
       case BadgeCollectResult.collected:
@@ -128,7 +161,7 @@ class CollectedPeopleView extends StatelessWidget {
   /// session. iOS does not always clean up the previous session (for
   /// example from the badge write flow), mirroring WriteToBadgeButton.
   Future<BadgeCollectSession> _startSession(
-    void Function(BadgePerson person) onCollected,
+    void Function(BadgePerson person, String? badgeId) onCollected,
   ) async {
     try {
       return await collector.start(onCollected: onCollected);
@@ -181,8 +214,37 @@ class _CollectBadgeDialogState extends State<CollectBadgeDialog> {
   }
 }
 
+/// Shown while the app-wide listener holds an NFC session, in place of the
+/// collect button.
+class ListeningBanner extends StatelessWidget {
+  const ListeningBanner({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    return Material(
+      color: colors.primaryContainer,
+      child: ListTile(
+        leading: Icon(Icons.nfc, color: colors.onPrimaryContainer),
+        title: Text(
+          'Listening for badges',
+          style: TextStyle(color: colors.onPrimaryContainer),
+        ),
+        subtitle: Text(
+          'Hold your phone to a badge to collect them',
+          style: TextStyle(color: colors.onPrimaryContainer),
+        ),
+      ),
+    );
+  }
+}
+
 class EmptyCollectedPeople extends StatelessWidget {
-  const EmptyCollectedPeople({super.key});
+  const EmptyCollectedPeople({this.listening = false, super.key});
+
+  /// Whether the app-wide listener is active, which changes the hint from
+  /// "tap the button" to "hold the phone to a badge".
+  final bool listening;
 
   @override
   Widget build(BuildContext context) {
@@ -207,9 +269,11 @@ class EmptyCollectedPeople extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
-            const Text(
-              "Tap the NFC button and hold your phone near someone's "
-              'badge to collect them',
+            Text(
+              listening
+                  ? "Hold your phone near someone's badge to collect them"
+                  : "Tap the NFC button and hold your phone near someone's "
+                        'badge to collect them',
               textAlign: TextAlign.center,
             ),
           ],

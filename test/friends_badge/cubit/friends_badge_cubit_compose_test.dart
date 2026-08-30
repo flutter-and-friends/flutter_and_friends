@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_and_friends/friends_badge/friends_badge.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:friends_badge/friends_badge.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:image/image.dart' as img;
 
@@ -52,11 +53,22 @@ void main() {
 
         expect(cubit.state.status, FriendsBadgeStatus.loaded);
         expect(cubit.state.badge, isNotNull);
-        // The composed badge renders back to bytes (dithered preview path).
+        // The previews are encoded by the isolate, not by the widgets.
+        final badge = cubit.state.badge!;
+        expect(badge.previewPng, isNotEmpty);
         expect(
-          cubit.state.badge!.image.getImageBytes(),
-          isNotEmpty,
+          badge.peekPngs.keys,
+          unorderedEquals(BadgeImage.allSupportedKernels),
         );
+
+        final previous = badge.previewPng;
+        await cubit.updateDitherKernel(img.DitherKernel.floydSteinberg);
+
+        expect(
+          cubit.state.badge!.ditherKernel,
+          img.DitherKernel.floydSteinberg,
+        );
+        expect(identical(cubit.state.badge!.previewPng, previous), isFalse);
       },
       // TextPainter layout inside renderPng needs the test binding's font
       // pipeline; google_fonts styles fall back to default fonts offline.

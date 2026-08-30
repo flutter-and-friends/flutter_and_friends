@@ -27,6 +27,8 @@ class BadgeIdentityCubit extends HydratedCubit<BadgeIdentityState> {
 
   void updateFont(BadgeFont font) => emit(state.copyWith(font: font));
 
+  void updateFrame(BadgeFrame frame) => emit(state.copyWith(frame: frame));
+
   @override
   BadgeIdentityState? fromJson(Map<String, dynamic> json) {
     return BadgeIdentityState(
@@ -35,8 +37,9 @@ class BadgeIdentityCubit extends HydratedCubit<BadgeIdentityState> {
       url: json['url'] as String? ?? '',
       template:
           BadgeTemplate.values.asNameMap()[json['template']] ??
-          BadgeTemplate.imageOnly,
+          BadgeTemplate.classic,
       font: BadgeFont.values.asNameMap()[json['font']] ?? BadgeFont.display,
+      frame: BadgeFrame.values.asNameMap()[json['frame']] ?? BadgeFrame.bold,
     );
   }
 
@@ -48,6 +51,7 @@ class BadgeIdentityCubit extends HydratedCubit<BadgeIdentityState> {
       'url': state.url,
       'template': state.template.name,
       'font': state.font.name,
+      'frame': state.frame.name,
     };
   }
 }

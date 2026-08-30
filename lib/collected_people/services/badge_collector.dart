@@ -75,19 +75,29 @@ class BadgeCollector {
       (await NfcManager.instance.checkAvailability()) ==
       NfcAvailability.enabled;
 
-  /// Starts an NFC session that ends on the first tapped tag.
+  /// Starts an NFC session that ends on the first tapped tag, or, when
+  /// [continuous] is set, keeps listening until cancelled.
   ///
-  /// [onCollected] is invoked with the person read off a tapped badge,
-  /// before the returned session's [BadgeCollectSession.result] completes
-  /// with [BadgeCollectResult.collected]. A tag that is not a readable badge
-  /// (not ISO-DEP, no NDEF payload, malformed payload) ends the session with
-  /// [BadgeCollectResult.notABadge].
+  /// [onCollected] is invoked with the person read off a tapped badge and
+  /// the badge's tag UID as lowercase hex (`null` if the platform did not
+  /// report one), before the returned session's [BadgeCollectSession.result]
+  /// completes with [BadgeCollectResult.collected]. A tag that is not a
+  /// readable badge (not ISO-DEP, no NDEF payload, malformed payload) ends
+  /// the session with [BadgeCollectResult.notABadge].
+  ///
+  /// In [continuous] mode every tap is collected and un-collectable tags
+  /// are skipped, the session stays open, and [BadgeCollectSession.result]
+  /// only completes on cancel. Holding reader mode this way also keeps
+  /// Android from handing a badge that is still on the phone to the system
+  /// ("New tag collected"). Meant for Android; iOS shows a modal system
+  /// sheet per session, so use single-tap sessions there.
   ///
   /// Throws a [StateError] when NFC is unavailable and rethrows the platform
   /// error when the session cannot be started.
   Future<BadgeCollectSession> start({
-    required void Function(BadgePerson person) onCollected,
+    required void Function(BadgePerson person, String? badgeId) onCollected,
     String alertMessageIos = 'Hold your device near a badge to collect them',
+    bool continuous = false,
   }) async {
     final availability = await NfcManager.instance.checkAvailability();
     if (availability != NfcAvailability.enabled) {
@@ -118,16 +128,22 @@ class BadgeCollector {
       onDiscovered: (tag) async {
         if (completer.isCompleted || handlingTag) return;
         handlingTag = true;
-        final person = await _tryRead(tag);
-        if (completer.isCompleted) return;
-        if (person == null) {
-          await stop(errorMessageIos: 'Not a badge, try another tap');
-          finish(BadgeCollectResult.notABadge);
-          return;
+        try {
+          final person = await _tryRead(tag);
+          if (completer.isCompleted) return;
+          if (person == null) {
+            if (continuous) return;
+            await stop(errorMessageIos: 'Not a badge, try another tap');
+            finish(BadgeCollectResult.notABadge);
+            return;
+          }
+          onCollected(person, badgeIdFrom(tag));
+          if (continuous) return;
+          await stop(alertMessageIos: 'Collected!');
+          finish(BadgeCollectResult.collected);
+        } finally {
+          handlingTag = false;
         }
-        onCollected(person);
-        await stop(alertMessageIos: 'Collected!');
-        finish(BadgeCollectResult.collected);
       },
       onSessionErrorIos: (error) {
         debugPrint('Badge collect session ended: ${error.code}');
@@ -164,6 +180,23 @@ class BadgeCollector {
       debugPrint('Skipping un-collectable tag: $e');
       return null;
     }
+  }
+
+  /// The tag UID of [tag] as lowercase hex, or `null` when the platform
+  /// reports none. Android exposes it on every tag, iOS on the ISO 7816
+  /// technology the badge speaks.
+  @visibleForTesting
+  static String? badgeIdFrom(NfcTag tag) {
+    final Uint8List? id;
+    if (Platform.isAndroid) {
+      id = NfcTagAndroid.from(tag)?.id;
+    } else if (Platform.isIOS) {
+      id = Iso7816Ios.from(tag)?.identifier;
+    } else {
+      id = null;
+    }
+    if (id == null || id.isEmpty) return null;
+    return id.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
   }
 
   /// Builds an [IsoDepTransceiver] over [tag], mirroring the `friends_badge`

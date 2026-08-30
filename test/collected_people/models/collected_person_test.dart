@@ -160,6 +160,27 @@ void main() {
     });
   });
 
+  group('toCollectedPerson badgeId', () {
+    const person = BadgePerson(
+      name: 'Lukas',
+      role: 'Test',
+      urls: [],
+      primaryUri: null,
+      installId: null,
+      capybaraId: null,
+    );
+
+    test('stores the badge ID handed in by the collector', () {
+      final collected = toCollectedPerson(person, badgeId: '1dd4ad1958');
+
+      expect(collected.badgeId, '1dd4ad1958');
+    });
+
+    test('has no badge ID when the collector reported none', () {
+      expect(toCollectedPerson(person).badgeId, isNull);
+    });
+  });
+
   group('CollectedPerson JSON', () {
     test('round-trips through toJson/fromJson', () {
       final person = CollectedPerson(
@@ -169,11 +190,13 @@ void main() {
         collectedAt: DateTime(2026, 8, 24, 12, 30),
         installId: 'id-1',
         capybaraId: 'coffee_mode',
+        badgeId: '1dd4ad1958',
       );
 
       final restored = CollectedPerson.fromJson(person.toJson());
 
       expect(restored, person);
+      expect(restored.badgeId, '1dd4ad1958');
     });
 
     test('fromJson tolerates missing fields', () {
@@ -184,6 +207,18 @@ void main() {
       expect(restored.urls, isEmpty);
       expect(restored.installId, isNull);
       expect(restored.capybaraId, isNull);
+      expect(restored.badgeId, isNull);
+    });
+
+    test('omits badgeId from JSON when it is null', () {
+      final person = CollectedPerson(
+        name: 'Johannes',
+        role: 'Organizer',
+        urls: const [],
+        collectedAt: DateTime(2026, 8, 24, 12),
+      );
+
+      expect(person.toJson().containsKey('badgeId'), isFalse);
     });
 
     test(

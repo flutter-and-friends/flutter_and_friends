@@ -1,9 +1,11 @@
+import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart' as m;
 import 'package:flutter/painting.dart';
 import 'package:flutter_and_friends/friends_badge/models/models.dart';
+import 'package:flutter_and_friends/friends_badge/services/badge_font_styles.dart';
 import 'package:friends_badge/friends_badge.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image/image.dart' as img;
@@ -40,8 +42,6 @@ class BadgeComposer {
   // Palette colors (pure values — no mid-grays).
   static const _black = m.Color(0xFF000000);
   static const _white = m.Color(0xFFFFFFFF);
-  static const _red = m.Color(0xFFFF0000);
-  static const _yellow = m.Color(0xFFFFFF00);
 
   /// Rasterizes the composition to raw 8-bit straight-alpha RGBA bytes
   /// ([kBadgePanelSize] wide and tall, 4 bytes per pixel) on the root
@@ -56,8 +56,21 @@ class BadgeComposer {
     required String name,
     required String role,
     required BadgeFont font,
+    BadgeFrame frame = BadgeFrame.bold,
   }) async {
-    final layout = BadgeLayout.forTemplate(template);
+    final layout = BadgeLayout.forTemplate(template, frame: frame);
+    if (template.usesText) {
+      // Fonts are fetched on first use; wait so the text is not drawn with
+      // a fallback face while the download is in flight. Offline, the
+      // fetch fails and the fallback face is the best we can do.
+      try {
+        await GoogleFonts.pendingFonts([font.nameStyle, font.roleStyle]);
+        // google_fonts reports a failed download as a plain Exception.
+        // ignore: avoid_catches_without_on_clauses
+      } catch (e) {
+        m.debugPrint('Badge font unavailable, using fallback: $e');
+      }
+    }
     final recorder = ui.PictureRecorder();
     final canvas = m.Canvas(recorder);
     final panelRect = Offset.zero & kBadgePanelSize;
@@ -69,7 +82,7 @@ class BadgeComposer {
     _drawImage(canvas, uiImage: sourceImage, layout: layout);
 
     if (template.usesText) {
-      _drawTemplateChrome(canvas, layout);
+      paintTemplateChrome(canvas, layout);
       _drawText(
         canvas,
         layout: layout,
@@ -121,17 +134,27 @@ class BadgeComposer {
       ),
       dest: layout.imageRect,
     );
+    final radius = layout.imageCornerRadius;
+    if (radius > 0) {
+      canvas
+        ..save()
+        ..clipRRect(
+          RRect.fromRectAndRadius(layout.imageRect, Radius.circular(radius)),
+        );
+    }
     canvas.drawImageRect(
       uiImage,
       source,
       layout.imageRect,
       Paint()..filterQuality = FilterQuality.high,
     );
+    if (radius > 0) canvas.restore();
   }
 
-  /// Template-specific chrome: divider lines, overlay band, framed border
-  /// and accent stripe.
-  static void _drawTemplateChrome(m.Canvas canvas, BadgeLayout layout) {
+  /// Template-specific chrome: divider lines, overlay band, and the frame
+  /// styles of the framed template. Public so the frame picker can draw
+  /// miniatures with exactly the chrome the badge gets.
+  static void paintTemplateChrome(m.Canvas canvas, BadgeLayout layout) {
     switch (layout.template) {
       case BadgeTemplate.imageOnly:
         break;
@@ -155,36 +178,76 @@ class BadgeComposer {
           Paint()..color = _black,
         );
       case BadgeTemplate.framed:
-        final border = layout.imageRect.inflate(layout.borderWidth);
-        canvas.drawRect(
-          border,
-          Paint()
-            ..color = _black
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = layout.borderWidth,
+        _drawFrame(canvas, layout);
+    }
+  }
+
+  static void _drawFrame(m.Canvas canvas, BadgeLayout layout) {
+    final image = layout.imageRect;
+    switch (layout.frame ?? BadgeFrame.bold) {
+      case BadgeFrame.bold:
+        _strokeAround(canvas, image, width: layout.borderWidth);
+      case BadgeFrame.double:
+        _strokeAround(canvas, image, width: 2);
+        _strokeAround(canvas, image.inflate(6), width: 3);
+      case BadgeFrame.rounded:
+        _strokeAround(
+          canvas,
+          image,
+          width: layout.borderWidth,
+          radius: layout.imageCornerRadius,
         );
-        // Accent stripe: red on top half, yellow on bottom half, so the
-        // framed template carries both palette accents.
-        final stripe = layout.accentStripeRect!;
-        canvas
-          ..drawRect(
-            Rect.fromLTWH(
-              stripe.left,
-              stripe.top,
-              stripe.width,
-              stripe.height / 2,
-            ),
-            Paint()..color = _red,
-          )
-          ..drawRect(
-            Rect.fromLTWH(
-              stripe.left,
-              stripe.top + stripe.height / 2,
-              stripe.width,
-              stripe.height / 2,
-            ),
-            Paint()..color = _yellow,
-          );
+      case BadgeFrame.corners:
+        const thickness = 6.0;
+        const length = 40.0;
+        final paint = Paint()..color = _black;
+        for (final corner in [
+          image.topLeft,
+          image.topRight,
+          image.bottomLeft,
+          image.bottomRight,
+        ]) {
+          final dx = corner.dx == image.left ? 1 : -1;
+          final dy = corner.dy == image.top ? 1 : -1;
+          canvas
+            ..drawRect(
+              Rect.fromPoints(
+                corner,
+                corner.translate(dx * length, dy * thickness),
+              ),
+              paint,
+            )
+            ..drawRect(
+              Rect.fromPoints(
+                corner,
+                corner.translate(dx * thickness, dy * length),
+              ),
+              paint,
+            );
+        }
+    }
+  }
+
+  /// Strokes a black band of [width] hugging the outside of [rect], with the
+  /// rect's corners rounded by [radius] when it is greater than zero.
+  static void _strokeAround(
+    m.Canvas canvas,
+    Rect rect, {
+    required double width,
+    double radius = 0,
+  }) {
+    final paint = Paint()
+      ..color = _black
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = width;
+    final band = rect.inflate(width / 2);
+    if (radius > 0) {
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(band, Radius.circular(radius + width / 2)),
+        paint,
+      );
+    } else {
+      canvas.drawRect(band, paint);
     }
   }
 
@@ -196,105 +259,81 @@ class BadgeComposer {
     required BadgeFont font,
   }) {
     final textColor = layout.textOnDark ? _white : _black;
-    final displayStyle = _displayStyle(font);
-    final sansStyle = _sansStyle(font);
-
-    double measure(String text, double fontSize, m.TextStyle base) {
-      final painter = TextPainter(
-        text: TextSpan(
-          text: text,
-          style: base.copyWith(fontSize: fontSize),
-        ),
-        maxLines: 1,
-        textDirection: m.TextDirection.ltr,
-      )..layout();
-      return painter.width;
-    }
-
-    final fittedName = fitFontSize(
-      text: name,
-      maxWidth: layout.nameRect.width,
+    _paintText(
+      canvas,
+      text: badgeTextLines(name, layout.template),
+      rect: layout.nameRect,
+      style: font.nameStyle.copyWith(color: textColor),
       maxFontSize: layout.nameMaxFontSize,
       minFontSize: 14,
-      measure: (t, s) => measure(t, s, displayStyle),
     );
-    final shownName = truncateToFit(
-      text: name,
-      maxWidth: layout.nameRect.width,
-      fontSize: fittedName,
-      measure: (t, s) => measure(t, s, displayStyle),
-    );
-
-    final fittedRole = fitFontSize(
-      text: role,
-      maxWidth: layout.roleRect.width,
+    _paintText(
+      canvas,
+      text: badgeTextLines(role, layout.template),
+      rect: layout.roleRect,
+      style: font.roleStyle.copyWith(color: textColor),
       maxFontSize: layout.roleMaxFontSize,
       minFontSize: 12,
-      measure: (t, s) => measure(t, s, sansStyle),
     );
-    final shownRole = truncateToFit(
-      text: role,
-      maxWidth: layout.roleRect.width,
-      fontSize: fittedRole,
-      measure: (t, s) => measure(t, s, sansStyle),
-    );
-
-    if (shownName.isNotEmpty) {
-      TextPainter(
-          text: TextSpan(
-            text: shownName,
-            style: displayStyle.copyWith(
-              fontSize: fittedName,
-              color: textColor,
-            ),
-          ),
-          maxLines: 1,
-          textDirection: m.TextDirection.ltr,
-        )
-        ..layout(maxWidth: layout.nameRect.width)
-        ..paint(canvas, layout.nameRect.topLeft);
-    }
-
-    if (shownRole.isNotEmpty) {
-      TextPainter(
-          text: TextSpan(
-            text: shownRole,
-            style: sansStyle.copyWith(
-              fontSize: fittedRole,
-              color: textColor,
-            ),
-          ),
-          maxLines: 1,
-          textDirection: m.TextDirection.ltr,
-        )
-        ..layout(maxWidth: layout.roleRect.width)
-        ..paint(canvas, layout.roleRect.topLeft);
-    }
   }
 
-  // -- Fonts -----------------------------------------------------------------
+  /// Paints [text] (one or two lines, see [breakBadgeText]) top-left in
+  /// [rect] at the largest font size between [minFontSize] and
+  /// [maxFontSize] at which every line fits the width and all lines fit the
+  /// height, truncating lines that still overflow at [minFontSize].
+  static void _paintText(
+    m.Canvas canvas, {
+    required String text,
+    required Rect rect,
+    required m.TextStyle style,
+    required double maxFontSize,
+    required double minFontSize,
+  }) {
+    if (text.isEmpty || rect.isEmpty) return;
+    final lines = text.split('\n');
 
-  static m.TextStyle _displayStyle(BadgeFont font) => switch (font) {
-    BadgeFont.display => GoogleFonts.oswald(
-      fontWeight: m.FontWeight.w700,
-      color: _black,
-    ),
-    BadgeFont.sans => GoogleFonts.roboto(
-      fontWeight: m.FontWeight.w700,
-      color: _black,
-    ),
-  };
+    TextPainter painterFor(String value, double fontSize) {
+      return TextPainter(
+        text: TextSpan(
+          text: value,
+          style: style.copyWith(fontSize: fontSize),
+        ),
+        maxLines: lines.length,
+        textDirection: m.TextDirection.ltr,
+      )..layout();
+    }
 
-  static m.TextStyle _sansStyle(BadgeFont font) => switch (font) {
-    BadgeFont.display => GoogleFonts.roboto(
-      fontWeight: m.FontWeight.w400,
-      color: _black,
-    ),
-    BadgeFont.sans => GoogleFonts.roboto(
-      fontWeight: m.FontWeight.w400,
-      color: _black,
-    ),
-  };
+    double measure(String value, double fontSize) =>
+        painterFor(value, fontSize).width;
+
+    // Line height scales linearly with font size, so one measurement at the
+    // maximum gives the largest size whose lines still fit the rect height.
+    final heightAtMax = painterFor(text, maxFontSize).height;
+    final cappedMax = heightAtMax <= rect.height
+        ? maxFontSize
+        : math.max(minFontSize, maxFontSize * rect.height / heightAtMax);
+
+    final fontSize = fitFontSize(
+      text: text,
+      maxWidth: rect.width,
+      maxFontSize: cappedMax,
+      minFontSize: minFontSize,
+      measure: measure,
+    );
+    final shown = [
+      for (final line in lines)
+        truncateToFit(
+          text: line,
+          maxWidth: rect.width,
+          fontSize: fontSize,
+          measure: measure,
+        ),
+    ].join('\n');
+
+    painterFor(shown, fontSize)
+      ..layout(maxWidth: rect.width)
+      ..paint(canvas, rect.topLeft);
+  }
 }
 
 /// Isolate entrypoint for the second compose phase: wrap the rendered RGBA
@@ -323,4 +362,57 @@ BadgeImage badgeImageFromRgba(Uint8List rgba) {
     numChannels: 4,
   );
   return BadgeImage(image);
+}
+
+/// Input for [composeBadge]: the rendered RGBA bytes and the dither kernel
+/// the full-size preview should use.
+class ComposeRequest {
+  const ComposeRequest({required this.rgba, required this.kernel});
+
+  final Uint8List rgba;
+  final DitherKernel kernel;
+}
+
+/// Output of [composeBadge]: the [BadgeImage] plus the PNG previews the
+/// editor shows, so that dithering and encoding never run on the UI thread.
+class ComposedBadge {
+  const ComposedBadge({
+    required this.image,
+    required this.kernel,
+    required this.previewPng,
+    required this.peekPngs,
+  });
+
+  final BadgeImage image;
+  final DitherKernel kernel;
+
+  /// [image] dithered with [kernel], PNG encoded.
+  final Uint8List previewPng;
+
+  /// A small PNG per supported kernel for the kernel carousel.
+  final Map<DitherKernel, Uint8List> peekPngs;
+}
+
+/// Isolate entrypoint for the second compose phase: builds the [BadgeImage]
+/// from the rendered RGBA bytes (see [badgeImageFromRgba]) and encodes the
+/// previews the editor needs. `BadgeImage.getImageBytes` and
+/// `getPeekImageBytes` dither and PNG-encode on every call with no caching,
+/// which is far too slow to do inside `build` on each keystroke.
+ComposedBadge composeBadge(ComposeRequest request) {
+  final image = badgeImageFromRgba(request.rgba);
+  return ComposedBadge(
+    image: image,
+    kernel: request.kernel,
+    previewPng: image.getImageBytes(request.kernel),
+    peekPngs: {
+      for (final kernel in BadgeImage.allSupportedKernels)
+        kernel: image.getPeekImageBytes(kernel),
+    },
+  );
+}
+
+/// Encodes the full-size preview of [image] dithered with [kernel]. Meant to
+/// run off the UI thread, for example through `Isolate.run`.
+Uint8List encodeBadgePreview(BadgeImage image, DitherKernel kernel) {
+  return image.getImageBytes(kernel);
 }
