@@ -1,5 +1,6 @@
 export 'animated_scoreboard.dart';
 export 'award_badge.dart';
+export 'connection_banner.dart';
 export 'finished_view.dart';
 export 'lobby_view.dart';
 export 'question_view.dart';

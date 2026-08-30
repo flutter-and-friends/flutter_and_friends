@@ -48,6 +48,16 @@ class PubQuizRepository {
     });
   }
 
+  /// Emits true while the quiz is served live from the server and false
+  /// while Firestore can only offer its cache, which is the case until the
+  /// first server round trip completes and whenever the connection drops.
+  Stream<bool> watchConnected() {
+    return _quiz
+        .snapshots(includeMetadataChanges: true)
+        .map((snapshot) => !snapshot.metadata.isFromCache)
+        .distinct();
+  }
+
   Stream<List<PubQuizTeam>> watchTeams() {
     final userId = _requireUserId();
     return _teams.snapshots().map(

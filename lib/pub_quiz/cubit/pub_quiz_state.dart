@@ -7,6 +7,20 @@ enum PubQuizStatus { initial, loading, loaded, error }
 /// had already closed.
 enum PubQuizSubmission { idle, submitting, submitted, tooLate, failure }
 
+/// Whether what is on screen comes live from the server. Firestore keeps
+/// serving its cache while offline, so the quiz can look fine yet be stale.
+enum PubQuizConnection {
+  /// No server round trip has completed yet in this session.
+  connecting,
+
+  /// The latest snapshot came from the server.
+  connected,
+
+  /// The server was reachable earlier but the latest snapshot came from the
+  /// cache.
+  reconnecting,
+}
+
 /// Which screen to show, derived from the phase and whether this device has
 /// a team yet.
 enum PubQuizScreen {
@@ -26,10 +40,12 @@ class PubQuizState extends Equatable {
     this.teams = const [],
     this.myAnswer,
     this.submission = PubQuizSubmission.idle,
+    this.connection = PubQuizConnection.connecting,
     this.errorMessage,
   });
 
   final PubQuizStatus status;
+  final PubQuizConnection connection;
 
   /// Null until the first snapshot arrives, and when the organizers have not
   /// created the quiz yet.
@@ -105,6 +121,7 @@ class PubQuizState extends Equatable {
     List<PubQuizTeam>? teams,
     PubQuizAnswer? Function()? myAnswer,
     PubQuizSubmission? submission,
+    PubQuizConnection? connection,
     String? errorMessage,
   }) {
     return PubQuizState(
@@ -113,6 +130,7 @@ class PubQuizState extends Equatable {
       teams: teams ?? this.teams,
       myAnswer: myAnswer != null ? myAnswer() : this.myAnswer,
       submission: submission ?? this.submission,
+      connection: connection ?? this.connection,
       errorMessage: errorMessage,
     );
   }
@@ -124,6 +142,7 @@ class PubQuizState extends Equatable {
     teams,
     myAnswer,
     submission,
+    connection,
     errorMessage,
   ];
 }

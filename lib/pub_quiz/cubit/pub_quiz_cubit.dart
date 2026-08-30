@@ -22,6 +22,7 @@ class PubQuizCubit extends Cubit<PubQuizState> {
   final PubQuizRepository _repository;
 
   StreamSubscription<PubQuiz?>? _quiz;
+  StreamSubscription<bool>? _connection;
   StreamSubscription<List<PubQuizTeam>>? _teams;
   StreamSubscription<PubQuizAnswer?>? _myAnswer;
   String? _answerQuestionId;
@@ -38,6 +39,7 @@ class PubQuizCubit extends Cubit<PubQuizState> {
       return;
     }
     _quiz = _repository.watchQuiz().listen(_onQuiz, onError: _fail);
+    _connection = _repository.watchConnected().listen(_onConnected);
     _teams = _repository.watchTeams().listen(_onTeams, onError: _fail);
   }
 
@@ -104,6 +106,15 @@ class PubQuizCubit extends Cubit<PubQuizState> {
         );
   }
 
+  void _onConnected(bool connected) {
+    final connection = connected
+        ? PubQuizConnection.connected
+        : state.connection == PubQuizConnection.connecting
+        ? PubQuizConnection.connecting
+        : PubQuizConnection.reconnecting;
+    emit(state.copyWith(connection: connection));
+  }
+
   void _onTeams(List<PubQuizTeam> teams) {
     emit(state.copyWith(status: PubQuizStatus.loaded, teams: _sorted(teams)));
   }
@@ -127,6 +138,7 @@ class PubQuizCubit extends Cubit<PubQuizState> {
 
   Future<void> _cancelAll() async {
     await _quiz?.cancel();
+    await _connection?.cancel();
     await _teams?.cancel();
     await _myAnswer?.cancel();
     _answerQuestionId = null;
