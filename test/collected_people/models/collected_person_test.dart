@@ -58,6 +58,19 @@ void main() {
       expect(collected.urls, ['http://example.com/in/johannes']);
     });
 
+    test('keeps mailto: links intact instead of prefixing https://', () {
+      final person = BadgePerson.fromNdefMessage(
+        NdefMessage([
+          NdefRecord.uri(Uri.parse('mailto:ada@example.com')),
+          NdefRecord.text('Ada · Speaker · mailto:ada@example.com'),
+        ]),
+      );
+
+      final collected = toCollectedPerson(person, collectedAt: at);
+
+      expect(collected.urls, ['mailto:ada@example.com']);
+    });
+
     test('name-only Text record collects with empty role and no URLs', () {
       final person = BadgePerson.fromNdefMessage(
         NdefMessage([NdefRecord.text('Johannes')]),

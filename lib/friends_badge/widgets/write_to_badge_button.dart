@@ -4,15 +4,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_and_friends/collected_people/collected_people.dart';
 import 'package:flutter_and_friends/friends_badge/friends_badge.dart';
-import 'package:flutter_and_friends/identity/identity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:friends_badge/friends_badge.dart';
 import 'package:nfc_manager/nfc_manager.dart';
 
 class WriteToBadgeButton extends StatelessWidget {
-  const WriteToBadgeButton(this.badge, {super.key});
+  const WriteToBadgeButton(
+    this.badge, {
+    this.ndef,
+    this.onWritten,
+    this.rearmsListener = true,
+    super.key,
+  });
 
   final FriendsBadge badge;
+
+  /// The NDEF message written after the image, or `null` for an image-only
+  /// write.
+  final NdefMessage? ndef;
+
+  /// Called once the badge has been written successfully.
+  final VoidCallback? onWritten;
+
+  /// Whether to restart the app-wide badge listener after the write. The
+  /// speed writer keeps the listener stopped for its whole session, so it
+  /// passes `false`.
+  final bool rearmsListener;
 
   @override
   Widget build(BuildContext context) {
@@ -20,17 +37,9 @@ class WriteToBadgeButton extends StatelessWidget {
       heroTag: 'WriteToBadgeButton',
       tooltip: 'Write to badge',
       onPressed: () async {
-        final badgeCubit = context.read<FriendsBadgeCubit>();
-        final state = badgeCubit.state;
-        final ndef = buildBadgeNdefMessage(
-          name: state.name,
-          role: state.role,
-          url: state.url,
-          installId: context.read<InstallIdCubit>().state.id,
-          capybaraId: badgeCubit.capybaraId,
-        );
         try {
           await _writeToBadge(context: context, badge: badge, ndef: ndef);
+          onWritten?.call();
         } on PlatformException catch (e) {
           if (!context.mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
@@ -46,7 +55,7 @@ Error: $e''',
           // The write session replaced the app-wide badge listener's NFC
           // session; bring it back so the badge still on the phone is
           // handled by the app rather than the system.
-          if (context.mounted) {
+          if (rearmsListener && context.mounted) {
             unawaited(context.read<BadgeListenerCubit?>()?.rearm());
           }
         }

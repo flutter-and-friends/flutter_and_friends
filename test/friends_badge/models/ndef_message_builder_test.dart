@@ -146,6 +146,82 @@ void main() {
         expect(person.capybaraId, 'coder');
         expect(person.primaryUri, Uri.parse('x.com/johannes'));
       });
+
+      test('writes an e-mail address as a mailto: link', () {
+        final message = buildBadgeNdefMessage(
+          name: 'Ada',
+          role: 'Speaker',
+          url: ' ada@example.com ',
+        )!;
+
+        final person = BadgePerson.fromNdefMessage(message);
+        expect(person.primaryUri, Uri.parse('mailto:ada@example.com'));
+        expect(person.urls, ['mailto:ada@example.com']);
+      });
+    });
+  });
+
+  group('normalizeBadgeLink', () {
+    test('prefixes a bare e-mail address with mailto:', () {
+      expect(normalizeBadgeLink('ada@example.com'), 'mailto:ada@example.com');
+      expect(
+        normalizeBadgeLink('first.last+tag@sub.example.co.uk'),
+        'mailto:first.last+tag@sub.example.co.uk',
+      );
+    });
+
+    test('leaves URLs and existing mailto: links alone', () {
+      expect(normalizeBadgeLink('x.com/ada'), 'x.com/ada');
+      expect(normalizeBadgeLink('https://x.com/@ada'), 'https://x.com/@ada');
+      expect(
+        normalizeBadgeLink('mailto:ada@example.com'),
+        'mailto:ada@example.com',
+      );
+      expect(normalizeBadgeLink('x.com/ada@work'), 'x.com/ada@work');
+    });
+
+    test('trims whitespace and keeps empty input empty', () {
+      expect(normalizeBadgeLink('  x.com/ada  '), 'x.com/ada');
+      expect(normalizeBadgeLink('   '), '');
+    });
+  });
+
+  group('buildPreparedBadgeNdefMessage', () {
+    test('writes only the person record when there is no link', () {
+      final message = buildPreparedBadgeNdefMessage(
+        name: 'Ada Lovelace',
+        role: 'Speaker',
+        badgeId: 'badge-1',
+        capybaraId: 'coder',
+      );
+
+      expect(message.records, hasLength(1));
+      expect(message.records.single.type.single, 0x54);
+      expect(
+        _decodeTextRecord(message.records.single),
+        'Ada Lovelace · Speaker · id:badge-1 · capy:coder',
+      );
+      final person = BadgePerson.fromNdefMessage(message);
+      expect(person.installId, 'badge-1');
+      expect(person.urls, isEmpty);
+      expect(person.primaryUri, isNull);
+    });
+
+    test('adds a mailto: URI record for an e-mail', () {
+      final message = buildPreparedBadgeNdefMessage(
+        name: 'Ada Lovelace',
+        role: 'Speaker',
+        badgeId: 'badge-1',
+        link: 'ada@example.com',
+      );
+
+      expect(message.records, hasLength(2));
+      expect(message.records[0].type.single, 0x55);
+      final person = BadgePerson.fromNdefMessage(message);
+      expect(person.primaryUri, Uri.parse('mailto:ada@example.com'));
+      expect(person.urls, ['mailto:ada@example.com']);
+      expect(person.installId, 'badge-1');
+      expect(person.capybaraId, isNull);
     });
   });
 }

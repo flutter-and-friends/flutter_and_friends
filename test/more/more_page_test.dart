@@ -68,4 +68,59 @@ void main() {
 
     expect(tapped, isTrue);
   });
+
+  group('onHold', () {
+    Widget subject({
+      required VoidCallback onTap,
+      required VoidCallback onHold,
+    }) {
+      return MaterialApp(
+        home: Scaffold(
+          body: MoreItem(
+            icon: Icons.badge_outlined,
+            title: 'Friends Badge',
+            subtitle: 'Customize your badge',
+            onTap: onTap,
+            onHold: onHold,
+          ),
+        ),
+      );
+    }
+
+    testWidgets('fires after holding for five seconds and swallows the tap', (
+      tester,
+    ) async {
+      var tapped = false;
+      var held = false;
+      await tester.pumpWidget(
+        subject(onTap: () => tapped = true, onHold: () => held = true),
+      );
+
+      final gesture = await tester.startGesture(
+        tester.getCenter(find.text('Friends Badge')),
+      );
+      await tester.pump(MoreItem.holdDuration - const Duration(seconds: 1));
+      expect(held, isFalse);
+      await tester.pump(const Duration(seconds: 1));
+      expect(held, isTrue);
+
+      await gesture.up();
+      await tester.pumpAndSettle();
+      expect(tapped, isFalse);
+    });
+
+    testWidgets('a short press still taps', (tester) async {
+      var tapped = false;
+      var held = false;
+      await tester.pumpWidget(
+        subject(onTap: () => tapped = true, onHold: () => held = true),
+      );
+
+      await tester.tap(find.text('Friends Badge'));
+      await tester.pumpAndSettle();
+
+      expect(tapped, isTrue);
+      expect(held, isFalse);
+    });
+  });
 }

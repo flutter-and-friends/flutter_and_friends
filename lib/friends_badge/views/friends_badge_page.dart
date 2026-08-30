@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_and_friends/friends_badge/friends_badge.dart';
+import 'package:flutter_and_friends/identity/identity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:friends_badge/friends_badge.dart';
 
@@ -29,7 +30,8 @@ class FriendsBadgeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final state = context.watch<FriendsBadgeCubit>().state;
+    final cubit = context.watch<FriendsBadgeCubit>();
+    final state = cubit.state;
     final badge = state.badge;
     final body = badge == null
         ? const _BadgeSourcePicker()
@@ -55,7 +57,17 @@ class FriendsBadgeView extends StatelessWidget {
           spacing: 8,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            if (badge != null) WriteToBadgeButton(badge),
+            if (badge != null)
+              WriteToBadgeButton(
+                badge,
+                ndef: buildBadgeNdefMessage(
+                  name: state.name,
+                  role: state.role,
+                  url: state.url,
+                  installId: context.read<InstallIdCubit>().state.id,
+                  capybaraId: cubit.capybaraId,
+                ),
+              ),
             if (state.status == FriendsBadgeStatus.loading)
               const FloatingActionButton(
                 heroTag: 'ImageLoading',
@@ -424,9 +436,8 @@ class _NameRoleFieldsState extends State<_NameRoleFields> {
         TextField(
           controller: _urlController,
           decoration: const InputDecoration(
-            labelText: 'Link (optional)',
-            hintText:
-                'x.com/FlutterNFriends or linkedin.com/company/flutter-friends',
+            labelText: 'Link or e-mail (optional)',
+            hintText: 'x.com/FlutterNFriends or you@example.com',
             helperText: 'Written to the badge as an NFC link.',
             border: OutlineInputBorder(),
           ),

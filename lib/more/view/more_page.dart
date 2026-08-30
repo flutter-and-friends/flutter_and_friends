@@ -1,4 +1,8 @@
+import 'dart:async';
+
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_and_friends/collected_people/collected_people.dart';
 import 'package:flutter_and_friends/friends_badge/friends_badge.dart';
 import 'package:flutter_and_friends/highscore/highscore.dart';
@@ -40,6 +44,8 @@ class MoreView extends StatelessWidget {
             title: 'Friends Badge',
             subtitle: 'Customize your badge',
             onTap: () => Navigator.of(context).push(FriendsBadgePage.route()),
+            // Organizer shortcut: hold the entry to prepare badges in bulk.
+            onHold: () => Navigator.of(context).push(SpeedWriterPage.route()),
           ),
           MoreItem(
             icon: Icons.contact_page,
@@ -68,18 +74,26 @@ class MoreItem extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.onTap,
+    this.onHold,
     super.key,
   });
+
+  /// How long an entry has to be held before [onHold] fires.
+  static const holdDuration = Duration(seconds: 5);
 
   final IconData icon;
   final String title;
   final String subtitle;
   final VoidCallback onTap;
 
+  /// Called after the entry has been held for [holdDuration]. Winning the
+  /// gesture arena cancels the tap, so [onTap] does not fire on release.
+  final VoidCallback? onHold;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Card(
+    final card = Card(
       clipBehavior: Clip.hardEdge,
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
@@ -103,6 +117,21 @@ class MoreItem extends StatelessWidget {
         trailing: const Icon(Icons.chevron_right),
         onTap: onTap,
       ),
+    );
+    final onHold = this.onHold;
+    if (onHold == null) return card;
+    return RawGestureDetector(
+      gestures: {
+        LongPressGestureRecognizer:
+            GestureRecognizerFactoryWithHandlers<LongPressGestureRecognizer>(
+              () => LongPressGestureRecognizer(duration: holdDuration),
+              (recognizer) => recognizer.onLongPress = () {
+                unawaited(HapticFeedback.heavyImpact());
+                onHold();
+              },
+            ),
+      },
+      child: card,
     );
   }
 }

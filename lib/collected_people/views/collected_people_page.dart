@@ -383,24 +383,36 @@ class CollectedPersonLinksSheet extends StatelessWidget {
               ),
             ],
             const SizedBox(height: 16),
-            for (final url in person.urls)
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: const Icon(Icons.link),
-                title: Text(
-                  url,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                trailing: const Icon(Icons.open_in_new),
-                onTap: () => launchUrlString(
-                  url,
-                  mode: LaunchMode.externalApplication,
-                ),
-              ),
+            for (final url in person.urls) CollectedPersonLinkTile(url: url),
           ],
         ),
       ),
+    );
+  }
+}
+
+/// One link of a collected person; `mailto:` links show as an e-mail
+/// address with a mail icon.
+class CollectedPersonLinkTile extends StatelessWidget {
+  const CollectedPersonLinkTile({required this.url, super.key});
+
+  static const _mailto = 'mailto:';
+
+  final String url;
+
+  @override
+  Widget build(BuildContext context) {
+    final isEmail = url.startsWith(_mailto);
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: Icon(isEmail ? Icons.mail : Icons.link),
+      title: Text(
+        isEmail ? url.substring(_mailto.length) : url,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+      trailing: const Icon(Icons.open_in_new),
+      onTap: () => launchUrlString(url, mode: LaunchMode.externalApplication),
     );
   }
 }

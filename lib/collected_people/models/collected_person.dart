@@ -153,7 +153,13 @@ CollectedPerson toCollectedPerson(
   );
 }
 
-String _ensureScheme(String url) => url.contains('://') ? url : 'https://$url';
+String _ensureScheme(String url) {
+  final hasScheme =
+      url.contains('://') ||
+      url.startsWith('mailto:') ||
+      url.startsWith('tel:');
+  return hasScheme ? url : 'https://$url';
+}
 
 /// Whether [person] was written by this installation ([ownInstallId]), that
 /// is, whether the tapped badge is the user's own. Badges without an install
