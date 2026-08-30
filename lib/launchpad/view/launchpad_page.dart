@@ -30,7 +30,7 @@ class LaunchpadView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(toolbarHeight: 0, shadowColor: Colors.transparent),
       body: const _LaunchpadBody(),
-      bottomNavigationBar: const _BottomNavigationBar(),
+      bottomNavigationBar: const _NavigationBar(),
     );
   }
 }
@@ -56,8 +56,8 @@ class _LaunchpadBody extends StatelessWidget {
   }
 }
 
-class _BottomNavigationBar extends StatelessWidget {
-  const _BottomNavigationBar();
+class _NavigationBar extends StatelessWidget {
+  const _NavigationBar();
 
   @override
   Widget build(BuildContext context) {
