@@ -16,7 +16,7 @@ class FriendsBadgeState extends Equatable {
     this.role = '',
     this.font = BadgeFont.display,
     this.url = '',
-    this.frame = BadgeFrame.stripe,
+    this.frame = BadgeFrame.bold,
   });
 
   final FriendsBadge? badge;

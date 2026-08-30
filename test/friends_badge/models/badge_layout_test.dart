@@ -26,7 +26,7 @@ void main() {
       test('draws no chrome', () {
         expect(layout.dividerY, isNull);
         expect(layout.borderWidth, 0);
-        expect(layout.accentStripeRect, isNull);
+        expect(layout.frame, isNull);
       });
     });
 
@@ -106,24 +106,17 @@ void main() {
         expect(layout.borderWidth, greaterThanOrEqualTo(4));
       });
 
-      test('accent stripe sits between image and text', () {
-        final stripe = layout.accentStripeRect!;
-        expect(stripe.top, greaterThanOrEqualTo(layout.imageRect.bottom));
-        expect(stripe.bottom, lessThanOrEqualTo(layout.nameRect.top));
-        expect(stripe.width, layout.imageRect.width);
-      });
-
-      test('text below stripe, name above role', () {
+      test('text below the frame, name above role', () {
         expect(
           layout.nameRect.top,
-          greaterThan(layout.accentStripeRect!.bottom),
+          greaterThan(layout.imageRect.bottom + layout.borderWidth),
         );
         expect(layout.roleRect.top, greaterThan(layout.nameRect.top));
       });
 
-      test('defaults to the stripe frame', () {
-        expect(layout.frame, BadgeFrame.stripe);
-        expect(BadgeFrame.values.first, BadgeFrame.stripe);
+      test('defaults to the bold frame', () {
+        expect(layout.frame, BadgeFrame.bold);
+        expect(BadgeFrame.values.first, BadgeFrame.bold);
       });
     });
 
@@ -148,13 +141,16 @@ void main() {
         });
       }
 
-      test('double and rounded have no accent bar', () {
-        for (final frame in [BadgeFrame.double, BadgeFrame.rounded]) {
+      test('bold, double and rounded surround the image with a border', () {
+        for (final frame in [
+          BadgeFrame.bold,
+          BadgeFrame.double,
+          BadgeFrame.rounded,
+        ]) {
           final layout = BadgeLayout.forTemplate(
             BadgeTemplate.framed,
             frame: frame,
           );
-          expect(layout.accentStripeRect, isNull, reason: '$frame');
           expect(layout.borderWidth, greaterThan(0), reason: '$frame');
         }
       });
@@ -173,16 +169,31 @@ void main() {
         }
       });
 
-      test('corners draws over the image and keeps an accent bar', () {
+      test('corners draws over the image instead of around it', () {
         final layout = BadgeLayout.forTemplate(
           BadgeTemplate.framed,
           frame: BadgeFrame.corners,
         );
         expect(layout.borderWidth, 0);
-        final bar = layout.accentStripeRect!;
-        expect(bar.top, greaterThanOrEqualTo(layout.imageRect.bottom));
-        expect(bar.bottom, lessThanOrEqualTo(layout.nameRect.top));
       });
+    });
+  });
+
+  group('badgeTextLines', () {
+    test('breaks long text only for the classic template', () {
+      expect(
+        badgeTextLines('Software Engineer', BadgeTemplate.classic),
+        'Software\nEngineer',
+      );
+      for (final template in BadgeTemplate.values.where(
+        (t) => t != BadgeTemplate.classic,
+      )) {
+        expect(
+          badgeTextLines('Software Engineer', template),
+          'Software Engineer',
+          reason: '$template',
+        );
+      }
     });
   });
 

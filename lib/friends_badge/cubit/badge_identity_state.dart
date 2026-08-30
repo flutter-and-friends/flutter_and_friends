@@ -8,7 +8,7 @@ class BadgeIdentityState extends Equatable {
     this.url = '',
     this.template = BadgeTemplate.classic,
     this.font = BadgeFont.display,
-    this.frame = BadgeFrame.stripe,
+    this.frame = BadgeFrame.bold,
   });
 
   final String name;

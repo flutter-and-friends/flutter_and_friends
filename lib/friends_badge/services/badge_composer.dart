@@ -42,8 +42,6 @@ class BadgeComposer {
   // Palette colors (pure values — no mid-grays).
   static const _black = m.Color(0xFF000000);
   static const _white = m.Color(0xFFFFFFFF);
-  static const _red = m.Color(0xFFFF0000);
-  static const _yellow = m.Color(0xFFFFFF00);
 
   /// Rasterizes the composition to raw 8-bit straight-alpha RGBA bytes
   /// ([kBadgePanelSize] wide and tall, 4 bytes per pixel) on the root
@@ -58,7 +56,7 @@ class BadgeComposer {
     required String name,
     required String role,
     required BadgeFont font,
-    BadgeFrame frame = BadgeFrame.stripe,
+    BadgeFrame frame = BadgeFrame.bold,
   }) async {
     final layout = BadgeLayout.forTemplate(template, frame: frame);
     if (template.usesText) {
@@ -186,43 +184,18 @@ class BadgeComposer {
 
   static void _drawFrame(m.Canvas canvas, BadgeLayout layout) {
     final image = layout.imageRect;
-    switch (layout.frame ?? BadgeFrame.stripe) {
-      case BadgeFrame.stripe:
-        _strokeAround(canvas, image, width: layout.borderWidth, color: _black);
-        // Accent stripe: red on top half, yellow on bottom half, so the
-        // frame carries both palette accents.
-        final stripe = layout.accentStripeRect!;
-        canvas
-          ..drawRect(
-            Rect.fromLTWH(
-              stripe.left,
-              stripe.top,
-              stripe.width,
-              stripe.height / 2,
-            ),
-            Paint()..color = _red,
-          )
-          ..drawRect(
-            Rect.fromLTWH(
-              stripe.left,
-              stripe.top + stripe.height / 2,
-              stripe.width,
-              stripe.height / 2,
-            ),
-            Paint()..color = _yellow,
-          );
+    switch (layout.frame ?? BadgeFrame.bold) {
+      case BadgeFrame.bold:
+        _strokeAround(canvas, image, width: layout.borderWidth);
       case BadgeFrame.double:
-        _strokeAround(canvas, image, width: 2, color: _black);
-        _strokeAround(canvas, image.inflate(6), width: 3, color: _black);
+        _strokeAround(canvas, image, width: 2);
+        _strokeAround(canvas, image.inflate(6), width: 3);
       case BadgeFrame.rounded:
-        final radius = layout.imageCornerRadius;
-        _strokeAround(canvas, image, width: 2, color: _yellow, radius: radius);
         _strokeAround(
           canvas,
-          image.inflate(2),
-          width: 8,
-          color: _red,
-          radius: radius + 2,
+          image,
+          width: layout.borderWidth,
+          radius: layout.imageCornerRadius,
         );
       case BadgeFrame.corners:
         const thickness = 6.0;
@@ -252,37 +225,19 @@ class BadgeComposer {
               paint,
             );
         }
-        // Accent bar: a red third, then yellow.
-        final bar = layout.accentStripeRect!;
-        final split = bar.width / 3;
-        canvas
-          ..drawRect(
-            Rect.fromLTWH(bar.left, bar.top, split, bar.height),
-            Paint()..color = _red,
-          )
-          ..drawRect(
-            Rect.fromLTWH(
-              bar.left + split,
-              bar.top,
-              bar.width - split,
-              bar.height,
-            ),
-            Paint()..color = _yellow,
-          );
     }
   }
 
-  /// Strokes a band of [width] hugging the outside of [rect], with the
+  /// Strokes a black band of [width] hugging the outside of [rect], with the
   /// rect's corners rounded by [radius] when it is greater than zero.
   static void _strokeAround(
     m.Canvas canvas,
     Rect rect, {
     required double width,
-    required m.Color color,
     double radius = 0,
   }) {
     final paint = Paint()
-      ..color = color
+      ..color = _black
       ..style = PaintingStyle.stroke
       ..strokeWidth = width;
     final band = rect.inflate(width / 2);
@@ -306,7 +261,7 @@ class BadgeComposer {
     final textColor = layout.textOnDark ? _white : _black;
     _paintText(
       canvas,
-      text: breakBadgeText(name),
+      text: badgeTextLines(name, layout.template),
       rect: layout.nameRect,
       style: font.nameStyle.copyWith(color: textColor),
       maxFontSize: layout.nameMaxFontSize,
@@ -314,7 +269,7 @@ class BadgeComposer {
     );
     _paintText(
       canvas,
-      text: breakBadgeText(role),
+      text: badgeTextLines(role, layout.template),
       rect: layout.roleRect,
       style: font.roleStyle.copyWith(color: textColor),
       maxFontSize: layout.roleMaxFontSize,

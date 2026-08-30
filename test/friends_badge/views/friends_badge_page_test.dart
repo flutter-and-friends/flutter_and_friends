@@ -185,7 +185,7 @@ void main() {
       );
     }
 
-    testWidgets('shows a swatch per frame with stripe selected', (
+    testWidgets('shows a swatch per frame with bold selected', (
       tester,
     ) async {
       final cubit = FriendsBadgeCubit(identity: BadgeIdentityCubit());
@@ -200,7 +200,7 @@ void main() {
           .widgetList<FrameSwatch>(find.byType(FrameSwatch))
           .where((swatch) => swatch.selected)
           .map((swatch) => swatch.frame);
-      expect(selected, [BadgeFrame.stripe]);
+      expect(selected, [BadgeFrame.bold]);
     });
 
     testWidgets('tapping a swatch selects that frame', (tester) async {

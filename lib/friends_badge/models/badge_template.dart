@@ -16,7 +16,7 @@ enum BadgeTemplate {
   /// and role.
   overlay,
 
-  /// Inset image with a thick border and accent stripe, name/role beneath.
+  /// Inset image with a frame (see `BadgeFrame`), name/role beneath.
   framed;
 
   /// Whether this template renders name/role text fields.

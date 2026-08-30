@@ -39,7 +39,7 @@ class BadgeIdentityCubit extends HydratedCubit<BadgeIdentityState> {
           BadgeTemplate.values.asNameMap()[json['template']] ??
           BadgeTemplate.classic,
       font: BadgeFont.values.asNameMap()[json['font']] ?? BadgeFont.display,
-      frame: BadgeFrame.values.asNameMap()[json['frame']] ?? BadgeFrame.stripe,
+      frame: BadgeFrame.values.asNameMap()[json['frame']] ?? BadgeFrame.bold,
     );
   }
 

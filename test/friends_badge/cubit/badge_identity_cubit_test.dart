@@ -65,7 +65,7 @@ void main() {
       expect(stored['frame'], 'rounded');
     });
 
-    test('rehydrates the frame and defaults to stripe without one', () {
+    test('rehydrates the frame and defaults to bold without one', () {
       storage._data['BadgeIdentityCubit'] = {'frame': 'corners'};
       final withFrame = BadgeIdentityCubit();
       addTearDown(withFrame.close);
@@ -74,7 +74,7 @@ void main() {
       storage._data['BadgeIdentityCubit'] = {'name': 'A'};
       final withoutFrame = BadgeIdentityCubit();
       addTearDown(withoutFrame.close);
-      expect(withoutFrame.state.frame, BadgeFrame.stripe);
+      expect(withoutFrame.state.frame, BadgeFrame.bold);
     });
 
     test('rehydrates a previously saved identity on construction', () async {

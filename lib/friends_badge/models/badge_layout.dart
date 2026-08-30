@@ -27,7 +27,6 @@ class BadgeLayout {
     required this.roleMaxFontSize,
     this.dividerY,
     this.borderWidth = 0,
-    this.accentStripeRect,
     this.textOnDark = false,
     this.frame,
     this.imageCornerRadius = 0,
@@ -40,7 +39,7 @@ class BadgeLayout {
   /// [Rect.zero] and font sizes are 0.
   factory BadgeLayout.forTemplate(
     BadgeTemplate template, {
-    BadgeFrame frame = BadgeFrame.stripe,
+    BadgeFrame frame = BadgeFrame.bold,
     Size panelSize = kBadgePanelSize,
   }) {
     switch (template) {
@@ -84,12 +83,9 @@ class BadgeLayout {
   /// (`classic` only).
   final double? dividerY;
 
-  /// Stroke width of the border drawn around [imageRect], if any
-  /// (`framed` only).
+  /// Total thickness of the frame drawn around [imageRect], if any
+  /// (`framed` only). Zero when the frame is drawn over the image instead.
   final double borderWidth;
-
-  /// Accent stripe (red/yellow) rect, if the template draws one (`framed`).
-  final Rect? accentStripeRect;
 
   /// True when text sits on a dark band and should render in white
   /// (`overlay`); false for black text on light background.
@@ -166,22 +162,17 @@ class BadgeLayout {
   }
 
   static BadgeLayout _framed(Size panel, BadgeFrame frame) {
-    // Inset image with a frame drawn around it (or over its corners), an
-    // optional accent bar underneath, and name/role beneath that.
+    // Inset image with a frame drawn around it (or over its corners), and
+    // name/role beneath.
     const margin = 12.0;
     const textAreaHeight = 96.0;
     const hPad = 12.0;
     const gap = 6.0;
     final borderWidth = switch (frame) {
-      BadgeFrame.stripe => 6.0,
+      BadgeFrame.bold => 6.0,
       BadgeFrame.double => 9.0,
-      BadgeFrame.rounded => 10.0,
+      BadgeFrame.rounded => 8.0,
       BadgeFrame.corners => 0.0,
-    };
-    final accentHeight = switch (frame) {
-      BadgeFrame.stripe => 8.0,
-      BadgeFrame.corners => 6.0,
-      BadgeFrame.double || BadgeFrame.rounded => 0.0,
     };
     final imageRect = Rect.fromLTWH(
       margin + borderWidth,
@@ -189,8 +180,7 @@ class BadgeLayout {
       panel.width - (margin + borderWidth) * 2,
       panel.height - textAreaHeight - (margin + borderWidth) * 2,
     );
-    final accentTop = imageRect.bottom + borderWidth;
-    final textTop = accentTop + accentHeight + 8;
+    final textTop = imageRect.bottom + borderWidth + 8;
     const nameHeight = 44.0;
     return BadgeLayout._(
       template: BadgeTemplate.framed,
@@ -198,14 +188,6 @@ class BadgeLayout {
       imageRect: imageRect,
       imageCornerRadius: frame == BadgeFrame.rounded ? 16 : 0,
       borderWidth: borderWidth,
-      accentStripeRect: accentHeight == 0
-          ? null
-          : Rect.fromLTWH(
-              imageRect.left,
-              accentTop,
-              imageRect.width,
-              accentHeight,
-            ),
       nameRect: Rect.fromLTWH(
         hPad,
         textTop,
@@ -307,6 +289,13 @@ String breakBadgeText(String text) {
   final tail = text.substring(breakAt + 1).trimLeft();
   if (head.isEmpty || tail.isEmpty) return text;
   return '$head\n$tail';
+}
+
+/// The text to draw for [text] on [template]: only the classic template
+/// breaks long text onto two lines (see [breakBadgeText]), the others keep
+/// it on one line and let it shrink to fit.
+String badgeTextLines(String text, BadgeTemplate template) {
+  return template == BadgeTemplate.classic ? breakBadgeText(text) : text;
 }
 
 /// Cover-fit source rect math: given a source image of [source] size and a
