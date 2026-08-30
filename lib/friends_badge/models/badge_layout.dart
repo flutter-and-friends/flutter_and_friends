@@ -264,6 +264,26 @@ String truncateToFit({
   return '${text.substring(0, lo)}$ellipsis';
 }
 
+/// Once a badge text line has this many characters, it breaks at the next
+/// space (see [breakBadgeText]).
+const int kBadgeTextBreakAfter = 8;
+
+/// Splits [text] onto two lines for the badge: the line breaks at the first
+/// space found at or after [kBadgeTextBreakAfter] characters.
+///
+/// Shorter texts, and texts whose only spaces come earlier, are returned
+/// unchanged. At most one break is inserted; the second line is fitted and
+/// truncated by the composer like any other line.
+String breakBadgeText(String text) {
+  if (text.length <= kBadgeTextBreakAfter) return text;
+  final breakAt = text.indexOf(' ', kBadgeTextBreakAfter);
+  if (breakAt == -1) return text;
+  final head = text.substring(0, breakAt).trimRight();
+  final tail = text.substring(breakAt + 1).trimLeft();
+  if (head.isEmpty || tail.isEmpty) return text;
+  return '$head\n$tail';
+}
+
 /// Cover-fit source rect math: given a source image of [source] size and a
 /// destination [dest], returns the largest centered rect of [source] that,
 /// scaled uniformly, covers [dest] completely.

@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -196,80 +197,80 @@ class BadgeComposer {
     required BadgeFont font,
   }) {
     final textColor = layout.textOnDark ? _white : _black;
-    final displayStyle = _displayStyle(font);
-    final sansStyle = _sansStyle(font);
-
-    double measure(String text, double fontSize, m.TextStyle base) {
-      final painter = TextPainter(
-        text: TextSpan(
-          text: text,
-          style: base.copyWith(fontSize: fontSize),
-        ),
-        maxLines: 1,
-        textDirection: m.TextDirection.ltr,
-      )..layout();
-      return painter.width;
-    }
-
-    final fittedName = fitFontSize(
-      text: name,
-      maxWidth: layout.nameRect.width,
+    _paintText(
+      canvas,
+      text: breakBadgeText(name),
+      rect: layout.nameRect,
+      style: _displayStyle(font).copyWith(color: textColor),
       maxFontSize: layout.nameMaxFontSize,
       minFontSize: 14,
-      measure: (t, s) => measure(t, s, displayStyle),
     );
-    final shownName = truncateToFit(
-      text: name,
-      maxWidth: layout.nameRect.width,
-      fontSize: fittedName,
-      measure: (t, s) => measure(t, s, displayStyle),
-    );
-
-    final fittedRole = fitFontSize(
-      text: role,
-      maxWidth: layout.roleRect.width,
+    _paintText(
+      canvas,
+      text: breakBadgeText(role),
+      rect: layout.roleRect,
+      style: _sansStyle(font).copyWith(color: textColor),
       maxFontSize: layout.roleMaxFontSize,
       minFontSize: 12,
-      measure: (t, s) => measure(t, s, sansStyle),
     );
-    final shownRole = truncateToFit(
-      text: role,
-      maxWidth: layout.roleRect.width,
-      fontSize: fittedRole,
-      measure: (t, s) => measure(t, s, sansStyle),
-    );
+  }
 
-    if (shownName.isNotEmpty) {
-      TextPainter(
-          text: TextSpan(
-            text: shownName,
-            style: displayStyle.copyWith(
-              fontSize: fittedName,
-              color: textColor,
-            ),
-          ),
-          maxLines: 1,
-          textDirection: m.TextDirection.ltr,
-        )
-        ..layout(maxWidth: layout.nameRect.width)
-        ..paint(canvas, layout.nameRect.topLeft);
+  /// Paints [text] (one or two lines, see [breakBadgeText]) top-left in
+  /// [rect] at the largest font size between [minFontSize] and
+  /// [maxFontSize] at which every line fits the width and all lines fit the
+  /// height, truncating lines that still overflow at [minFontSize].
+  static void _paintText(
+    m.Canvas canvas, {
+    required String text,
+    required Rect rect,
+    required m.TextStyle style,
+    required double maxFontSize,
+    required double minFontSize,
+  }) {
+    if (text.isEmpty || rect.isEmpty) return;
+    final lines = text.split('\n');
+
+    TextPainter painterFor(String value, double fontSize) {
+      return TextPainter(
+        text: TextSpan(
+          text: value,
+          style: style.copyWith(fontSize: fontSize),
+        ),
+        maxLines: lines.length,
+        textDirection: m.TextDirection.ltr,
+      )..layout();
     }
 
-    if (shownRole.isNotEmpty) {
-      TextPainter(
-          text: TextSpan(
-            text: shownRole,
-            style: sansStyle.copyWith(
-              fontSize: fittedRole,
-              color: textColor,
-            ),
-          ),
-          maxLines: 1,
-          textDirection: m.TextDirection.ltr,
-        )
-        ..layout(maxWidth: layout.roleRect.width)
-        ..paint(canvas, layout.roleRect.topLeft);
-    }
+    double measure(String value, double fontSize) =>
+        painterFor(value, fontSize).width;
+
+    // Line height scales linearly with font size, so one measurement at the
+    // maximum gives the largest size whose lines still fit the rect height.
+    final heightAtMax = painterFor(text, maxFontSize).height;
+    final cappedMax = heightAtMax <= rect.height
+        ? maxFontSize
+        : math.max(minFontSize, maxFontSize * rect.height / heightAtMax);
+
+    final fontSize = fitFontSize(
+      text: text,
+      maxWidth: rect.width,
+      maxFontSize: cappedMax,
+      minFontSize: minFontSize,
+      measure: measure,
+    );
+    final shown = [
+      for (final line in lines)
+        truncateToFit(
+          text: line,
+          maxWidth: rect.width,
+          fontSize: fontSize,
+          measure: measure,
+        ),
+    ].join('\n');
+
+    painterFor(shown, fontSize)
+      ..layout(maxWidth: rect.width)
+      ..paint(canvas, rect.topLeft);
   }
 
   // -- Fonts -----------------------------------------------------------------

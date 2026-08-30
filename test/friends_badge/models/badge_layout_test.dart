@@ -123,6 +123,45 @@ void main() {
     });
   });
 
+  group('breakBadgeText', () {
+    test('leaves short text alone', () {
+      expect(breakBadgeText('Lukas'), 'Lukas');
+      expect(breakBadgeText('Flutter!'), 'Flutter!');
+    });
+
+    test('breaks at the first space at or after 8 characters', () {
+      expect(breakBadgeText('Software Engineer'), 'Software\nEngineer');
+      expect(
+        breakBadgeText('Johannes Pietilä Löhnn'),
+        'Johannes\nPietilä Löhnn',
+      );
+      expect(
+        breakBadgeText('Senior Flutter Developer'),
+        'Senior Flutter\nDeveloper',
+      );
+    });
+
+    test('does not break when the only spaces come before 8 characters', () {
+      expect(breakBadgeText('Lukas Klingsbo'), 'Lukas Klingsbo');
+      expect(breakBadgeText('SDK Engineer'), 'SDK Engineer');
+    });
+
+    test('never breaks text without spaces', () {
+      expect(breakBadgeText('Supercalifragilistic'), 'Supercalifragilistic');
+    });
+
+    test('inserts at most one break', () {
+      expect(
+        breakBadgeText('Senior Flutter Developer at Acme'),
+        'Senior Flutter\nDeveloper at Acme',
+      );
+    });
+
+    test('ignores a trailing space', () {
+      expect(breakBadgeText('Software '), 'Software ');
+    });
+  });
+
   group('fitFontSize', () {
     // Stub measurer: 10 px per character per font-size-10 unit, i.e.
     // width = text.length * fontSize. Deterministic, no TextPainter.

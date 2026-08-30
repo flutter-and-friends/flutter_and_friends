@@ -116,6 +116,42 @@ void main() {
       expect(red, panelWidth * panelHeight);
     });
 
+    test('a long name renders on two lines inside the name rect', () async {
+      final source = img.Image(width: 32, height: 32)
+        ..clear(img.ColorRgb8(255, 255, 255));
+      final uiImage = await BadgeComposer.toUiImage(source);
+      addTearDown(uiImage.dispose);
+      final layout = BadgeLayout.forTemplate(BadgeTemplate.classic);
+      final rect = layout.nameRect;
+
+      Future<int> lowestDarkRow(String name) async {
+        final rgba = await BadgeComposer.renderRgba(
+          sourceImage: uiImage,
+          template: BadgeTemplate.classic,
+          name: name,
+          role: '',
+          font: BadgeFont.display,
+        );
+        final image = badgeImageFromRgba(
+          rgba,
+        ).getDitheredImage(img.DitherKernel.none);
+        var lowest = -1;
+        for (var y = rect.top.ceil(); y < rect.bottom.floor(); y++) {
+          for (var x = rect.left.ceil(); x < rect.right.floor(); x++) {
+            if (image.getPixel(x, y).r == 0) lowest = y;
+          }
+        }
+        return lowest;
+      }
+
+      final oneLine = await lowestDarkRow('Johannes');
+      final twoLines = await lowestDarkRow('Johannes Pietilä Löhnn');
+
+      expect(oneLine, greaterThan(rect.top));
+      expect(twoLines, greaterThan(oneLine));
+      expect(twoLines, lessThan(rect.bottom));
+    });
+
     test('the classic divider survives as a black line', () async {
       final source = img.Image(width: 32, height: 32)
         ..clear(img.ColorRgb8(255, 255, 255));
