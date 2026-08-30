@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_and_friends/collected_people/collected_people.dart';
 import 'package:flutter_and_friends/friends_badge/friends_badge.dart';
 import 'package:flutter_and_friends/identity/identity.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -39,6 +42,13 @@ Error: $e''',
               ),
             ),
           );
+        } finally {
+          // The write session replaced the app-wide badge listener's NFC
+          // session; bring it back so the badge still on the phone is
+          // handled by the app rather than the system.
+          if (context.mounted) {
+            unawaited(context.read<BadgeListenerCubit?>()?.rearm());
+          }
         }
       },
       child: const Icon(Icons.nfc),

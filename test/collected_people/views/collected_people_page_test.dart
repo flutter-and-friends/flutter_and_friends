@@ -57,9 +57,11 @@ class _FakeBadgeCollector extends BadgeCollector {
   Future<BadgeCollectSession> start({
     required void Function(BadgePerson person, String? badgeId) onCollected,
     String alertMessageIos = '',
+    bool continuous = false,
   }) async {
     controller
       ..onCollected = onCollected
+      ..continuous = continuous
       ..startCalls += 1;
     return BadgeCollectSession(
       result: controller.completer.future,
@@ -76,12 +78,13 @@ class _FakeBadgeCollector extends BadgeCollector {
 class _FakeSessionController {
   final completer = Completer<BadgeCollectResult>();
   void Function(BadgePerson person, String? badgeId)? onCollected;
+  bool? continuous;
   int startCalls = 0;
   int cancelCalls = 0;
 
   void tap(BadgePerson person, {String? badgeId = '1dd4ad1958'}) {
     onCollected!(person, badgeId);
-    completer.complete(BadgeCollectResult.collected);
+    if (continuous != true) completer.complete(BadgeCollectResult.collected);
   }
 
   void finish(BadgeCollectResult result) => completer.complete(result);
@@ -99,10 +102,14 @@ const _badgePerson = BadgePerson(
 Widget _subject(
   CollectedPeopleCubit cubit, {
   BadgeCollector collector = const BadgeCollector(),
+  BadgeListenerCubit? listener,
 }) {
   return MaterialApp(
-    home: BlocProvider.value(
-      value: cubit,
+    home: MultiBlocProvider(
+      providers: [
+        BlocProvider.value(value: cubit),
+        if (listener != null) BlocProvider.value(value: listener),
+      ],
       child: CollectedPeopleView(collector: collector),
     ),
   );
@@ -266,6 +273,53 @@ void main() {
           find.text('That was not a Friends badge, try again'),
           findsOneWidget,
         );
+      });
+    });
+
+    group('with the app-wide listener active', () {
+      testWidgets('hides the collect button and shows the hint', (
+        tester,
+      ) async {
+        final controller = _FakeSessionController();
+        final cubit = CollectedPeopleCubit();
+        final listener = BadgeListenerCubit(
+          people: cubit,
+          collector: _FakeBadgeCollector(controller),
+          enabled: true,
+        );
+        addTearDown(listener.close);
+        await listener.start();
+        await tester.pumpWidget(_subject(cubit, listener: listener));
+
+        expect(controller.continuous, isTrue);
+        expect(find.byType(FloatingActionButton), findsNothing);
+        expect(find.byType(ListeningBanner), findsOneWidget);
+        expect(
+          find.text("Hold your phone near someone's badge to collect them"),
+          findsOneWidget,
+        );
+
+        controller.tap(_badgePerson);
+        await tester.pumpAndSettle();
+
+        expect(find.text('Ada Lovelace'), findsOneWidget);
+        expect(find.byType(ListeningBanner), findsOneWidget);
+      });
+
+      testWidgets('keeps the collect button while not listening', (
+        tester,
+      ) async {
+        final cubit = CollectedPeopleCubit();
+        final listener = BadgeListenerCubit(
+          people: cubit,
+          collector: _FakeBadgeCollector(_FakeSessionController()),
+          enabled: false,
+        );
+        addTearDown(listener.close);
+        await tester.pumpWidget(_subject(cubit, listener: listener));
+
+        expect(find.byType(FloatingActionButton), findsOneWidget);
+        expect(find.byType(ListeningBanner), findsNothing);
       });
     });
 

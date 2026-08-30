@@ -154,3 +154,11 @@ CollectedPerson toCollectedPerson(
 }
 
 String _ensureScheme(String url) => url.contains('://') ? url : 'https://$url';
+
+/// Whether [person] was written by this installation ([ownInstallId]), that
+/// is, whether the tapped badge is the user's own. Badges without an install
+/// ID are never considered one's own.
+bool isOwnBadge(BadgePerson person, {required String? ownInstallId}) {
+  final installId = person.installId;
+  return installId != null && installId.isNotEmpty && installId == ownInstallId;
+}
