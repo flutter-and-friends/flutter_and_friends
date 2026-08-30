@@ -1,3 +1,7 @@
+## 1.5.0+29
+
+ - **FEAT**: Add a speed writing mode for preparing badges from a CSV ([#78](https://github.com/flutter-and-friends/flutter_and_friends/issues/78)). ([4c675718](https://github.com/flutter-and-friends/flutter_and_friends/commit/4c675718743ce8e25ddb485a35a2ab7d9468662a))
+
 ## 1.4.0+28
 
  - **FIX**: Wait for a badge tap when collecting people ([#74](https://github.com/flutter-and-friends/flutter_and_friends/issues/74)). ([b2d9c807](https://github.com/flutter-and-friends/flutter_and_friends/commit/b2d9c807bf369a4eab02d92458d628bec72f7805))
