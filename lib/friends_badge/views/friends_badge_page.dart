@@ -137,17 +137,15 @@ class _BadgeEditor extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               spacing: 16,
               children: [
-                if (state.template == BadgeTemplate.framed) const FramePicker(),
-                if (state.template.usesText) ...[
-                  _NameRoleFields(state: state),
-                  const _FontPicker(),
-                ],
+                if (state.template.usesText) _NameRoleFields(state: state),
                 SizedBox(
                   height: height * 1 / 6,
                   child: Center(
                     child: _BadgeDitherKernelCarousel(badge: badge),
                   ),
                 ),
+                if (state.template.usesText) const _FontPicker(),
+                if (state.template == BadgeTemplate.framed) const FramePicker(),
                 ConstrainedBox(
                   constraints: BoxConstraints(maxHeight: height * 4 / 6),
                   child: Center(child: _BadgePreview(badge: badge)),
