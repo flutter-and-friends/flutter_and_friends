@@ -5,6 +5,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart' as m;
 import 'package:flutter/painting.dart';
 import 'package:flutter_and_friends/friends_badge/models/models.dart';
+import 'package:flutter_and_friends/friends_badge/services/badge_font_styles.dart';
 import 'package:friends_badge/friends_badge.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image/image.dart' as img;
@@ -60,6 +61,18 @@ class BadgeComposer {
     BadgeFrame frame = BadgeFrame.stripe,
   }) async {
     final layout = BadgeLayout.forTemplate(template, frame: frame);
+    if (template.usesText) {
+      // Fonts are fetched on first use; wait so the text is not drawn with
+      // a fallback face while the download is in flight. Offline, the
+      // fetch fails and the fallback face is the best we can do.
+      try {
+        await GoogleFonts.pendingFonts([font.nameStyle, font.roleStyle]);
+        // google_fonts reports a failed download as a plain Exception.
+        // ignore: avoid_catches_without_on_clauses
+      } catch (e) {
+        m.debugPrint('Badge font unavailable, using fallback: $e');
+      }
+    }
     final recorder = ui.PictureRecorder();
     final canvas = m.Canvas(recorder);
     final panelRect = Offset.zero & kBadgePanelSize;
@@ -295,7 +308,7 @@ class BadgeComposer {
       canvas,
       text: breakBadgeText(name),
       rect: layout.nameRect,
-      style: _displayStyle(font).copyWith(color: textColor),
+      style: font.nameStyle.copyWith(color: textColor),
       maxFontSize: layout.nameMaxFontSize,
       minFontSize: 14,
     );
@@ -303,7 +316,7 @@ class BadgeComposer {
       canvas,
       text: breakBadgeText(role),
       rect: layout.roleRect,
-      style: _sansStyle(font).copyWith(color: textColor),
+      style: font.roleStyle.copyWith(color: textColor),
       maxFontSize: layout.roleMaxFontSize,
       minFontSize: 12,
     );
@@ -366,30 +379,6 @@ class BadgeComposer {
       ..layout(maxWidth: rect.width)
       ..paint(canvas, rect.topLeft);
   }
-
-  // -- Fonts -----------------------------------------------------------------
-
-  static m.TextStyle _displayStyle(BadgeFont font) => switch (font) {
-    BadgeFont.display => GoogleFonts.oswald(
-      fontWeight: m.FontWeight.w700,
-      color: _black,
-    ),
-    BadgeFont.sans => GoogleFonts.roboto(
-      fontWeight: m.FontWeight.w700,
-      color: _black,
-    ),
-  };
-
-  static m.TextStyle _sansStyle(BadgeFont font) => switch (font) {
-    BadgeFont.display => GoogleFonts.roboto(
-      fontWeight: m.FontWeight.w400,
-      color: _black,
-    ),
-    BadgeFont.sans => GoogleFonts.roboto(
-      fontWeight: m.FontWeight.w400,
-      color: _black,
-    ),
-  };
 }
 
 /// Isolate entrypoint for the second compose phase: wrap the rendered RGBA

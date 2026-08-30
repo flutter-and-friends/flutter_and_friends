@@ -54,6 +54,21 @@ void main() {
   });
 
   group('BadgeFont', () {
+    test('offers seven fonts with unique labels', () {
+      expect(BadgeFont.values, hasLength(7));
+      expect(
+        BadgeFont.values.map((f) => f.label).toSet(),
+        hasLength(BadgeFont.values.length),
+      );
+    });
+
+    test('every font has a name and role style', () {
+      for (final font in BadgeFont.values) {
+        expect(font.nameStyle.fontFamily, isNotNull, reason: '$font');
+        expect(font.roleStyle.fontFamily, isNotNull, reason: '$font');
+      }
+    });
+
     test('every font has a non-empty label', () {
       for (final f in BadgeFont.values) {
         expect(f.label, isNotEmpty);

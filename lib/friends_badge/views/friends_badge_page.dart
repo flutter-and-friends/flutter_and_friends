@@ -361,7 +361,7 @@ class _FontPicker extends StatelessWidget {
       children: [
         for (final font in BadgeFont.values)
           ChoiceChip(
-            label: Text(font.label),
+            label: Text(font.label, style: font.nameStyle),
             selected: font == selected,
             onSelected: (_) =>
                 context.read<FriendsBadgeCubit>().updateFont(font),
