@@ -64,16 +64,34 @@ class FriendsBadgeState extends Equatable {
 class FriendsBadge extends Equatable {
   const FriendsBadge({
     required this.image,
+    required this.previewPng,
+    required this.peekPngs,
     this.ditherKernel = DitherKernel.atkinson,
   });
 
   final BadgeImage image;
   final DitherKernel ditherKernel;
 
-  FriendsBadge copyWith({BadgeImage? image, DitherKernel? ditherKernel}) {
+  /// [image] dithered with [ditherKernel] as PNG, encoded off the UI
+  /// thread by the compose isolate. Derived from [image] and
+  /// [ditherKernel], so it is not part of [props].
+  final Uint8List previewPng;
+
+  /// A small PNG of [image] per supported kernel for the kernel carousel,
+  /// encoded off the UI thread. Derived from [image], not part of [props].
+  final Map<DitherKernel, Uint8List> peekPngs;
+
+  FriendsBadge copyWith({
+    BadgeImage? image,
+    DitherKernel? ditherKernel,
+    Uint8List? previewPng,
+    Map<DitherKernel, Uint8List>? peekPngs,
+  }) {
     return FriendsBadge(
       image: image ?? this.image,
       ditherKernel: ditherKernel ?? this.ditherKernel,
+      previewPng: previewPng ?? this.previewPng,
+      peekPngs: peekPngs ?? this.peekPngs,
     );
   }
 

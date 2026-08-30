@@ -52,8 +52,8 @@ class FriendsBadgeCubit extends Cubit<FriendsBadgeState> {
   ///
   /// `autoInit: false` — the isolate is not spawned until the first compose,
   /// so merely opening the creator page costs no isolate.
-  final TailoredStatefulIsolate<Uint8List, BadgeImage> _composeIsolate =
-      TailoredStatefulIsolate<Uint8List, BadgeImage>(
+  final TailoredStatefulIsolate<ComposeRequest, ComposedBadge> _composeIsolate =
+      TailoredStatefulIsolate<ComposeRequest, ComposedBadge>(
         backpressureStrategy: ReplaceBackpressureStrategy(),
         autoInit: false,
       );
@@ -122,10 +122,24 @@ class FriendsBadgeCubit extends Cubit<FriendsBadgeState> {
     }
   }
 
-  void updateDitherKernel(DitherKernel ditherKernel) {
+  /// Switches the preview to [ditherKernel]. The dithered preview is encoded
+  /// in a short-lived isolate; the badge is left untouched if a recompose
+  /// replaced it in the meantime.
+  Future<void> updateDitherKernel(DitherKernel ditherKernel) async {
     final badge = state.badge;
-    if (badge == null) return;
-    emit(state.copyWith(badge: badge.copyWith(ditherKernel: ditherKernel)));
+    if (badge == null || badge.ditherKernel == ditherKernel) return;
+    final previewPng = await Isolate.run(
+      () => encodeBadgePreview(badge.image, ditherKernel),
+    );
+    if (isClosed || state.badge?.image != badge.image) return;
+    emit(
+      state.copyWith(
+        badge: badge.copyWith(
+          ditherKernel: ditherKernel,
+          previewPng: previewPng,
+        ),
+      ),
+    );
   }
 
   Future<void> updateTemplate(BadgeTemplate template) async {
@@ -177,21 +191,27 @@ class FriendsBadgeCubit extends Cubit<FriendsBadgeState> {
       font: state.font,
     );
 
-    // Phase 2 (background isolate): RGBA wrap + BadgeImage construction.
-    // Stale requests dropped by the back-pressure strategy complete with
-    // BackpressureDropException — expected, ignore.
+    // Phase 2 (background isolate): RGBA wrap, BadgeImage construction and
+    // PNG previews. Stale requests dropped by the back-pressure strategy
+    // complete with BackpressureDropException — expected, ignore.
     await _composeIsolate.init();
     _isolateInitialized = true;
     try {
-      final badgeImage = await _composeIsolate.compute(
-        badgeImageFromRgba,
-        rgba,
+      final composed = await _composeIsolate.compute(
+        composeBadge,
+        ComposeRequest(
+          rgba: rgba,
+          kernel: state.badge?.ditherKernel ?? DitherKernel.atkinson,
+        ),
       );
+      if (isClosed) return;
       emit(
         state.copyWith(
           badge: FriendsBadge(
-            image: badgeImage,
-            ditherKernel: state.badge?.ditherKernel ?? DitherKernel.atkinson,
+            image: composed.image,
+            ditherKernel: composed.kernel,
+            previewPng: composed.previewPng,
+            peekPngs: composed.peekPngs,
           ),
         ),
       );

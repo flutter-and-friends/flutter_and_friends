@@ -324,3 +324,56 @@ BadgeImage badgeImageFromRgba(Uint8List rgba) {
   );
   return BadgeImage(image);
 }
+
+/// Input for [composeBadge]: the rendered RGBA bytes and the dither kernel
+/// the full-size preview should use.
+class ComposeRequest {
+  const ComposeRequest({required this.rgba, required this.kernel});
+
+  final Uint8List rgba;
+  final DitherKernel kernel;
+}
+
+/// Output of [composeBadge]: the [BadgeImage] plus the PNG previews the
+/// editor shows, so that dithering and encoding never run on the UI thread.
+class ComposedBadge {
+  const ComposedBadge({
+    required this.image,
+    required this.kernel,
+    required this.previewPng,
+    required this.peekPngs,
+  });
+
+  final BadgeImage image;
+  final DitherKernel kernel;
+
+  /// [image] dithered with [kernel], PNG encoded.
+  final Uint8List previewPng;
+
+  /// A small PNG per supported kernel for the kernel carousel.
+  final Map<DitherKernel, Uint8List> peekPngs;
+}
+
+/// Isolate entrypoint for the second compose phase: builds the [BadgeImage]
+/// from the rendered RGBA bytes (see [badgeImageFromRgba]) and encodes the
+/// previews the editor needs. `BadgeImage.getImageBytes` and
+/// `getPeekImageBytes` dither and PNG-encode on every call with no caching,
+/// which is far too slow to do inside `build` on each keystroke.
+ComposedBadge composeBadge(ComposeRequest request) {
+  final image = badgeImageFromRgba(request.rgba);
+  return ComposedBadge(
+    image: image,
+    kernel: request.kernel,
+    previewPng: image.getImageBytes(request.kernel),
+    peekPngs: {
+      for (final kernel in BadgeImage.allSupportedKernels)
+        kernel: image.getPeekImageBytes(kernel),
+    },
+  );
+}
+
+/// Encodes the full-size preview of [image] dithered with [kernel]. Meant to
+/// run off the UI thread, for example through `Isolate.run`.
+Uint8List encodeBadgePreview(BadgeImage image, DitherKernel kernel) {
+  return image.getImageBytes(kernel);
+}

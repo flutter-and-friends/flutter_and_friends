@@ -39,6 +39,35 @@ void main() {
     });
   });
 
+  group('composeBadge', () {
+    test('returns the badge with its preview and a peek per kernel', () {
+      final rgba = Uint8List(panelWidth * panelHeight * 4);
+      for (var i = 0; i < rgba.length; i += 4) {
+        rgba[i] = 255;
+        rgba[i + 1] = 255;
+        rgba[i + 2] = 255;
+        rgba[i + 3] = 255;
+      }
+
+      final composed = composeBadge(
+        ComposeRequest(rgba: rgba, kernel: img.DitherKernel.atkinson),
+      );
+
+      expect(composed.kernel, img.DitherKernel.atkinson);
+      expect(
+        composed.previewPng,
+        composed.image.getImageBytes(img.DitherKernel.atkinson),
+      );
+      expect(
+        composed.peekPngs.keys,
+        unorderedEquals(BadgeImage.allSupportedKernels),
+      );
+      for (final png in composed.peekPngs.values) {
+        expect(png, isNotEmpty);
+      }
+    });
+  });
+
   group('BadgeComposer.renderRgba', () {
     Future<BadgeImage> compose(
       img.Image source,

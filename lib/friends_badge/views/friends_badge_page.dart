@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_and_friends/friends_badge/friends_badge.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -315,7 +317,7 @@ class _BadgePreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Image.memory(badge.image.getImageBytes(badge.ditherKernel));
+    return Image.memory(badge.previewPng, gaplessPlayback: true);
   }
 }
 
@@ -344,10 +346,13 @@ class _BadgeDitherKernelCarousel extends StatelessWidget {
           position: DecorationPosition.foreground,
           decoration: decoration,
           child: InkWell(
-            onTap: () {
-              context.read<FriendsBadgeCubit>().updateDitherKernel(kernel);
-            },
-            child: Image.memory(badge.image.getPeekImageBytes(kernel)),
+            onTap: () => unawaited(
+              context.read<FriendsBadgeCubit>().updateDitherKernel(kernel),
+            ),
+            child: Image.memory(
+              badge.peekPngs[kernel] ?? badge.previewPng,
+              gaplessPlayback: true,
+            ),
           ),
         );
       },
