@@ -12,13 +12,7 @@ final lightTheme = ThemeData(
     elevation: 1,
     shadowColor: _lightColorScheme.secondary,
   ),
-  bottomNavigationBarTheme: BottomNavigationBarThemeData(
-    backgroundColor: _lightColorScheme.surface,
-    selectedItemColor: _lightColorScheme.primary,
-    unselectedItemColor: _lightColorScheme.onSurfaceVariant,
-    showUnselectedLabels: true,
-    type: BottomNavigationBarType.fixed,
-  ),
+  navigationBarTheme: _navigationBarTheme(_lightColorScheme),
   cardTheme: CardThemeData(surfaceTintColor: _lightColorScheme.primary),
   colorScheme: _lightColorScheme,
   bannerTheme: MaterialBannerThemeData(
@@ -35,13 +29,7 @@ final darkTheme = ThemeData(
     elevation: 1,
     shadowColor: _darkColorScheme.secondary,
   ),
-  bottomNavigationBarTheme: BottomNavigationBarThemeData(
-    backgroundColor: _darkColorScheme.surface,
-    selectedItemColor: _darkColorScheme.primary,
-    unselectedItemColor: _darkColorScheme.onSurfaceVariant,
-    type: BottomNavigationBarType.fixed,
-    showUnselectedLabels: true,
-  ),
+  navigationBarTheme: _navigationBarTheme(_darkColorScheme),
   cardTheme: CardThemeData(surfaceTintColor: _darkColorScheme.primary),
   colorScheme: _darkColorScheme,
   bannerTheme: MaterialBannerThemeData(
@@ -49,6 +37,36 @@ final darkTheme = ThemeData(
   ),
   useMaterial3: true,
 );
+
+/// The tab bar at the bottom of the launchpad: a pill behind the active
+/// icon, with labels always shown so the five tabs stay easy to tell apart.
+NavigationBarThemeData _navigationBarTheme(ColorScheme colors) {
+  return NavigationBarThemeData(
+    backgroundColor: colors.surface,
+    surfaceTintColor: colors.primary,
+    indicatorColor: colors.primaryContainer,
+    height: 72,
+    labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+    iconTheme: WidgetStateProperty.resolveWith(
+      (states) => IconThemeData(
+        color: states.contains(WidgetState.selected)
+            ? colors.onPrimaryContainer
+            : colors.onSurfaceVariant,
+      ),
+    ),
+    labelTextStyle: WidgetStateProperty.resolveWith(
+      (states) => TextStyle(
+        fontSize: 12,
+        fontWeight: states.contains(WidgetState.selected)
+            ? FontWeight.w700
+            : FontWeight.w500,
+        color: states.contains(WidgetState.selected)
+            ? colors.onSurface
+            : colors.onSurfaceVariant,
+      ),
+    ),
+  );
+}
 
 const _lightColorScheme = ColorScheme(
   brightness: Brightness.light,
