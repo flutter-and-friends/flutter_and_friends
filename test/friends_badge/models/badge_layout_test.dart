@@ -120,6 +120,69 @@ void main() {
         );
         expect(layout.roleRect.top, greaterThan(layout.nameRect.top));
       });
+
+      test('defaults to the stripe frame', () {
+        expect(layout.frame, BadgeFrame.stripe);
+        expect(BadgeFrame.values.first, BadgeFrame.stripe);
+      });
+    });
+
+    group('framed frames', () {
+      for (final frame in BadgeFrame.values) {
+        final layout = BadgeLayout.forTemplate(
+          BadgeTemplate.framed,
+          frame: frame,
+        );
+
+        test('$frame keeps the image inset and the text below it', () {
+          expect(layout.frame, frame);
+          expect(layout.imageRect.left, greaterThan(0));
+          expect(layout.imageRect.top, greaterThan(0));
+          expect(layout.imageRect.right, lessThan(kBadgePanelSize.width));
+          expect(
+            layout.nameRect.top,
+            greaterThanOrEqualTo(layout.imageRect.bottom + layout.borderWidth),
+          );
+          expect(layout.roleRect.top, greaterThan(layout.nameRect.top));
+          expect(layout.roleRect.bottom, lessThan(kBadgePanelSize.height));
+        });
+      }
+
+      test('double and rounded have no accent bar', () {
+        for (final frame in [BadgeFrame.double, BadgeFrame.rounded]) {
+          final layout = BadgeLayout.forTemplate(
+            BadgeTemplate.framed,
+            frame: frame,
+          );
+          expect(layout.accentStripeRect, isNull, reason: '$frame');
+          expect(layout.borderWidth, greaterThan(0), reason: '$frame');
+        }
+      });
+
+      test('only rounded clips the image corners', () {
+        for (final frame in BadgeFrame.values) {
+          final layout = BadgeLayout.forTemplate(
+            BadgeTemplate.framed,
+            frame: frame,
+          );
+          expect(
+            layout.imageCornerRadius,
+            frame == BadgeFrame.rounded ? greaterThan(0) : 0,
+            reason: '$frame',
+          );
+        }
+      });
+
+      test('corners draws over the image and keeps an accent bar', () {
+        final layout = BadgeLayout.forTemplate(
+          BadgeTemplate.framed,
+          frame: BadgeFrame.corners,
+        );
+        expect(layout.borderWidth, 0);
+        final bar = layout.accentStripeRect!;
+        expect(bar.top, greaterThanOrEqualTo(layout.imageRect.bottom));
+        expect(bar.bottom, lessThanOrEqualTo(layout.nameRect.top));
+      });
     });
   });
 

@@ -16,6 +16,7 @@ class FriendsBadgeState extends Equatable {
     this.role = '',
     this.font = BadgeFont.display,
     this.url = '',
+    this.frame = BadgeFrame.stripe,
   });
 
   final FriendsBadge? badge;
@@ -24,6 +25,9 @@ class FriendsBadgeState extends Equatable {
   final String name;
   final String role;
   final BadgeFont font;
+
+  /// The frame style used by the framed template.
+  final BadgeFrame frame;
 
   /// The personal link the user wants on their badge. Collected ahead of
   /// NDEF support landing in `friends_badge`; not yet sent to the badge.
@@ -37,6 +41,7 @@ class FriendsBadgeState extends Equatable {
     String? role,
     BadgeFont? font,
     String? url,
+    BadgeFrame? frame,
   }) {
     return FriendsBadgeState(
       badge: badge ?? this.badge,
@@ -46,6 +51,7 @@ class FriendsBadgeState extends Equatable {
       role: role ?? this.role,
       font: font ?? this.font,
       url: url ?? this.url,
+      frame: frame ?? this.frame,
     );
   }
 
@@ -58,6 +64,7 @@ class FriendsBadgeState extends Equatable {
     role,
     font,
     url,
+    frame,
   ];
 }
 

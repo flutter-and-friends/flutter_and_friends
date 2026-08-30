@@ -8,6 +8,7 @@ class BadgeIdentityState extends Equatable {
     this.url = '',
     this.template = BadgeTemplate.classic,
     this.font = BadgeFont.display,
+    this.frame = BadgeFrame.stripe,
   });
 
   final String name;
@@ -15,6 +16,7 @@ class BadgeIdentityState extends Equatable {
   final String url;
   final BadgeTemplate template;
   final BadgeFont font;
+  final BadgeFrame frame;
 
   BadgeIdentityState copyWith({
     String? name,
@@ -22,6 +24,7 @@ class BadgeIdentityState extends Equatable {
     String? url,
     BadgeTemplate? template,
     BadgeFont? font,
+    BadgeFrame? frame,
   }) {
     return BadgeIdentityState(
       name: name ?? this.name,
@@ -29,9 +32,10 @@ class BadgeIdentityState extends Equatable {
       url: url ?? this.url,
       template: template ?? this.template,
       font: font ?? this.font,
+      frame: frame ?? this.frame,
     );
   }
 
   @override
-  List<Object> get props => [name, role, url, template, font];
+  List<Object> get props => [name, role, url, template, font, frame];
 }

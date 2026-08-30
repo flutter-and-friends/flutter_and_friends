@@ -160,6 +160,48 @@ void main() {
     });
   });
 
+  group('FramePicker', () {
+    Widget subject(FriendsBadgeCubit cubit) {
+      return MaterialApp(
+        home: BlocProvider.value(
+          value: cubit,
+          child: const Scaffold(body: Center(child: FramePicker())),
+        ),
+      );
+    }
+
+    testWidgets('shows a swatch per frame with stripe selected', (
+      tester,
+    ) async {
+      final cubit = FriendsBadgeCubit(identity: BadgeIdentityCubit());
+      addTearDown(cubit.close);
+      await tester.pumpWidget(subject(cubit));
+
+      expect(find.byType(FrameSwatch), findsNWidgets(BadgeFrame.values.length));
+      for (final frame in BadgeFrame.values) {
+        expect(find.text(frame.label), findsOneWidget);
+      }
+      final selected = tester
+          .widgetList<FrameSwatch>(find.byType(FrameSwatch))
+          .where((swatch) => swatch.selected)
+          .map((swatch) => swatch.frame);
+      expect(selected, [BadgeFrame.stripe]);
+    });
+
+    testWidgets('tapping a swatch selects that frame', (tester) async {
+      final identity = BadgeIdentityCubit();
+      final cubit = FriendsBadgeCubit(identity: identity);
+      addTearDown(cubit.close);
+      await tester.pumpWidget(subject(cubit));
+
+      await tester.tap(find.text('Rounded'));
+      await tester.pumpAndSettle();
+
+      expect(cubit.state.frame, BadgeFrame.rounded);
+      expect(identity.state.frame, BadgeFrame.rounded);
+    });
+  });
+
   group('FriendsBadgeView', () {
     testWidgets('shows the capybara grid when no image is picked', (
       tester,

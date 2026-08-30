@@ -28,6 +28,7 @@ class FriendsBadgeCubit extends Cubit<FriendsBadgeState> {
           url: identity.state.url,
           template: identity.state.template,
           font: identity.state.font,
+          frame: identity.state.frame,
         ),
       );
 
@@ -170,6 +171,13 @@ class FriendsBadgeCubit extends Cubit<FriendsBadgeState> {
     await _recompose();
   }
 
+  Future<void> updateFrame(BadgeFrame frame) async {
+    if (state.frame == frame) return;
+    emit(state.copyWith(frame: frame));
+    _identity.updateFrame(frame);
+    await _recompose();
+  }
+
   /// Records the personal link the user wants on their badge's NDEF payload.
   void updateUrl(String url) {
     if (state.url == url) return;
@@ -189,6 +197,7 @@ class FriendsBadgeCubit extends Cubit<FriendsBadgeState> {
       name: state.name,
       role: state.role,
       font: state.font,
+      frame: state.frame,
     );
 
     // Phase 2 (background isolate): RGBA wrap, BadgeImage construction and

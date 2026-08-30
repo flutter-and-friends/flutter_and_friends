@@ -57,8 +57,9 @@ class BadgeComposer {
     required String name,
     required String role,
     required BadgeFont font,
+    BadgeFrame frame = BadgeFrame.stripe,
   }) async {
-    final layout = BadgeLayout.forTemplate(template);
+    final layout = BadgeLayout.forTemplate(template, frame: frame);
     final recorder = ui.PictureRecorder();
     final canvas = m.Canvas(recorder);
     final panelRect = Offset.zero & kBadgePanelSize;
@@ -70,7 +71,7 @@ class BadgeComposer {
     _drawImage(canvas, uiImage: sourceImage, layout: layout);
 
     if (template.usesText) {
-      _drawTemplateChrome(canvas, layout);
+      paintTemplateChrome(canvas, layout);
       _drawText(
         canvas,
         layout: layout,
@@ -122,17 +123,27 @@ class BadgeComposer {
       ),
       dest: layout.imageRect,
     );
+    final radius = layout.imageCornerRadius;
+    if (radius > 0) {
+      canvas
+        ..save()
+        ..clipRRect(
+          RRect.fromRectAndRadius(layout.imageRect, Radius.circular(radius)),
+        );
+    }
     canvas.drawImageRect(
       uiImage,
       source,
       layout.imageRect,
       Paint()..filterQuality = FilterQuality.high,
     );
+    if (radius > 0) canvas.restore();
   }
 
-  /// Template-specific chrome: divider lines, overlay band, framed border
-  /// and accent stripe.
-  static void _drawTemplateChrome(m.Canvas canvas, BadgeLayout layout) {
+  /// Template-specific chrome: divider lines, overlay band, and the frame
+  /// styles of the framed template. Public so the frame picker can draw
+  /// miniatures with exactly the chrome the badge gets.
+  static void paintTemplateChrome(m.Canvas canvas, BadgeLayout layout) {
     switch (layout.template) {
       case BadgeTemplate.imageOnly:
         break;
@@ -156,16 +167,17 @@ class BadgeComposer {
           Paint()..color = _black,
         );
       case BadgeTemplate.framed:
-        final border = layout.imageRect.inflate(layout.borderWidth);
-        canvas.drawRect(
-          border,
-          Paint()
-            ..color = _black
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = layout.borderWidth,
-        );
+        _drawFrame(canvas, layout);
+    }
+  }
+
+  static void _drawFrame(m.Canvas canvas, BadgeLayout layout) {
+    final image = layout.imageRect;
+    switch (layout.frame ?? BadgeFrame.stripe) {
+      case BadgeFrame.stripe:
+        _strokeAround(canvas, image, width: layout.borderWidth, color: _black);
         // Accent stripe: red on top half, yellow on bottom half, so the
-        // framed template carries both palette accents.
+        // frame carries both palette accents.
         final stripe = layout.accentStripeRect!;
         canvas
           ..drawRect(
@@ -186,6 +198,88 @@ class BadgeComposer {
             ),
             Paint()..color = _yellow,
           );
+      case BadgeFrame.double:
+        _strokeAround(canvas, image, width: 2, color: _black);
+        _strokeAround(canvas, image.inflate(6), width: 3, color: _black);
+      case BadgeFrame.rounded:
+        final radius = layout.imageCornerRadius;
+        _strokeAround(canvas, image, width: 2, color: _yellow, radius: radius);
+        _strokeAround(
+          canvas,
+          image.inflate(2),
+          width: 8,
+          color: _red,
+          radius: radius + 2,
+        );
+      case BadgeFrame.corners:
+        const thickness = 6.0;
+        const length = 40.0;
+        final paint = Paint()..color = _black;
+        for (final corner in [
+          image.topLeft,
+          image.topRight,
+          image.bottomLeft,
+          image.bottomRight,
+        ]) {
+          final dx = corner.dx == image.left ? 1 : -1;
+          final dy = corner.dy == image.top ? 1 : -1;
+          canvas
+            ..drawRect(
+              Rect.fromPoints(
+                corner,
+                corner.translate(dx * length, dy * thickness),
+              ),
+              paint,
+            )
+            ..drawRect(
+              Rect.fromPoints(
+                corner,
+                corner.translate(dx * thickness, dy * length),
+              ),
+              paint,
+            );
+        }
+        // Accent bar: a red third, then yellow.
+        final bar = layout.accentStripeRect!;
+        final split = bar.width / 3;
+        canvas
+          ..drawRect(
+            Rect.fromLTWH(bar.left, bar.top, split, bar.height),
+            Paint()..color = _red,
+          )
+          ..drawRect(
+            Rect.fromLTWH(
+              bar.left + split,
+              bar.top,
+              bar.width - split,
+              bar.height,
+            ),
+            Paint()..color = _yellow,
+          );
+    }
+  }
+
+  /// Strokes a band of [width] hugging the outside of [rect], with the
+  /// rect's corners rounded by [radius] when it is greater than zero.
+  static void _strokeAround(
+    m.Canvas canvas,
+    Rect rect, {
+    required double width,
+    required m.Color color,
+    double radius = 0,
+  }) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = width;
+    final band = rect.inflate(width / 2);
+    if (radius > 0) {
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(band, Radius.circular(radius + width / 2)),
+        paint,
+      );
+    } else {
+      canvas.drawRect(band, paint);
     }
   }
 

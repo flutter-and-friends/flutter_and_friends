@@ -137,6 +137,7 @@ class _BadgeEditor extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               spacing: 16,
               children: [
+                if (state.template == BadgeTemplate.framed) const FramePicker(),
                 if (state.template.usesText) ...[
                   _NameRoleFields(state: state),
                   const _FontPicker(),
@@ -211,6 +212,139 @@ class _TemplateTabBarState extends State<TemplateTabBar>
       ],
     );
   }
+}
+
+/// Picks the frame style of the framed template from miniatures drawn with
+/// the badge's own chrome code.
+class FramePicker extends StatelessWidget {
+  const FramePicker({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final selected = context.select((FriendsBadgeCubit c) => c.state.frame);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      spacing: 12,
+      children: [
+        for (final frame in BadgeFrame.values)
+          FrameSwatch(
+            frame: frame,
+            selected: frame == selected,
+            onTap: () => context.read<FriendsBadgeCubit>().updateFrame(frame),
+          ),
+      ],
+    );
+  }
+}
+
+class FrameSwatch extends StatelessWidget {
+  const FrameSwatch({
+    required this.frame,
+    required this.selected,
+    required this.onTap,
+    super.key,
+  });
+
+  final BadgeFrame frame;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final primary = theme.colorScheme.primary;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        spacing: 4,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                width: 3,
+                color: selected ? primary : Colors.transparent,
+              ),
+            ),
+            child: CustomPaint(
+              size: kBadgePanelSize / 4,
+              painter: FramePainter(frame),
+            ),
+          ),
+          Text(
+            frame.label,
+            style: theme.textTheme.labelSmall?.copyWith(
+              fontWeight: selected ? FontWeight.bold : null,
+              color: selected ? primary : null,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Draws a miniature badge with the given frame: a grey image placeholder,
+/// the real frame chrome, and bars standing in for the name and role.
+class FramePainter extends CustomPainter {
+  const FramePainter(this.frame);
+
+  final BadgeFrame frame;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final layout = BadgeLayout.forTemplate(
+      BadgeTemplate.framed,
+      frame: frame,
+    );
+    final image = layout.imageRect;
+    final placeholder = Paint()..color = Colors.grey.shade400;
+    canvas
+      ..save()
+      ..scale(
+        size.width / kBadgePanelSize.width,
+        size.height / kBadgePanelSize.height,
+      )
+      ..drawRect(Offset.zero & kBadgePanelSize, Paint()..color = Colors.white);
+    if (layout.imageCornerRadius > 0) {
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          image,
+          Radius.circular(layout.imageCornerRadius),
+        ),
+        placeholder,
+      );
+    } else {
+      canvas.drawRect(image, placeholder);
+    }
+    BadgeComposer.paintTemplateChrome(canvas, layout);
+    canvas
+      ..drawRect(
+        Rect.fromLTWH(
+          layout.nameRect.left,
+          layout.nameRect.top + 8,
+          layout.nameRect.width * 0.7,
+          20,
+        ),
+        Paint()..color = Colors.black,
+      )
+      ..drawRect(
+        Rect.fromLTWH(
+          layout.roleRect.left,
+          layout.roleRect.top + 4,
+          layout.roleRect.width * 0.5,
+          12,
+        ),
+        Paint()..color = Colors.black54,
+      )
+      ..restore();
+  }
+
+  @override
+  bool shouldRepaint(FramePainter oldDelegate) => oldDelegate.frame != frame;
 }
 
 class _FontPicker extends StatelessWidget {
