@@ -1,3 +1,7 @@
+## 1.3.0+27
+
+ - **FEAT**: Animate vote statistics on reveal, new primary blue, and UI polish ([#72](https://github.com/flutter-and-friends/flutter_and_friends/issues/72)). ([f50c90b8](https://github.com/flutter-and-friends/flutter_and_friends/commit/f50c90b819beb11c65eb7f50aa6180d95b921c49))
+
 ## 1.2.0+26
 
  - **FIX**: schedule card overflows, launch artwork, and stage names ([#66](https://github.com/flutter-and-friends/flutter_and_friends/issues/66)). ([00c651a8](https://github.com/flutter-and-friends/flutter_and_friends/commit/00c651a84f5c51b14e30c40d56486470a2a69d99))
