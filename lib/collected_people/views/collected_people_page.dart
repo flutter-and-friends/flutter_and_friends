@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_and_friends/collected_people/collected_people.dart';
 import 'package:flutter_and_friends/friends_badge/friends_badge.dart'
     show kCapybaraAssets;
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:friends_badge/friends_badge.dart' show BadgePerson;
+import 'package:nfc_manager/nfc_manager.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 /// The asset path for a collected person's capybara avatar, or `null` when
@@ -28,7 +32,12 @@ class CollectedPeoplePage extends StatelessWidget {
 }
 
 class CollectedPeopleView extends StatelessWidget {
-  const CollectedPeopleView({super.key});
+  const CollectedPeopleView({
+    this.collector = const BadgeCollector(),
+    super.key,
+  });
+
+  final BadgeCollector collector;
 
   @override
   Widget build(BuildContext context) {
@@ -49,58 +58,126 @@ class CollectedPeopleView extends StatelessWidget {
     );
   }
 
-  /// Foreground dispatch: while the returned session is held, tapping a
-  /// badge collects the person in place (the app wins over the browser).
+  /// Foreground dispatch: while the session is held, tapping a badge
+  /// collects the person in place (the app wins over the browser).
   ///
-  /// ⚠️ This NFC wiring cannot be exercised in CI — confirm on device.
+  /// The session only ends on a tap, a cancel, or a platform error, so a
+  /// [CollectBadgeDialog] is shown for as long as it runs. It doubles as the
+  /// prompt on Android, which has no system NFC sheet, and as the only way
+  /// to stop reader mode there.
   Future<void> _collect(BuildContext context) async {
     final cubit = context.read<CollectedPeopleCubit>();
     final messenger = ScaffoldMessenger.of(context);
-    try {
-      final collected = await const BadgeCollector().collectTaps(
-        onCollected: (badgePerson) {
-          final existing = cubit.state.people.length;
-          final person = cubit.collect(
-            toCollectedPerson(badgePerson),
-          );
-          final isNew = cubit.state.people.length > existing;
-          messenger
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(
-                content: Text(
-                  isNew
-                      ? 'Collected ${person.name} ✓'
-                      : '${person.name} is already in your dex',
-                ),
-              ),
-            );
-        },
-      );
-      if (!collected) {
-        messenger.showSnackBar(
-          const SnackBar(content: Text('No badge tapped')),
-        );
-      }
-    } on PlatformException catch (e) {
-      // iOS can report a leftover session from a previous (e.g. badge-write)
-      // flow — stop it and let the user retry, mirroring WriteToBadgeButton.
-      if (e.code == 'session_already_exists') {
-        messenger.showSnackBar(
-          const SnackBar(
-            content: Text('NFC session busy — please try again'),
+
+    void onCollected(BadgePerson badgePerson) {
+      final existing = cubit.state.people.length;
+      final person = cubit.collect(toCollectedPerson(badgePerson));
+      final isNew = cubit.state.people.length > existing;
+      messenger
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+              isNew
+                  ? 'Collected ${person.name} ✓'
+                  : '${person.name} is already in your dex',
+            ),
           ),
         );
-      } else {
-        messenger.showSnackBar(
-          SnackBar(content: Text('Could not collect badge: $e')),
-        );
-      }
+    }
+
+    final BadgeCollectSession session;
+    try {
+      session = await _startSession(onCollected);
+    } on PlatformException catch (e) {
+      messenger.showSnackBar(
+        SnackBar(content: Text('Could not collect badge: $e')),
+      );
+      return;
       // NFC unavailable surfaces as a StateError from BadgeCollector.
       // ignore: avoid_catching_errors
     } on StateError catch (e) {
       messenger.showSnackBar(SnackBar(content: Text(e.message)));
+      return;
     }
+
+    if (!context.mounted) {
+      await session.cancel();
+      return;
+    }
+    await showDialog<void>(
+      context: context,
+      builder: (_) => CollectBadgeDialog(session: session),
+    );
+    await session.cancel();
+
+    switch (await session.result) {
+      case BadgeCollectResult.collected:
+      case BadgeCollectResult.cancelled:
+        break;
+      case BadgeCollectResult.notABadge:
+        messenger.showSnackBar(
+          const SnackBar(
+            content: Text('That was not a Friends badge, try again'),
+          ),
+        );
+    }
+  }
+
+  /// Starts the collect session, retrying once after stopping a leftover
+  /// session. iOS does not always clean up the previous session (for
+  /// example from the badge write flow), mirroring WriteToBadgeButton.
+  Future<BadgeCollectSession> _startSession(
+    void Function(BadgePerson person) onCollected,
+  ) async {
+    try {
+      return await collector.start(onCollected: onCollected);
+    } on PlatformException catch (e) {
+      if (e.code != 'session_already_exists') rethrow;
+      await NfcManager.instance.stopSession();
+      return collector.start(onCollected: onCollected);
+    }
+  }
+}
+
+/// Shown while a [BadgeCollectSession] is listening for a tap. Pops itself
+/// once the session ends, or ends the session when dismissed.
+class CollectBadgeDialog extends StatefulWidget {
+  const CollectBadgeDialog({required this.session, super.key});
+
+  final BadgeCollectSession session;
+
+  @override
+  State<CollectBadgeDialog> createState() => _CollectBadgeDialogState();
+}
+
+class _CollectBadgeDialogState extends State<CollectBadgeDialog> {
+  @override
+  void initState() {
+    super.initState();
+    unawaited(
+      widget.session.result.then((_) {
+        if (mounted) Navigator.of(context).pop();
+      }),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      icon: const Icon(Icons.nfc, size: 48),
+      title: const Text('Ready to collect'),
+      content: const Text(
+        "Hold your phone near someone's badge to collect them",
+        textAlign: TextAlign.center,
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+      ],
+    );
   }
 }
 

@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_and_friends/collected_people/collected_people.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:friends_badge/friends_badge.dart' show BadgePerson;
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 class _MemoryStorage implements Storage {
@@ -40,11 +43,65 @@ CollectedPerson _person({
   );
 }
 
-Widget _subject(CollectedPeopleCubit cubit) {
+/// A collector whose session is driven by the test through its
+/// [_FakeSessionController]: the collected callback is captured so a tap can
+/// be simulated, and the controller ends the session.
+class _FakeBadgeCollector extends BadgeCollector {
+  const _FakeBadgeCollector(this.controller);
+
+  final _FakeSessionController controller;
+
+  @override
+  Future<BadgeCollectSession> start({
+    required void Function(BadgePerson person) onCollected,
+    String alertMessageIos = '',
+  }) async {
+    controller
+      ..onCollected = onCollected
+      ..startCalls += 1;
+    return BadgeCollectSession(
+      result: controller.completer.future,
+      onCancel: () async {
+        controller.cancelCalls += 1;
+        if (!controller.completer.isCompleted) {
+          controller.completer.complete(BadgeCollectResult.cancelled);
+        }
+      },
+    );
+  }
+}
+
+class _FakeSessionController {
+  final completer = Completer<BadgeCollectResult>();
+  void Function(BadgePerson person)? onCollected;
+  int startCalls = 0;
+  int cancelCalls = 0;
+
+  void tap(BadgePerson person) {
+    onCollected!(person);
+    completer.complete(BadgeCollectResult.collected);
+  }
+
+  void finish(BadgeCollectResult result) => completer.complete(result);
+}
+
+const _badgePerson = BadgePerson(
+  name: 'Ada Lovelace',
+  role: 'Speaker',
+  urls: ['https://x.com/ada'],
+  primaryUri: null,
+  installId: 'install-1',
+  capybaraId: null,
+);
+
+Widget _subject(
+  CollectedPeopleCubit cubit, {
+  BadgeCollector collector = const BadgeCollector(),
+}) {
   return MaterialApp(
     home: BlocProvider.value(
       value: cubit,
-      child: const CollectedPeopleView(),
+      child: CollectedPeopleView(collector: collector),
     ),
   );
 }
@@ -113,6 +170,77 @@ void main() {
 
       expect(cubit.state.people, isEmpty);
       expect(find.text('No one collected yet'), findsOneWidget);
+    });
+
+    group('collecting a badge', () {
+      testWidgets('keeps listening until a badge is tapped', (tester) async {
+        final controller = _FakeSessionController();
+        final cubit = CollectedPeopleCubit();
+        await tester.pumpWidget(
+          _subject(cubit, collector: _FakeBadgeCollector(controller)),
+        );
+
+        await tester.tap(find.byIcon(Icons.nfc));
+        await tester.pumpAndSettle();
+
+        expect(controller.startCalls, 1);
+        expect(find.byType(CollectBadgeDialog), findsOneWidget);
+        expect(find.text('No badge tapped'), findsNothing);
+        expect(find.byType(SnackBar), findsNothing);
+
+        controller.tap(_badgePerson);
+        await tester.pumpAndSettle();
+
+        expect(find.byType(CollectBadgeDialog), findsNothing);
+        expect(find.text('Collected Ada Lovelace ✓'), findsOneWidget);
+        expect(cubit.state.people.single.name, 'Ada Lovelace');
+        expect(find.text('Ada Lovelace'), findsOneWidget);
+      });
+
+      testWidgets('cancel ends the session without a message', (
+        tester,
+      ) async {
+        final controller = _FakeSessionController();
+        await tester.pumpWidget(
+          _subject(
+            CollectedPeopleCubit(),
+            collector: _FakeBadgeCollector(controller),
+          ),
+        );
+
+        await tester.tap(find.byIcon(Icons.nfc));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('Cancel'));
+        await tester.pumpAndSettle();
+
+        expect(controller.cancelCalls, greaterThanOrEqualTo(1));
+        expect(await controller.completer.future, BadgeCollectResult.cancelled);
+        expect(find.byType(CollectBadgeDialog), findsNothing);
+        expect(find.byType(SnackBar), findsNothing);
+      });
+
+      testWidgets('a foreign tag closes the dialog and explains', (
+        tester,
+      ) async {
+        final controller = _FakeSessionController();
+        await tester.pumpWidget(
+          _subject(
+            CollectedPeopleCubit(),
+            collector: _FakeBadgeCollector(controller),
+          ),
+        );
+
+        await tester.tap(find.byIcon(Icons.nfc));
+        await tester.pumpAndSettle();
+        controller.finish(BadgeCollectResult.notABadge);
+        await tester.pumpAndSettle();
+
+        expect(find.byType(CollectBadgeDialog), findsNothing);
+        expect(
+          find.text('That was not a Friends badge, try again'),
+          findsOneWidget,
+        );
+      });
     });
 
     group('capybara avatar', () {
