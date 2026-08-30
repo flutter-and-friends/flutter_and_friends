@@ -82,6 +82,28 @@ Extend `FriendsBadgeCubit` / `FriendsBadgeState` with: selected template, name,
 role, font choice, and the composed `BadgeImage`. Composition is pure
 Dart/image work — no NFC until "Write" is tapped.
 
+### 4.3 Speed writer (organizers)
+
+Hidden mode for flashing every badge before the conference. Holding the
+**Friends Badge** entry on the More page for five seconds opens
+`SpeedWriterPage`:
+
+1. **Pick a CSV** (`file_picker`) with the columns `name`, `role` and
+   `email` (header optional, comma/semicolon/tab delimited, see
+   `parseBadgeRoster`).
+2. For the current person, `SpeedWriterCubit` composes a **classic** badge with
+   a **random font and capybara** (reroll available) through the same
+   `BadgeComposer` pipeline as the creator.
+3. **Write** flashes the image plus a person record (§7) carrying a fresh UUID
+   as `id:` (so collectors dedupe the badge and the owner's app never collects
+   it as a stranger), the capybara ID, and the e-mail as a `mailto:` link.
+4. A successful write advances to the **next person**; Previous/Skip move
+   without writing.
+
+The app-wide badge listener is stopped for the whole session so the organizer's
+phone does not collect the roster it just wrote (which would also inflate the
+highscore).
+
 ## 5. Templates (4)
 
 All render to a 240 × 416 canvas. Text is drawn with `TextPainter` onto an

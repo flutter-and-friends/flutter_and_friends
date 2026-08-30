@@ -29,6 +29,10 @@ The Q&A tab lets attendees ask the panel questions and upvote each other's quest
 
 The Pub Quiz entry under More lets a table play the live quiz that an organizer runs from the website's `/admin/quiz` page. Each phone creates one team (keyed by the same anonymous identity as the Q&A), answers the open question once, and follows the reveal and the scoreboard as the website's server moves the quiz forward. The server publishes questions, closes them, scores the answers (two points for a correct answer, one more for the three fastest correct teams) and writes the standings; the rules in [`firestore.rules`](firestore.rules) make sure a phone can only ever create its own team and one immutable, server-timestamped answer per open question, and never sees the correct answer before it is revealed.
 
+## Badge speed writer
+
+Organizers can flash every badge before the conference without typing: hold the Friends Badge entry under More for five seconds to open the speed writer, pick a CSV with the columns `name`, `role` and `email` (header optional), and tap each badge in turn. Every person gets a random font and capybara, the e-mail is written to the badge as a `mailto:` link, and a successful write moves on to the next person. See [`docs/badge-creator.md`](docs/badge-creator.md) §4.3.
+
 ## Highscore
 
 The Highscore entry under More ranks attendees by how many people they have collected by tapping badges. Each phone publishes a single document (keyed by the same anonymous identity as the Q&A) with the name on its badge and its collected count, and updates it whenever either changes; the collected people themselves never leave the phone. The rules in [`firestore.rules`](firestore.rules) let a phone write only its own entry, so the count is self-reported but nobody can edit anyone else's.

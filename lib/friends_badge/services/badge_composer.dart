@@ -367,10 +367,18 @@ BadgeImage badgeImageFromRgba(Uint8List rgba) {
 /// Input for [composeBadge]: the rendered RGBA bytes and the dither kernel
 /// the full-size preview should use.
 class ComposeRequest {
-  const ComposeRequest({required this.rgba, required this.kernel});
+  const ComposeRequest({
+    required this.rgba,
+    required this.kernel,
+    this.includePeeks = true,
+  });
 
   final Uint8List rgba;
   final DitherKernel kernel;
+
+  /// Whether to encode the per-kernel peek images for the kernel carousel.
+  /// The speed writer shows no carousel, so it skips them.
+  final bool includePeeks;
 }
 
 /// Output of [composeBadge]: the [BadgeImage] plus the PNG previews the
@@ -405,8 +413,9 @@ ComposedBadge composeBadge(ComposeRequest request) {
     kernel: request.kernel,
     previewPng: image.getImageBytes(request.kernel),
     peekPngs: {
-      for (final kernel in BadgeImage.allSupportedKernels)
-        kernel: image.getPeekImageBytes(kernel),
+      if (request.includePeeks)
+        for (final kernel in BadgeImage.allSupportedKernels)
+          kernel: image.getPeekImageBytes(kernel),
     },
   );
 }
