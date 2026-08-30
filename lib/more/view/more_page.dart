@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_and_friends/collected_people/collected_people.dart';
 import 'package:flutter_and_friends/friends_badge/friends_badge.dart';
+import 'package:flutter_and_friends/highscore/highscore.dart';
 import 'package:flutter_and_friends/pub_quiz/pub_quiz.dart';
 import 'package:flutter_and_friends/qa/qa.dart';
 import 'package:flutter_and_friends/theme/theme.dart';
@@ -46,6 +47,12 @@ class MoreView extends StatelessWidget {
             subtitle: 'People you met, tap a badge to collect',
             onTap: () =>
                 Navigator.of(context).push(CollectedPeoplePage.route()),
+          ),
+          MoreItem(
+            icon: Icons.emoji_events,
+            title: 'Highscore',
+            subtitle: 'Who has collected the most people',
+            onTap: () => Navigator.of(context).push(HighscorePage.route()),
           ),
         ],
       ),

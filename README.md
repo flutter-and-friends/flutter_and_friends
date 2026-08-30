@@ -29,6 +29,10 @@ The Q&A tab lets attendees ask the panel questions and upvote each other's quest
 
 The Pub Quiz entry under More lets a table play the live quiz that an organizer runs from the website's `/admin/quiz` page. Each phone creates one team (keyed by the same anonymous identity as the Q&A), answers the open question once, and follows the reveal and the scoreboard as the website's server moves the quiz forward. The server publishes questions, closes them, scores the answers (two points for a correct answer, one more for the three fastest correct teams) and writes the standings; the rules in [`firestore.rules`](firestore.rules) make sure a phone can only ever create its own team and one immutable, server-timestamped answer per open question, and never sees the correct answer before it is revealed.
 
+## Highscore
+
+The Highscore entry under More ranks attendees by how many people they have collected by tapping badges. Each phone publishes a single document (keyed by the same anonymous identity as the Q&A) with the name on its badge and its collected count, and updates it whenever either changes; the collected people themselves never leave the phone. The rules in [`firestore.rules`](firestore.rules) let a phone write only its own entry, so the count is self-reported but nobody can edit anyone else's.
+
 ### Local development
 
 Debug builds talk to the local Firebase emulators by default, so no project access is needed. The emulators need a JDK; on a machine with Android Studio, point `JAVA_HOME` at its bundled one:
@@ -49,7 +53,7 @@ On an Android emulator the app reaches the emulators through `10.0.2.2` automati
 npx firebase-tools deploy --only firestore
 ```
 
-The Anonymous sign-in provider must be enabled under Authentication in the Firebase console for the Q&A and the pub quiz to work.
+The Anonymous sign-in provider must be enabled under Authentication in the Firebase console for the Q&A, the pub quiz and the highscore to work.
 
 ## Releasing
 

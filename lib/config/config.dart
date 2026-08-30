@@ -44,6 +44,12 @@ bool get isPubQuizConfigured => DefaultFirebaseOptions.isSupportedPlatform;
 /// drives; the app only ever plays this one quiz.
 const pubQuizId = 'pub-quiz-2026';
 
+/// The highscore (see `lib/highscore`) publishes how many people each
+/// device has collected to the same Firestore database, under the same
+/// anonymous identity as the Q&A, so it is available on exactly the same
+/// platforms.
+bool get isHighscoreConfigured => DefaultFirebaseOptions.isSupportedPlatform;
+
 /// The developer machine as seen from the running app. On an Android
 /// emulator `localhost` resolves to the emulator itself, not the host
 /// machine; `10.0.2.2` is the documented alias back to the host loopback

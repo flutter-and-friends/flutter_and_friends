@@ -9,8 +9,39 @@ rules_version = '2';
 // these rules). A signed-in device may create its own team and submit one
 // immutable answer per question while that question is open; the correct
 // answer only reaches Firestore when the server reveals it.
+//
+// Highscore: every signed-in device may read the board and publish, replace
+// or remove exactly its own entry, which carries the name on its badge and
+// how many people it has collected. The count is self-reported; the rules
+// only keep it a sane non-negative integer.
 service cloud.firestore {
   match /databases/{database}/documents {
+    match /highscores/{userId} {
+      function signedIn() {
+        return request.auth != null;
+      }
+
+      function incoming() {
+        return request.resource.data;
+      }
+
+      allow read: if signedIn();
+
+      allow create, update: if signedIn()
+        && userId == request.auth.uid
+        && incoming().keys().hasOnly(['name', 'count', 'updatedAt'])
+        && incoming().keys().hasAll(['name', 'count', 'updatedAt'])
+        && incoming().name is string
+        && incoming().name.trim().size() >= 1
+        && incoming().name.size() <= 60
+        && incoming().count is int
+        && incoming().count >= 0
+        && incoming().count <= 10000
+        && incoming().updatedAt == request.time;
+
+      allow delete: if signedIn() && userId == request.auth.uid;
+    }
+
     match /qa_sessions/{sessionId}/questions/{questionId} {
       function signedIn() {
         return request.auth != null;

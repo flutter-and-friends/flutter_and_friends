@@ -9,6 +9,8 @@ import 'package:flutter_and_friends/collected_people/collected_people.dart';
 import 'package:flutter_and_friends/config/config.dart';
 import 'package:flutter_and_friends/favorites/favorites.dart';
 import 'package:flutter_and_friends/firebase_options.dart';
+import 'package:flutter_and_friends/friends_badge/friends_badge.dart';
+import 'package:flutter_and_friends/highscore/highscore.dart';
 import 'package:flutter_and_friends/identity/identity.dart';
 import 'package:flutter_and_friends/launchpad/launchpad.dart';
 import 'package:flutter_and_friends/organizers/organizers.dart';
@@ -94,6 +96,12 @@ class _AppState extends State<App> {
           quizId: pubQuizId,
         )
       : null;
+  late final _highscoreRepository = isHighscoreConfigured
+      ? HighscoreRepository(
+          auth: FirebaseAuth.instance,
+          firestore: FirebaseFirestore.instance,
+        )
+      : null;
 
   @override
   void dispose() {
@@ -111,6 +119,8 @@ class _AppState extends State<App> {
           RepositoryProvider.value(value: qaRepository),
         if (_pubQuizRepository case final pubQuizRepository?)
           RepositoryProvider.value(value: pubQuizRepository),
+        if (_highscoreRepository case final highscoreRepository?)
+          RepositoryProvider.value(value: highscoreRepository),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -124,6 +134,22 @@ class _AppState extends State<App> {
           BlocProvider(create: (_) => FavoritesCubit()),
           BlocProvider(create: (_) => CollectedPeopleCubit()),
           BlocProvider(create: (_) => InstallIdCubit()),
+          BlocProvider(create: (_) => BadgeIdentityCubit()),
+          if (_highscoreRepository case final highscoreRepository?)
+            // Eager, so the score is published even if the highscore page
+            // is never opened on this device.
+            BlocProvider(
+              lazy: false,
+              create: (context) {
+                final sync = HighscoreSyncCubit(
+                  people: context.read<CollectedPeopleCubit>(),
+                  identity: context.read<BadgeIdentityCubit>(),
+                  repository: highscoreRepository,
+                );
+                unawaited(sync.start());
+                return sync;
+              },
+            ),
           BlocProvider(
             create: (context) {
               final listener = BadgeListenerCubit(
