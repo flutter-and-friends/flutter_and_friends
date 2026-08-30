@@ -1,3 +1,7 @@
+## 1.5.1+30
+
+ - **FIX**: Add missing iOS camera and photo library purpose strings ([#80](https://github.com/flutter-and-friends/flutter_and_friends/issues/80)). ([59010c02](https://github.com/flutter-and-friends/flutter_and_friends/commit/59010c02c58392c977780a24b2774f25e6f6430c))
+
 ## 1.5.0+29
 
  - **FEAT**: Add a speed writing mode for preparing badges from a CSV ([#78](https://github.com/flutter-and-friends/flutter_and_friends/issues/78)). ([4c675718](https://github.com/flutter-and-friends/flutter_and_friends/commit/4c675718743ce8e25ddb485a35a2ab7d9468662a))
