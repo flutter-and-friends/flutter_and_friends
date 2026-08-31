@@ -1,3 +1,7 @@
+## 1.5.2+31
+
+ - **FIX**: Added badge id to actually be able to read/collect badges on iOS ([#82](https://github.com/flutter-and-friends/flutter_and_friends/issues/82)). ([9eca567c](https://github.com/flutter-and-friends/flutter_and_friends/commit/9eca567c433ef60b676a1b8f8eea5c1d7a3b7758))
+
 ## 1.5.1+30
 
  - **FIX**: Add missing iOS camera and photo library purpose strings ([#80](https://github.com/flutter-and-friends/flutter_and_friends/issues/80)). ([59010c02](https://github.com/flutter-and-friends/flutter_and_friends/commit/59010c02c58392c977780a24b2774f25e6f6430c))
