@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-08-26T12:27:48+00:00",
-  "version": 4674723212842671,
+  "generated_at": "2026-09-01T13:26:52+00:00",
+  "version": 2079166702906965,
   "days": [
     {
       "date": "2026-09-03",
@@ -13,11 +13,11 @@
       "tracks": [
         {
           "id": "main",
-          "label": "THEATRE STAGE"
+          "label": "Theatre stage"
         },
         {
           "id": "second",
-          "label": "Kägelbanan STAGE"
+          "label": "Kägelbanan"
         }
       ]
     },
@@ -92,24 +92,6 @@
       "published": true
     },
     {
-      "id": "grona-lund-theme-park",
-      "type": "activity",
-      "category": "activity",
-      "title": "Gröna Lund Stockholm",
-      "speaker_slugs": [],
-      "day": "2026-09-03",
-      "start": "2026-09-03T13:00:00+02:00",
-      "end": "2026-09-03T17:00:00+02:00",
-      "duration_minutes": 240,
-      "track": null,
-      "location": {
-        "name": "Gröna Lund",
-        "lat": 59.324309,
-        "lng": 18.095993
-      },
-      "published": true
-    },
-    {
       "id": "islands-kayak-tour",
       "type": "activity",
       "category": "activity",
@@ -159,6 +141,24 @@
       "track": null,
       "location": {
         "name": "Meeting point coming soon"
+      },
+      "published": true
+    },
+    {
+      "id": "tolv-stockholm",
+      "type": "activity",
+      "category": "activity",
+      "title": "Tolv Stockholm",
+      "speaker_slugs": [],
+      "day": "2026-09-03",
+      "start": "2026-09-03T13:00:00+02:00",
+      "end": "2026-09-03T17:00:00+02:00",
+      "duration_minutes": 240,
+      "track": null,
+      "location": {
+        "name": "Tolv Stockholm",
+        "lat": 59.291484,
+        "lng": 18.083029
       },
       "published": true
     },
@@ -253,10 +253,11 @@
       "id": "qa-with-the-flutter-core-team",
       "type": "talk",
       "category": "panel",
-      "title": "Q&A with the Flutter Core Team: Featuring Emma Twersky and Michael Thomsen",
+      "title": "Q&A with the Flutter Core Team",
       "description": "Panel with members of the Flutter Core Team, taking questions from the audience. Featuring Emma Twersky and Michael Thomsen, and maybe Parker Lougheed and Brandon DeRosier.\n",
       "speaker_slugs": [
-        "emma-twersky"
+        "emma-twersky",
+        "michael-thomsen"
       ],
       "day": "2026-09-04",
       "start": "2026-09-04T10:15:00+02:00",
@@ -422,13 +423,14 @@
       "published": true
     },
     {
-      "id": "spatial-awareness-with-flutter-and-uwb",
+      "id": "technically-accessible-actually-usable-a11y-for-1m-mau-in-practise",
       "type": "talk",
       "category": "talk",
-      "title": "Spatial Awareness with Flutter and UWB",
-      "description": "Ultra-Wideband is the technology behind experiences like precision finding, digital car keys, and keyless building access. It allows devices to understand not just that something is nearby, but roughly how far away it is and in which direction.\n\nIn this talk, I'll explore what spatial awareness means for Flutter apps and how UWB can move us beyond simple proximity. We'll look at real-world use cases like digital car keys, item tracking, and nearby device interaction, then walk through flutter_uwb, an open-source plugin I built to bring these capabilities to Flutter.\n\nThe session is built around a live demo using Flutter, two phones, and a UWB chip, showing distance and direction as first-class inputs and walking through the Dart code that produces them.\n\nIf you've ever wanted your app to know where a user actually is in physical space, not just whether they're nearby, this talk gives you the mental model, the API, and the code to start.\n",
+      "title": "Technically Accessible, Actually Usable — A11y for 1M MAU in practise",
+      "description": "Most Flutter developers have touched the Semantics widget at some point - usually to set a label on a custom button, or to silence a decorative image. For many apps that's enough. But the moment you hand your app to a real screen reader user, the gap between technically accessible and actually usable becomes clear: everything is read, nothing is broken, and yet some flows are, in practice, painful to get through.\n\nThis talk comes out of roughly a year of accessibility work on a production banking app - the kind of app where a visually impaired user has to move money, confirm a transfer, and recover from a validation error with confidence.\n\nTwo things sit at the center of the talk. The first is the perspective of the people we're actually building for: we've spoken with several long-time screen reader users about how they really use mobile apps, and we'll bring their conclusions into the room - what they notice first, what they can live with, and what makes them leave.\n\nThe second is a set of concrete production cases - form errors and focus, reading order, status announcements, the GestureDetector trap, and a few more - each tied to the WCAG criterion that applies, and to how we ended up interpreting it. Along the way, just enough of Flutter's semantics tree to make all of it make sense.\n",
       "speaker_slugs": [
-        "ahmed-hamdan"
+        "artur-wisniewski",
+        "albert-wolszon"
       ],
       "day": "2026-09-04",
       "start": "2026-09-04T14:00:00+02:00",
@@ -460,7 +462,7 @@
       "id": "building-flitz-how-we-modified-the-flutter-engine-so-your-team-could-iterate-faster",
       "type": "talk",
       "category": "talk",
-      "title": "Building Flutter Go: How We Modified the Flutter Engine So Your Team Could Iterate Faster",
+      "title": "Building Flitz: How We Modified the Flutter Engine So Your Team Could Iterate Faster",
       "description": "Your designer would like to check out your changes, but they can't just flutter run it.\n\nWhat if you could build the app, send a QR code, and have your designer scan it and tap around? That's what we're gonna show.\n\nIt's a talk about a collaboration problem solved by going pretty deep into the Dart VM.\n",
       "speaker_slugs": [
         "jakub-fijalkowski"
@@ -508,14 +510,13 @@
       "published": true
     },
     {
-      "id": "technically-accessible-actually-usable-a11y-for-1m-mau-in-practise",
+      "id": "spatial-awareness-with-flutter-and-uwb",
       "type": "talk",
       "category": "talk",
-      "title": "Technically Accessible, Actually Usable — A11y for 1M MAU in practise",
-      "description": "Most Flutter developers have touched the Semantics widget at some point - usually to set a label on a custom button, or to silence a decorative image. For many apps that's enough. But the moment you hand your app to a real screen reader user, the gap between technically accessible and actually usable becomes clear: everything is read, nothing is broken, and yet some flows are, in practice, painful to get through.\n\nThis talk comes out of roughly a year of accessibility work on a production banking app - the kind of app where a visually impaired user has to move money, confirm a transfer, and recover from a validation error with confidence.\n\nTwo things sit at the center of the talk. The first is the perspective of the people we're actually building for: we've spoken with several long-time screen reader users about how they really use mobile apps, and we'll bring their conclusions into the room - what they notice first, what they can live with, and what makes them leave.\n\nThe second is a set of concrete production cases - form errors and focus, reading order, status announcements, the GestureDetector trap, and a few more - each tied to the WCAG criterion that applies, and to how we ended up interpreting it. Along the way, just enough of Flutter's semantics tree to make all of it make sense.\n",
+      "title": "Spatial Awareness with Flutter and UWB",
+      "description": "Ultra-Wideband is the technology behind experiences like precision finding, digital car keys, and keyless building access. It allows devices to understand not just that something is nearby, but roughly how far away it is and in which direction.\n\nIn this talk, I'll explore what spatial awareness means for Flutter apps and how UWB can move us beyond simple proximity. We'll look at real-world use cases like digital car keys, item tracking, and nearby device interaction, then walk through flutter_uwb, an open-source plugin I built to bring these capabilities to Flutter.\n\nThe session is built around a live demo using Flutter, two phones, and a UWB chip, showing distance and direction as first-class inputs and walking through the Dart code that produces them.\n\nIf you've ever wanted your app to know where a user actually is in physical space, not just whether they're nearby, this talk gives you the mental model, the API, and the code to start.\n",
       "speaker_slugs": [
-        "artur-wisniewski",
-        "albert-wolszon"
+        "ahmed-hamdan"
       ],
       "day": "2026-09-04",
       "start": "2026-09-04T16:20:00+02:00",
@@ -529,7 +530,7 @@
       "id": "add-3d-to-your-flutter-apps",
       "type": "talk",
       "category": "talk",
-      "title": "Add 3D to your Flutter apps",
+      "title": "Scene: A complete 3D engine for Flutter",
       "description": "Flutter is now a 3D engine. Flutter Scene is a complete realtime 3D engine built on Flutter GPU, rendering into the same context as the rest of your app on every platform, web included, enabling you to build incredible multiplatform 3D experiences. You can use it to tackle a huge range of different use cases, from simple model viewers to complex games.\n\nThis talk covers how little it costs to get started, how the declarative and imperative APIs fit together, advanced rendering features, physics, audio, and networking, plus the newest tooling, a visual scene editor and agent skills for AI-assisted development. You'll leave knowing exactly how to start.\n",
       "speaker_slugs": [
         "brandon-derosier"
@@ -563,7 +564,7 @@
       "id": "closing-words",
       "type": "activity",
       "category": "activity",
-      "title": "Wrapping up and closing + speakers, volunteers & ambassadors gifts",
+      "title": "Wrapping up and closing",
       "speaker_slugs": [],
       "day": "2026-09-04",
       "start": "2026-09-04T18:00:00+02:00",
@@ -763,8 +764,8 @@
     {
       "slug": "jamie-kerber",
       "name": "Jamie Kerber",
-      "role": "",
-      "bio": "",
+      "role": "Senior Software Engineer, consulting @ Very Good Ventures",
+      "bio": "Jamie Kerber is a Senior Software Engineer consulting at Very Good Ventures & Lead Engineer on the Fluorite Game Engine. With over 13 years of experience building scalable cloud systems and game engines, and 7 years in Flutter/Dart, she builds and designs delicious apps that sure to perform well and look great! She’s also a Flutter OSS contributor and Flutteristas member. Her talks focus on helping beginner devs level up to intermediate and above\n",
       "photo": "https://flutterfriends.dev/images/speakers/jamie-kerber.jpg",
       "social": {
         "github": "https://github.com/kerberjg/",
@@ -776,8 +777,8 @@
     {
       "slug": "remi-rousselet",
       "name": "Remi Rousselet",
-      "role": "",
-      "bio": "",
+      "role": "Software Engineer · Creator of Riverpod",
+      "bio": "Author of Provider/Riverpod/Freezed and a couple of other things\n",
       "photo": "https://flutterfriends.dev/images/speakers/remi-rousselet.jpg",
       "social": {
         "x": "https://x.com/remi_rousselet",
@@ -787,8 +788,8 @@
     {
       "slug": "sasha-denisov",
       "name": "Sasha Denisov",
-      "role": "",
-      "bio": "",
+      "role": "CTO @ Brainform.ai",
+      "bio": "Sasha is CTO at Brainform.ai with over 20 years of experience architecting scalable enterprise systems. With a strong engineering background, his expertise spans frontend, backend, cloud infrastructure, mobile development, and AI — from cloud-based generative AI to on-device solutions. He specializes in building robust, production-ready products using a variety of technologies and frameworks. Sasha has delivered solutions across fintech, digital media, and entertainment. He is a Google Developer Expert for Cloud, AI, Firebase, Flutter, and Dart, co-organizes the Flutter Berlin Community, and is a recognized international speaker and writer, having presented at 30+ conferences worldwide.\n",
       "photo": "https://flutterfriends.dev/images/speakers/sasha-denisov.jpg",
       "social": {
         "linkedin": "https://www.linkedin.com/in/aleks-denisov/"
@@ -797,8 +798,8 @@
     {
       "slug": "kilian-schulte",
       "name": "Kilian Schulte",
-      "role": "",
-      "bio": "",
+      "role": "Chief of Framework @ Jaspr",
+      "bio": "Kilian is the author of Jaspr, the Web Framework for Dart developers, and Consultant at Netlight. He is passionate about using Dart in new ways and an active contributor to the Dart ecosystem with packages like dart_mappable and stormberry.\n",
       "photo": "https://flutterfriends.dev/images/speakers/kilian-schulte.jpg",
       "social": {
         "x": "https://x.com/schultek_dev",
@@ -808,8 +809,8 @@
     {
       "slug": "parker-lougheed",
       "name": "Parker Lougheed",
-      "role": "",
-      "bio": "",
+      "role": "Developer Relations Engineer @ Google",
+      "bio": "Parker is a software engineer and educator working on the Dart and Flutter websites and documentation. He adopted Dart almost 10 years ago as a way to escape JavaScript and hasn't looked back since. When he's not coding or being the ultimate fan of Dash and Jasper, Parker loves exploring new cultures and is slowly but surely learning Chinese, a quest he's been on for almost as long as he's been writing Dart.\n",
       "photo": "https://flutterfriends.dev/images/speakers/parker-lougheed.jpg",
       "social": {
         "bluesky": "https://bsky.app/profile/parlough.dev",
@@ -819,7 +820,7 @@
     {
       "slug": "brandon-derosier",
       "name": "Brandon DeRosier",
-      "role": "",
+      "role": "Lead Engineer @ Shorebird",
       "bio": "Brandon (bdero) is the creator of Flutter GPU and Flutter Scene. He spent years on Flutter's engine team at Google building Impeller, Flutter's rendering backend, and now works independently full time on Flutter's graphics stack and the Scene ecosystem, including its editor and tooling.\n",
       "photo": "https://flutterfriends.dev/images/speakers/brandon-derosier.jpg",
       "social": {
@@ -830,8 +831,8 @@
     {
       "slug": "renuka-kelkar",
       "name": "Renuka Kelkar",
-      "role": "Flutter GDE",
-      "bio": "",
+      "role": "AI Instructor @ Multiverse",
+      "bio": "Renuka Kelkar is a trailblazing figure in the tech industry, known for her multifaceted roles as Co-Founder of ARNA Genext Solutions, Google Developer Expert for Flutter and Dart, and Founder of the TechPowerGirls Community. With a passion for fostering diversity and inclusion, she serves as an organizer for GDG London and a WomenTechmaker ambassador. Renuka's impactful contributions were recognized with the prestigious Diversity and Inclusion Award from Google in 2023. Her dynamic speaking prowess has earned her the prestigious title of Most Active Speaker for the past two years consecutively on Sessionize, cementing her reputation as a driving force in the tech community.\n",
       "photo": "https://flutterfriends.dev/images/speakers/renuka-kelkar.png",
       "social": {
         "x": "https://x.com/KelkarRenuka"
@@ -840,8 +841,8 @@
     {
       "slug": "jakub-fijalkowski",
       "name": "Jakub Fijałkowski",
-      "role": "",
-      "bio": "",
+      "role": "Head of Backend @ LeanCode",
+      "bio": "Head of Backend at LeanCode, but he sometimes dresses up as a Flutter Developer to support mobile teams. He brings backend architectural best practices into the mobile world, helping teams tackle complex challenges with a fresh perspective. In his free time, he enjoys watching golf and balancing it out by headbanging at metal gigs.\n",
       "photo": "https://flutterfriends.dev/images/speakers/jakub-fijalkowski.jpg",
       "social": {
         "x": "https://x.com/Fiolek_",
@@ -851,8 +852,8 @@
     {
       "slug": "lucas-josefiak",
       "name": "Lucas Josefiak",
-      "role": "",
-      "bio": "",
+      "role": "CEO & Co-Founder @ Widgetbook",
+      "bio": "Helping flutter devs build their design systems and catch visual bugs with Widgetbook\n",
       "photo": "https://flutterfriends.dev/images/speakers/lucas-josefiak.jpg",
       "social": {
         "x": "https://x.com/LucasJosefiak",
@@ -863,8 +864,8 @@
     {
       "slug": "perttu-lahteenlahti",
       "name": "Perttu Lähteenlahti",
-      "role": "",
-      "bio": "",
+      "role": "Senior Developer Advocate @ RevenueCat",
+      "bio": "Perttu Lähteenlahti is a Senior Developer Advocate at RevenueCat.\n",
       "photo": "https://flutterfriends.dev/images/speakers/perttu-lahteenlahti.jpg",
       "social": {
         "x": "https://x.com/plahteenlahti"
@@ -873,8 +874,8 @@
     {
       "slug": "anna-leushchenko",
       "name": "Anna Leushchenko",
-      "role": "",
-      "bio": "",
+      "role": "Senior Staff Engineer / Engineering Manager @ Tide",
+      "bio": "Anna Leushchenko is a Google Developer Expert in Dart and Flutter, and a Senior Staff Engineer / Engineering Manager at UK-based fintech company Tide. With over a decade in mobile development, she leads cross-functional teams, delivers scalable mobile solutions, drives engineering excellence, and shares her expertise at global tech conferences.\n",
       "photo": "https://flutterfriends.dev/images/speakers/anna-leushchenko.jpg",
       "social": {
         "x": "https://x.com/AnnaLeushchenko",
@@ -884,8 +885,8 @@
     {
       "slug": "ivanna-kacevica",
       "name": "Ivanna Kaceviča",
-      "role": "",
-      "bio": "",
+      "role": "Lead Software Developer @ LMT IoT",
+      "bio": "Ivanna is a Google Developer Expert in Flutter and Dart and a Lead Software Engineer at LMT. Over the past couple of years, she has won three coding scholarship competitions and several contests, securing the Grand Prize in both the Flutter Global Gamers Challenge and the Google Cloud NCAA March Madness Competition.\n",
       "photo": "https://flutterfriends.dev/images/speakers/ivanna-kacevica.jpg",
       "social": {
         "x": "https://x.com/ivannahere",
@@ -895,16 +896,26 @@
     {
       "slug": "emma-twersky",
       "name": "Emma Twersky",
-      "role": "",
-      "bio": "",
+      "role": "Staff Developer Relations Engineer / Lead @ Google",
+      "bio": "Staff Developer Relations Engineer / Lead at Google, currently managing developer relations for Flutter and formerly for Angular.\n",
       "photo": "https://flutterfriends.dev/images/speakers/emma-twersky.jpg",
       "social": {}
     },
     {
+      "slug": "michael-thomsen",
+      "name": "Michael Thomsen",
+      "role": "Product Manager, Flutter & Dart @ Google",
+      "bio": "",
+      "photo": "https://flutterfriends.dev/images/speakers/michael-thomsen.jpg",
+      "social": {
+        "github": "https://github.com/mit-mit"
+      }
+    },
+    {
       "slug": "mangirdas-kazlauskas",
       "name": "Mangirdas Kazlauskas",
-      "role": "",
-      "bio": "",
+      "role": "Mobile Tech Lead @ Billo",
+      "bio": "An experienced product-centric software engineer with a passion for learning and sharing knowledge. As a Google Developer Expert for Flutter & Dart technologies, I excel at building cross-platform apps with Flutter, and I love teaching others what I know. In my free time, I enjoy creating educational content, or just being outside and playing disc golf.\n",
       "photo": "https://flutterfriends.dev/images/speakers/mangirdas-kazlauskas.jpg",
       "social": {
         "x": "https://x.com/mkobuolys",
@@ -914,8 +925,8 @@
     {
       "slug": "dominik-roszkowski",
       "name": "Dominik Roszkowski",
-      "role": "",
-      "bio": "",
+      "role": "Lead Engineer @ Visible",
+      "bio": "Dominik is a Google Developer Expert in Flutter, eager to create beautiful apps for mobile and desktop platforms. He’s a Lead Engineer at Visible - a health startup helping people manage complex chronic illnesses using wearable tech. He is an active speaker at local meetups and maintains his blog, roszkowski.dev.\n",
       "photo": "https://flutterfriends.dev/images/speakers/dominik-roszkowski.jpg",
       "social": {
         "x": "https://twitter.com/orestesgaolin",
@@ -925,8 +936,8 @@
     {
       "slug": "anton-borries",
       "name": "Anton Borries",
-      "role": "",
-      "bio": "",
+      "role": "Senior Software Engineer @ Heartbeat AI",
+      "bio": "Anton is a Google Developer Expert for Dart and Flutter. He is interested in bridging gaps between Flutter and native Platform Features.\nHe also specializes in Design Systems and Collaboration between Designers and Developers.\n",
       "photo": "https://flutterfriends.dev/images/speakers/anton-borries.jpg",
       "social": {
         "x": "https://x.com/abausg",
@@ -939,7 +950,7 @@
       "slug": "mateusz-wojtczak",
       "name": "Mateusz Wojtczak",
       "role": "Head of Mobile @ LeanCode",
-      "bio": "",
+      "bio": "Leading Flutter @ LeanCode. Helping companies leverage Patrol E2E Testing. Preaching Flutter @ scale for enterprise companies.\n",
       "photo": "https://flutterfriends.dev/images/speakers/mateusz-wojtczak.jpg",
       "social": {
         "x": "https://x.com/matiwojt"
@@ -949,7 +960,7 @@
       "slug": "artur-wisniewski",
       "name": "Artur Wiśniewski",
       "role": "Flutter Developer @ LeanCode",
-      "bio": "",
+      "bio": "Flutter developer at LeanCode with over 5 years of experience, focused on large banking and fintech applications where accessibility has to work for real users, not just pass a checklist. After work, into board games.\n",
       "photo": "https://flutterfriends.dev/images/speakers/artur-wisniewski.jpg",
       "social": {
         "linkedin": "https://www.linkedin.com/in/artur-wi%C5%9Bniewski-6036831b7/"
@@ -959,7 +970,7 @@
       "slug": "albert-wolszon",
       "name": "Albert Wolszon",
       "role": "Senior Flutter Developer @ LeanCode",
-      "bio": "",
+      "bio": "Flutter GDE. Flutter developer since Flutter 1.0.0. Specializing in UI development and internationalization. Responsible for the development of the company’s and a few big clients’ design systems. After work flying as a private pilot.\n",
       "photo": "https://flutterfriends.dev/images/speakers/albert-wolszon.jpg",
       "social": {
         "x": "https://x.com/albert_wolszon",
@@ -969,8 +980,8 @@
     {
       "slug": "ahmed-hamdan",
       "name": "Ahmed Hamdan",
-      "role": "",
-      "bio": "",
+      "role": "Flutter Unit Head @ MaibornWolff GmbH",
+      "bio": "Ahmed Hamdan is the Head of the Flutter Unit at MaibornWolff GmbH, where he leads and grows the Flutter team, shapes the company’s cross-platform engineering capability, and drives excellence across delivery, people development, and market positioning.\n\nSpecialized in Flutter since 2017, Ahmed combines hands-on technical expertise with leadership, helping teams build scalable products across mobile, web, desktop, embedded, and emerging platforms. He is also focused on how AI-assisted development and agentic coding are changing the future of software engineering, especially for cross-platform teams.\n\nBeyond his work at MaibornWolff, Ahmed is an international tech speaker and community organizer. As one of the leaders of Flutter Valencia and GDG Valencia, he actively supports developer communities and helps create spaces for knowledge-sharing, collaboration, and growth.\n",
       "photo": "https://flutterfriends.dev/images/speakers/ahmed-hamdan.jpg",
       "social": {
         "x": "https://x.com/ahmedjhamdan",
@@ -980,8 +991,8 @@
     {
       "slug": "jochum-van-der-ploeg",
       "name": "Jochum van der Ploeg",
-      "role": "",
-      "bio": "",
+      "role": "Software Engineer @ FlutterFlow",
+      "bio": "I'm a Dutch open source software engineer, working at FlutterFlow by day and hacking away at night.\n\n🔥 I’m actively maintaining the Flame Engine.\n🧑‍💻 I’m a member of the Blue Fire Team.\n💬 Ask me about shaders, end-to-end testing and rendering in Flutter.\n\nFun fact: I own a working Commodore 64 that is older than I am.\n",
       "photo": "https://flutterfriends.dev/images/speakers/jochum-van-der-ploeg.jpg",
       "social": {
         "x": "https://twitter.com/wolfenrain",
@@ -992,8 +1003,8 @@
     {
       "slug": "salih-guler",
       "name": "Salih Güler",
-      "role": "",
-      "bio": "",
+      "role": "Senior Developer Advocate @ AWS",
+      "bio": "Salih is a Senior Developer Advocate at AWS with a strong focus on frontend and mobile app development, developer experience, and serverless architecture. With a background in building scalable mobile and web interfaces, he brings hands-on expertise to developer communities around the world. He’s passionate about creating intuitive developer tools and open source projects, often blending frontend craft with cloud infrastructure. Outside of work, Salih is a dedicated runner, comic book enthusiast, and a dad who balances code, curiosity, and creativity—always exploring new skills, from making music to architecture.\n",
       "photo": "https://flutterfriends.dev/images/speakers/salih-guler.jpg",
       "social": {
         "x": "https://x.com/salihgueler",
@@ -1004,8 +1015,8 @@
     {
       "slug": "jan-vincent-hoffbauer",
       "name": "Jan Vincent Hoffbauer",
-      "role": "",
-      "bio": "",
+      "role": "Software Engineer @ AWS",
+      "bio": "Jan Vincent Hoffbauer is a Software Development Engineer at Amazon with a background in AI and cloud engineering. He is passionate about building developer experiences and modern applications with AWS and Flutter.\n",
       "photo": "https://flutterfriends.dev/images/speakers/jan-vincent-hoffbauer.jpg",
       "social": {}
     },
@@ -1025,7 +1036,7 @@
       "slug": "oskar-zajac",
       "name": "Oskar Zając",
       "role": "QA Engineer @ LeanCode",
-      "bio": "",
+      "bio": "QA engineer at LeanCode and part of the Patrol team. Author of Patrol MCP, working on making Patrol and AI work better together. On a mission to prove that E2E testing doesn't have to be slow or expensive.\n",
       "photo": "https://flutterfriends.dev/images/speakers/oskar-zajac.jpg",
       "social": {
         "linkedin": "https://www.linkedin.com/in/zajac-oskar/",
